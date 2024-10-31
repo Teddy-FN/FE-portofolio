@@ -15,11 +15,11 @@ export default function Home() {
           <div className="text-center xl:text-left">
             <span className="text-xl">Full Stack Developer</span>
             <h1 className="h1">
-              Hello I'm <br />
+              Hello Im <br />
               <span className="text-accent">Teddy Ferdian</span>
             </h1>
             <p className="max-w-[500px] mb-9 text-white/80">
-              I'm A Fullstack Developer
+              Im A Fullstack Developer
             </p>
 
             {/* Btn Social Media */}
