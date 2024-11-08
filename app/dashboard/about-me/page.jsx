@@ -26,7 +26,7 @@ const page = () => {
               Cancel
             </Button>
             <Button size="sm" className="max-w-full">
-              Login
+              Save
             </Button>
           </div>
         </form>

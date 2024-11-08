@@ -4,7 +4,15 @@ import React, { useState } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 
-import { FaHome, FaBriefcase } from "react-icons/fa";
+import {
+  FaHome,
+  FaGlobe,
+  FaSchool,
+  FaSlidersH,
+  FaUser,
+  FaBriefcase,
+  FaBook,
+} from "react-icons/fa";
 
 import MobileNav from "./MobileNav";
 
@@ -15,34 +23,34 @@ const menus = [
     path: "/dashboard",
   },
   {
-    icon: <FaBriefcase />,
+    icon: <FaGlobe />,
     name: "Experience",
     path: "/dashboard/experience",
   },
   {
-    icon: <FaBriefcase />,
+    icon: <FaSchool />,
     name: "Education",
     path: "/dashboard/education",
   },
   {
-    icon: <FaBriefcase />,
+    icon: <FaBook />,
     name: "Skills",
     path: "/dashboard/skills",
   },
   {
-    icon: <FaBriefcase />,
+    icon: <FaUser />,
     name: "About Me",
     path: "/dashboard/about-me",
   },
   {
-    icon: "",
+    icon: <FaSlidersH />,
     name: "Service",
     path: "/dashboard/service",
   },
   {
-    icon: "",
-    name: "Title",
-    path: "/dashboard/title",
+    icon: <FaBriefcase />,
+    name: "Work / Project",
+    path: "/dashboard/work",
   },
 ];
 
@@ -56,21 +64,17 @@ const DashboardLayout = ({ children }) => {
         <h2 className="font-bold mb-4">Left Sidebar</h2>
         <ul>
           {menus.map((items, index) => {
-            console.log(
-              "items?.path === pathName =>",
-              items?.path === pathName
-            );
-
             return (
               <li className="mb-2" key={index}>
                 <Link
                   href={items.path}
+                  key={index}
                   className={`${
-                    items?.path === pathName
-                      ? "text-accent border-b-2 border-accent"
-                      : ""
-                  } text-xl capitalize hover:text-accent transition-all`}
+                    items.path !== pathName ||
+                    "text-accent border-b-2  border-accent"
+                  } text-xl capitalize hover:text-accent transition-all flex items-center gap-4`}
                 >
+                  {items.icon}
                   {items.name}
                 </Link>
               </li>

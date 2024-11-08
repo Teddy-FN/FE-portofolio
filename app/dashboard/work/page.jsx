@@ -9,7 +9,7 @@ const page = () => {
   return (
     <DashboardLayout>
       <div className="flex flex-col gap-8">
-        <h1 className="text-2xl font-bold">About Me Page</h1>
+        <h1 className="text-2xl font-bold">Work / Project Page</h1>
         <form className="flex flex-col gap-6 p-10 bg-[#272729] rounded-xl">
           {/* Input */}
           <div className="grid grid-cols-1 gap-6">
