@@ -1,5 +1,10 @@
 "use client";
 
+import React, { Fragment } from "react";
+import { motion } from "framer-motion";
+import { useQuery } from "@tanstack/react-query";
+
+// Icons
 import { FaHtml5, FaCss3, FaJs, FaReact, FaNodeJs } from "react-icons/fa";
 import {
   SiNextdotjs,
@@ -8,112 +13,38 @@ import {
   SiPostgresql,
   SiSequelize,
 } from "react-icons/si";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+
+// Components
+import Header from "@/components/Header";
+import { ScrollArea } from "@/components/ui/scroll-area";
 import {
   Tooltip,
   TooltipContent,
   TooltipProvider,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
-import { ScrollArea } from "@/components/ui/scroll-area";
-import { motion } from "framer-motion";
-import { Fragment } from "react";
-import Header from "@/components/Header";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+
+// Service
+import { getListExperience } from "@/service/experience";
+import { getListEducation } from "@/service/education";
+import { getListAboutMe } from "@/service/about-me";
 
 const aboutMe = {
   title: "About Me",
   description: "Lore Ipsum",
-  info: [
-    {
-      fieldName: "Name",
-      value: "Teddy Ferdian",
-    },
-    {
-      fieldName: "Phone",
-      value: "0821321",
-    },
-    {
-      fieldName: "Experience",
-      value: "3 Years",
-    },
-    {
-      fieldName: "Nationality",
-      value: "Indonesia",
-    },
-    {
-      fieldName: "Email",
-      value: "tedd.ferdy@gmail.com",
-    },
-    {
-      fieldName: "Freelance",
-      value: "Available",
-    },
-    {
-      fieldName: "Languages",
-      value: "Bahasa, English",
-    },
-  ],
 };
 
 const experience = {
   icon: "",
   title: "My Experience",
   description: "Lorem Ipsum",
-  info: [
-    {
-      company: "A",
-      position: "Frontend Developer",
-      duration: "2021 - Present",
-    },
-    {
-      company: "A",
-      position: "Frontend Developer",
-      duration: "2021 - Present",
-    },
-    {
-      company: "A",
-      position: "Frontend Developer",
-      duration: "2021 - Present",
-    },
-    {
-      company: "A",
-      position: "Frontend Developer",
-      duration: "2021 - Present",
-    },
-    {
-      company: "A",
-      position: "Frontend Developer",
-      duration: "2021 - Present",
-    },
-    {
-      company: "A",
-      position: "Frontend Developer",
-      duration: "2021 - Present",
-    },
-    {
-      company: "A",
-      position: "Frontend Developer",
-      duration: "2021 - Present",
-    },
-    {
-      company: "A",
-      position: "Frontend Developer",
-      duration: "2021 - Present",
-    },
-  ],
 };
 
 const education = {
   icon: "",
   title: "My Education",
   description: "Lorem Ipsum",
-  info: [
-    {
-      institution: "A",
-      degree: "Frontend Developer",
-      duration: "2021 - Present",
-    },
-  ],
 };
 
 const skills = {
@@ -164,6 +95,22 @@ const skills = {
 };
 
 const Resume = () => {
+  // Query
+  const getListExperienceData = useQuery({
+    queryKey: ["getListExperience"],
+    queryFn: getListExperience,
+  });
+
+  const getListEducationData = useQuery({
+    queryKey: ["getListEducation"],
+    queryFn: getListEducation,
+  });
+
+  const getListAboutMeData = useQuery({
+    queryKey: ["getListAboutMe"],
+    queryFn: getListAboutMe,
+  });
+
   return (
     <Fragment>
       <Header />
@@ -203,7 +150,7 @@ const Resume = () => {
 
                   <ScrollArea className="h-[400px]">
                     <ul className="grid grid-cols-1 lg:grid-cols-2 gap-[30px]">
-                      {experience.info.map((items, index) => {
+                      {getListExperienceData?.data?.map((items, index) => {
                         return (
                           <li
                             key={index}
@@ -236,7 +183,7 @@ const Resume = () => {
 
                   <ScrollArea className="h-[400px]">
                     <ul className="grid grid-cols-1 lg:grid-cols-2 gap-[30px]">
-                      {education.info.map((items, index) => {
+                      {getListEducationData?.data?.map((items, index) => {
                         return (
                           <li
                             key={index}
@@ -304,7 +251,7 @@ const Resume = () => {
                     {aboutMe.description}
                   </p>
                   <ul className="grid grid-cols-1 xl:grid-cols-2 gap-y-6 gap-x-6 max-w-[620px] mx-auto xl:mx-0">
-                    {aboutMe.info.map((items, index) => {
+                    {getListAboutMeData?.data?.map((items, index) => {
                       return (
                         <li
                           key={index}

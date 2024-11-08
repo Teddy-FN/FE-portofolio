@@ -1,39 +1,26 @@
 "use client";
 
-import { BsArrowDownRight } from "react-icons/bs";
+import React, { Fragment } from "react";
 import Link from "next/link";
 import { motion } from "framer-motion";
-import { Fragment } from "react";
+import { useQuery } from "@tanstack/react-query";
+
+// Icons
+import { BsArrowDownRight } from "react-icons/bs";
+
+// Component
 import Header from "@/components/Header";
 
-const services = [
-  {
-    num: "01",
-    title: "Web Development",
-    description: "lorem ipsum",
-    href: "",
-  },
-  {
-    num: "02",
-    title: "Web Development",
-    description: "lorem ipsum",
-    href: "",
-  },
-  {
-    num: "03",
-    title: "Web Development",
-    description: "lorem ipsum",
-    href: "",
-  },
-  {
-    num: "04",
-    title: "Web Development",
-    description: "lorem ipsum",
-    href: "",
-  },
-];
+// Service
+import { service } from "@/service/service";
 
 const Services = () => {
+  // Query
+  const getServiceData = useQuery({
+    queryKey: ["service"],
+    queryFn: service,
+  });
+
   return (
     <Fragment>
       <Header />
@@ -53,7 +40,7 @@ const Services = () => {
             }}
             className="grid grid-cols-1 md:grid-cols-2 gap-[60px]"
           >
-            {services.map((items, index) => {
+            {getServiceData?.data?.map((items, index) => {
               return (
                 <div
                   key={index}
