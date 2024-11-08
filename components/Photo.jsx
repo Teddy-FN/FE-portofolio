@@ -3,7 +3,7 @@
 import { motion } from "framer-motion";
 import Image from "next/image";
 
-const Photo = () => {
+const Photo = ({ src }) => {
   return (
     <div className="w-full h-full relative">
       <motion.div
@@ -35,7 +35,7 @@ const Photo = () => {
           className="w-[298px] h-[298px] xl:w-[489px] xl:h-[489px] mix-blend-lighten absolute"
         >
           <Image
-            src="/photo.jpg"
+            src={src}
             alt="photo"
             priority
             quality={100}
