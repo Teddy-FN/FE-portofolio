@@ -29,7 +29,7 @@ const MobileNav = ({ menus }) => {
                 href={items.path}
                 key={index}
                 className={`${
-                  items.path === pathName ??
+                  items.path !== pathName ||
                   "text-accent border-b-2  border-accent"
                 } text-xl capitalize hover:text-accent transition-all flex items-center gap-4`}
               >
