@@ -218,26 +218,28 @@ const Resume = () => {
                     </p>
                   </div>
 
-                  <ul className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 xl:gap-[30px] gap-4">
-                    {skills.info.map((items, index) => {
-                      return (
-                        <li key={index}>
-                          <TooltipProvider delayDuration={100}>
-                            <Tooltip>
-                              <TooltipTrigger className="w-full h-[150px] bg-[#232329] rounded-xl flex justify-center items-center group">
-                                <div className="text-6xl group-hover:text-accent transition-all duration-500">
-                                  {items.icon}
-                                </div>
-                              </TooltipTrigger>
-                              <TooltipContent>
-                                <p className="capitalize">{items.name}</p>
-                              </TooltipContent>
-                            </Tooltip>
-                          </TooltipProvider>
-                        </li>
-                      );
-                    })}
-                  </ul>
+                  <ScrollArea className="h-[400px]">
+                    <ul className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 xl:gap-[30px] gap-4">
+                      {skills.info.map((items, index) => {
+                        return (
+                          <li key={index}>
+                            <TooltipProvider delayDuration={100}>
+                              <Tooltip>
+                                <TooltipTrigger className="w-full h-[150px] bg-[#232329] rounded-xl flex justify-center items-center group">
+                                  <div className="text-6xl group-hover:text-accent transition-all duration-500">
+                                    {items.icon}
+                                  </div>
+                                </TooltipTrigger>
+                                <TooltipContent>
+                                  <p className="capitalize">{items.name}</p>
+                                </TooltipContent>
+                              </Tooltip>
+                            </TooltipProvider>
+                          </li>
+                        );
+                      })}
+                    </ul>
+                  </ScrollArea>
                 </div>
               </TabsContent>
 
@@ -245,26 +247,28 @@ const Resume = () => {
                 value="about"
                 className="w-full text-center xl:text-left"
               >
-                <div className="flex flex-col gap-[30px]">
+                <div className="flex flex-col gap-[30px] text-center xl:text-left">
                   <h3 className="text-4xl font-bold">{aboutMe.title}</h3>
                   <p className="max-w-[600px] text-white/60 mx-auto xl:mx-0">
                     {aboutMe.description}
                   </p>
-                  <ul className="grid grid-cols-1 xl:grid-cols-2 gap-y-6 gap-x-6 max-w-[620px] mx-auto xl:mx-0">
-                    {getListAboutMeData?.data?.map((items, index) => {
-                      return (
-                        <li
-                          key={index}
-                          className="flex items-center justify-center xl:justify-start gap-4"
-                        >
-                          <span className="text-white/60">
-                            {items.fieldName}
-                          </span>
-                          <span className="text-xl">{items.value}</span>
-                        </li>
-                      );
-                    })}
-                  </ul>
+                  <ScrollArea className="h-[400px]">
+                    <ul className="grid grid-cols-1 xl:grid-cols-2 gap-y-6 gap-x-6 max-w-[620px] mx-auto xl:mx-0">
+                      {getListAboutMeData?.data?.map((items, index) => {
+                        return (
+                          <li
+                            key={index}
+                            className="flex items-center justify-center xl:justify-start gap-4"
+                          >
+                            <span className="text-white/60">
+                              {items.fieldName}
+                            </span>
+                            <span className="text-xl">{items.value}</span>
+                          </li>
+                        );
+                      })}
+                    </ul>
+                  </ScrollArea>
                 </div>
               </TabsContent>
             </div>
