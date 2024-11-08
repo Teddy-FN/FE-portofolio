@@ -6,30 +6,7 @@ import Link from "next/link";
 
 import { CiMenuFries } from "react-icons/ci";
 
-const menus = [
-  {
-    name: "Home",
-    path: "/",
-  },
-  {
-    name: "Services",
-    path: "/services",
-  },
-  {
-    name: "Resume",
-    path: "/resume",
-  },
-  {
-    name: "Work",
-    path: "/work",
-  },
-  {
-    name: "Contact",
-    path: "/contact",
-  },
-];
-
-const MobileNav = () => {
+const MobileNav = ({ menus }) => {
   const pathName = usePathname();
 
   return (
@@ -37,7 +14,7 @@ const MobileNav = () => {
       <SheetTrigger className="flex items-center justify-center">
         <CiMenuFries className="text-[32px] text-accent" />
       </SheetTrigger>
-      <SheetContent className="flex flex-col">
+      <SheetContent className="flex flex-col overflow-scroll">
         <div className="my-20 text-center text-2xl">
           <Link href="/">
             <h1 className="text-4xl font-semibold">
@@ -54,8 +31,9 @@ const MobileNav = () => {
                 className={`${
                   items.path === pathName ??
                   "text-accent border-b-2  border-accent"
-                } text-xl capitalize hover:text-accent transition-all`}
+                } text-xl capitalize hover:text-accent transition-all flex items-center gap-4`}
               >
+                {items.icon}
                 {items.name}
               </Link>
             );
