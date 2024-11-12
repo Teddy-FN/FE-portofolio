@@ -29,6 +29,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { getListExperience } from "@/service/experience";
 import { getListEducation } from "@/service/education";
 import { getListAboutMe } from "@/service/about-me";
+import EmptyData from "@/components/EmptyData";
 
 const aboutMe = {
   title: "About Me",
@@ -111,6 +112,8 @@ const Resume = () => {
     queryFn: getListAboutMe,
   });
 
+  console.log("getListAboutMeData =>", getListAboutMeData);
+
   return (
     <Fragment>
       <Header />
@@ -180,32 +183,37 @@ const Resume = () => {
                   <p className="max-w-[600px] text-white/60 mx-auto xl:mx-0">
                     {education.description}
                   </p>
-
-                  <ScrollArea className="h-[400px]">
-                    <ul className="grid grid-cols-1 lg:grid-cols-2 gap-[30px]">
-                      {getListEducationData?.data?.map((items, index) => {
-                        return (
-                          <li
-                            key={index}
-                            className="bg-[#232329] h-[184px] py-6 px-10 rounded-xl flex flex-col justify-center items-center lg:items-start gap-1"
-                          >
-                            <span className="text-accent">
-                              {items.duration}
-                            </span>
-                            <h3 className="text-xl max-w-[260px] min-h-[60px] text-center lg:text-left">
-                              {items.degree}
-                            </h3>
-                            <div className="flex items-center gap-3">
-                              <span className="w-[6px] h-[6px] rounded-full bg-accent"></span>
-                              <p className="text-white/60">
-                                {items.institution}
-                              </p>
-                            </div>
-                          </li>
-                        );
-                      })}
-                    </ul>
-                  </ScrollArea>
+                  {getListEducationData?.data?.data?.length > 0 ? (
+                    <ScrollArea className="h-[400px]">
+                      <ul className="grid grid-cols-1 lg:grid-cols-2 gap-[30px]">
+                        {getListEducationData?.data?.data?.map(
+                          (items, index) => {
+                            return (
+                              <li
+                                key={index}
+                                className="bg-[#232329] h-[184px] py-6 px-10 rounded-xl flex flex-col justify-center items-center lg:items-start gap-1"
+                              >
+                                <span className="text-accent">
+                                  {items.duration}
+                                </span>
+                                <h3 className="text-xl max-w-[260px] min-h-[60px] text-center lg:text-left">
+                                  {items.degree}
+                                </h3>
+                                <div className="flex items-center gap-3">
+                                  <span className="w-[6px] h-[6px] rounded-full bg-accent"></span>
+                                  <p className="text-white/60">
+                                    {items.institution}
+                                  </p>
+                                </div>
+                              </li>
+                            );
+                          }
+                        )}
+                      </ul>
+                    </ScrollArea>
+                  ) : (
+                    <EmptyData text="Education Still Empty" />
+                  )}
                 </div>
               </TabsContent>
 
@@ -254,19 +262,63 @@ const Resume = () => {
                   </p>
                   <ScrollArea className="h-[400px]">
                     <ul className="grid grid-cols-1 xl:grid-cols-2 gap-y-6 gap-x-6 max-w-[620px] mx-auto xl:mx-0">
-                      {getListAboutMeData?.data?.map((items, index) => {
-                        return (
-                          <li
-                            key={index}
-                            className="flex items-center justify-center xl:justify-start gap-4"
-                          >
-                            <span className="text-white/60">
-                              {items.fieldName}
-                            </span>
-                            <span className="text-xl">{items.value}</span>
-                          </li>
-                        );
-                      })}
+                      <li className="flex items-center justify-center xl:justify-start gap-4">
+                        <span className="text-white/60">Name</span>
+                        <span className="text-xl">
+                          {getListAboutMeData?.data?.data?.name}
+                        </span>
+                      </li>
+                      <li className="flex items-center justify-center xl:justify-start gap-4">
+                        <span className="text-white/60">Phone</span>
+                        <span className="text-xl">
+                          {getListAboutMeData?.data?.data?.phone}
+                        </span>
+                      </li>
+                      <li className="flex items-center justify-center xl:justify-start gap-4">
+                        <span className="text-white/60">Experience</span>
+                        <span className="text-xl">
+                          {getListAboutMeData?.data?.data?.experience}
+                        </span>
+                      </li>
+                      <li className="flex items-center justify-center xl:justify-start gap-4">
+                        <span className="text-white/60">Nationality</span>
+                        <span className="text-xl">
+                          {getListAboutMeData?.data?.data?.nationality}
+                        </span>
+                      </li>
+                      <li className="flex items-center justify-center xl:justify-start gap-4">
+                        <span className="text-white/60">Email</span>
+                        <span className="text-xl">
+                          {getListAboutMeData?.data?.data?.email}
+                        </span>
+                      </li>
+                      <li className="flex items-center justify-center xl:justify-start gap-4">
+                        <span className="text-white/60">Freelance</span>
+                        <span className="text-xl">
+                          {getListAboutMeData?.data?.data?.freelance
+                            ? "Available"
+                            : "Not Available"}
+                        </span>
+                      </li>
+                      <li className="flex items-center justify-center xl:justify-start gap-4">
+                        <span className="text-white/60">Languages</span>
+                        <span className="text-xl">
+                          {getListAboutMeData?.data?.data?.languages.length > 0
+                            ? getListAboutMeData?.data?.data?.languages.map(
+                                (items, index) => (
+                                  <span key={index}>
+                                    {index !==
+                                    getListAboutMeData?.data?.data?.languages
+                                      .length -
+                                      1
+                                      ? `${items}, `
+                                      : items}
+                                  </span>
+                                )
+                              )
+                            : "-"}
+                        </span>
+                      </li>
                     </ul>
                   </ScrollArea>
                 </div>
