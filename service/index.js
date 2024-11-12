@@ -1,25 +1,26 @@
 import axios, { AxiosError } from "axios";
-import { ENDPOINT } from "../utils/endpoints";
 
 const axiosInstance = axios.create({
-  // .. where we make our configurations
-  baseURL: ENDPOINT.BASE_URL,
-  // headers: {
-  //   "Content-Type": "application/json"
-  // }
+  baseURL: process.env.NEXT_PUBLIC_BASE_URL || "http://localhost:7000",
+  headers: {
+    "Content-Type": "application/json",
+  },
 });
 
 axiosInstance.interceptors.request.use(
   (req) => req,
-  (err) => err
+  (err) => Promise.reject(err)
 );
 
 axiosInstance.interceptors.response.use(
   (res) => res,
   (err) => {
     if (err instanceof AxiosError) {
-      return err.response;
-    } else return err;
+      console.error("Axios error:", err.response);
+      return Promise.reject(err.response);
+    } else {
+      return Promise.reject(err);
+    }
   }
 );
 
