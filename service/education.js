@@ -21,3 +21,41 @@ export const getListEducation = async () => {
 
   return data;
 };
+
+export const educationDegree = async () => {
+  const list = [
+    {
+      label: "No formal education",
+      value: "No formal education",
+    },
+    {
+      label: "Primary education",
+      value: "Primary education",
+    },
+    {
+      label: "Secondary education or high school",
+      value: "Secondary education or high school",
+    },
+    {
+      label: "GED",
+      value: "GED",
+    },
+    {
+      label: "Vocational qualification",
+      value: "Vocational qualification",
+    },
+    {
+      label: "Bachelor's degree",
+      value: "Bachelor's degree",
+    },
+    {
+      label: "Master's degree",
+      value: "Master's degree",
+    },
+    {
+      label: "Doctorate or higher",
+      value: "Doctorate or higher",
+    },
+  ];
+  return list;
+};

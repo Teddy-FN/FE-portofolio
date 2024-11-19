@@ -16,7 +16,7 @@ import {
 
 // Components
 import Header from "@/components/Header";
-import { ScrollArea } from "@/components/ui/scroll-area";
+
 import {
   Tooltip,
   TooltipContent,
@@ -149,7 +149,7 @@ const Resume = () => {
                     {experience.description}
                   </p>
                   {getListExperienceData?.data?.data?.length > 0 ? (
-                    <ScrollArea className="h-[400px]">
+                    <div className="h-[400px]">
                       <ul className="grid grid-cols-1 lg:grid-cols-2 gap-[30px]">
                         {getListExperienceData?.data?.data?.map(
                           (items, index) => {
@@ -175,7 +175,7 @@ const Resume = () => {
                           }
                         )}
                       </ul>
-                    </ScrollArea>
+                    </div>
                   ) : (
                     <EmptyData text="Experience Still Empty" />
                   )}
@@ -189,7 +189,7 @@ const Resume = () => {
                     {education.description}
                   </p>
                   {getListEducationData?.data?.data?.length > 0 ? (
-                    <ScrollArea className="h-[400px]">
+                    <div className="h-[400px]">
                       <ul className="grid grid-cols-1 lg:grid-cols-2 gap-[30px]">
                         {getListEducationData?.data?.data?.map(
                           (items, index) => {
@@ -215,7 +215,7 @@ const Resume = () => {
                           }
                         )}
                       </ul>
-                    </ScrollArea>
+                    </div>
                   ) : (
                     <EmptyData text="Education Still Empty" />
                   )}
@@ -231,7 +231,7 @@ const Resume = () => {
                     </p>
                   </div>
 
-                  <ScrollArea className="h-[400px]">
+                  <div className="h-[400px]">
                     <ul className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 xl:gap-[30px] gap-4">
                       {skills.info.map((items, index) => {
                         return (
@@ -252,7 +252,7 @@ const Resume = () => {
                         );
                       })}
                     </ul>
-                  </ScrollArea>
+                  </div>
                 </div>
               </TabsContent>
 
@@ -265,7 +265,7 @@ const Resume = () => {
                   <p className="max-w-[600px] text-white/60 mx-auto xl:mx-0">
                     {aboutMe.description}
                   </p>
-                  <ScrollArea className="h-[400px]">
+                  <div className="h-[400px]">
                     <ul className="grid grid-cols-1 xl:grid-cols-2 gap-y-6 gap-x-6 max-w-[620px] mx-auto xl:mx-0">
                       <li className="flex items-center justify-center xl:justify-start gap-4">
                         <span className="text-white/60">Name</span>
@@ -325,7 +325,7 @@ const Resume = () => {
                         </span>
                       </li>
                     </ul>
-                  </ScrollArea>
+                  </div>
                 </div>
               </TabsContent>
             </div>
