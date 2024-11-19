@@ -58,7 +58,7 @@ const DashboardLayout = ({ children }) => {
   const pathName = usePathname();
 
   return (
-    <div className="flex flex-col md:flex-row min-h-screen">
+    <div className="flex flex-col lg:flex-row min-h-screen">
       {/* Left Sidebar */}
       <aside className="w-full md:w-1/6 bg-gray-800 text-white p-4 md:p-4 lg:block hidden">
         <h2 className="font-bold mb-4">Left Sidebar</h2>
