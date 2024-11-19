@@ -80,7 +80,7 @@ const page = () => {
             onSubmit={form.handleSubmit(onSubmit)}
             className="grid grid-cols-2 gap-8 p-10 bg-[#272729] rounded-xl"
           >
-            <div className="col-span-2">
+            <div className="col-span-2 lg:col-span-1">
               <FormField
                 control={form.control}
                 name="title"
@@ -103,7 +103,7 @@ const page = () => {
                 )}
               />
             </div>
-            <div className="col-span-2">
+            <div className="col-span-2 lg:col-span-1">
               <FormField
                 control={form.control}
                 name="description"
