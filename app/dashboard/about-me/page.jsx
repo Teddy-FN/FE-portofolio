@@ -1,7 +1,7 @@
 /* eslint-disable react-hooks/rules-of-hooks */
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useMemo } from "react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
@@ -21,40 +21,47 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Switch } from "@/components/ui/switch";
+import {
+  DropdownMenuRadioGroup,
+  DropdownMenuRadioItem,
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuLabel,
+  DropdownMenuCheckboxItem,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+
 import { nationality } from "@/service/nationality";
 
 const page = () => {
   const [imagePreview, setImagePreview] = useState(null);
 
   // Query
-  const natinaolityData = useQuery({
+  const nationalityData = useQuery({
     queryKey: ["nationality"],
     queryFn: nationality,
   });
 
-  console.log("natinaolityData =>", natinaolityData);
+  console.log("nationalityData =>", nationalityData);
+
+  // Sort nationality data once for reuse
+  const sortedNationalities = useMemo(() => {
+    return nationalityData?.data?.sort((a, b) =>
+      a.name.common.localeCompare(b.name.common)
+    );
+  }, [nationalityData]);
 
   const formSchema = z.object({
     image: z.union([
       z.instanceof(File).refine((file) => file.size > 0, "Image is required"),
       z.string().min(1, "Image URL is required").optional(),
     ]),
-    name: z.string().min(4, {
-      message: "Enter Name Product Minimum Character 4 and max character 30.",
-    }),
-    experience: z.string().min(4, {
-      message: "Enter Name Product Minimum Character 4 and max character 30.",
-    }),
-    email: z.string().min(4, {
-      message: "Enter Description Minimum 4 Character & Max 255 Character.",
-    }),
-    nationality: z.string().min(4, {
-      message: "Enter Description Minimum 4 Character & Max 255 Character.",
-    }),
-    languages: z.string().min(2, {
-      message:
-        "Enter Price Minimum 2 Character Price Product Must Number And Not Alphabet",
-    }),
+    name: z.string().min(4, "Enter a name with at least 4 characters."),
+    experience: z.string().min(4, "Enter an experience description (min 4)."),
+    email: z.string().email("Enter a valid email."),
+    nationality: z.string().nonempty("Select a nationality."),
+    languages: z.array(z.string()).min(1, "Select at least one language."),
     freelance: z.boolean(),
   });
 
@@ -289,25 +296,45 @@ const page = () => {
               />
             </div>
             <div className="col-span-1">
+              {/* nationality */}
               <FormField
                 control={form.control}
                 name="nationality"
                 render={({ field }) => (
                   <FormItem>
-                    <div className="mb-4 flex items-center gap-2">
-                      <FormLabel className="text-base">Nationality</FormLabel>
-                      {/* <Asterisk className="w-4 h-4 text-destructive" /> */}
-                    </div>
-                    <Input
-                      type="email"
-                      {...field}
-                      placeholder="Enter Name Product"
-                      maxLength={30}
-                      className="w-full"
-                    />
+                    <FormLabel>Nationality</FormLabel>
+                    <DropdownMenu>
+                      <DropdownMenuTrigger asChild>
+                        <div>
+                          <Input
+                            {...field}
+                            placeholder="Select nationality"
+                            readOnly
+                            className="w-full text-left cursor-pointer"
+                          />
+                        </div>
+                      </DropdownMenuTrigger>
+                      <DropdownMenuContent className="w-56 h-60 overflow-scroll">
+                        <DropdownMenuLabel>Nationality</DropdownMenuLabel>
+                        <DropdownMenuSeparator />
+                        <DropdownMenuRadioGroup
+                          value={field.value}
+                          onValueChange={(value) => field.onChange(value)}
+                        >
+                          {sortedNationalities?.map((item, index) => (
+                            <DropdownMenuRadioItem
+                              key={index}
+                              value={item.name.common}
+                            >
+                              {item.flag} {item.name.common}
+                            </DropdownMenuRadioItem>
+                          ))}
+                        </DropdownMenuRadioGroup>
+                      </DropdownMenuContent>
+                    </DropdownMenu>
                     {form.formState.errors.nationality && (
                       <FormMessage>
-                        {form.formState.errors.nationality}
+                        {form.formState.errors.nationality.message}
                       </FormMessage>
                     )}
                   </FormItem>
@@ -322,18 +349,57 @@ const page = () => {
                   <FormItem>
                     <div className="mb-4 flex items-center gap-2">
                       <FormLabel className="text-base">Languages</FormLabel>
-                      {/* <Asterisk className="w-4 h-4 text-destructive" /> */}
                     </div>
-                    <Input
-                      type="email"
-                      {...field}
-                      placeholder="Enter Name Product"
-                      maxLength={30}
-                      className="w-full"
-                    />
+                    <DropdownMenu>
+                      <DropdownMenuTrigger asChild>
+                        <div>
+                          <Input
+                            value={
+                              Array.isArray(field.value)
+                                ? field.value.join(", ")
+                                : ""
+                            }
+                            readOnly
+                            placeholder="Select languages"
+                            className="w-full text-left cursor-pointer"
+                          />
+                        </div>
+                      </DropdownMenuTrigger>
+                      <DropdownMenuContent className="w-56 h-60 overflow-scroll">
+                        <DropdownMenuLabel>Languages</DropdownMenuLabel>
+                        <DropdownMenuSeparator />
+                        {nationalityData?.data
+                          ?.sort((a, b) =>
+                            a.name.common.localeCompare(b.name.common)
+                          )
+                          ?.map((item, index) => {
+                            const isSelected =
+                              Array.isArray(field.value) &&
+                              field.value.includes(item.name.common);
+                            return (
+                              <DropdownMenuCheckboxItem
+                                key={index}
+                                checked={isSelected}
+                                onCheckedChange={(checked) => {
+                                  const updatedLanguages = checked
+                                    ? [...(field.value || []), item.name.common]
+                                    : (field.value || []).filter(
+                                        (lang) => lang !== item.name.common
+                                      );
+                                  field.onChange(updatedLanguages);
+                                }}
+                                className="flex items-center gap-5"
+                              >
+                                <p>{item?.flag || "-"}</p>
+                                <p>{item?.name?.common}</p>
+                              </DropdownMenuCheckboxItem>
+                            );
+                          })}
+                      </DropdownMenuContent>
+                    </DropdownMenu>
                     {form.formState.errors.languages && (
                       <FormMessage>
-                        {form.formState.errors.languages}
+                        {form.formState.errors.languages.message}
                       </FormMessage>
                     )}
                   </FormItem>
@@ -341,84 +407,12 @@ const page = () => {
               />
             </div>
 
-            {/* <div className="col-span-3 lg:col-span-1">
-              <FormField
-                control={form.control}
-                name="category"
-                render={({ field }) => {
-                  return (
-                    <FormItem>
-                      <div className="mb-4 flex items-center gap-2">
-                        <FormLabel className="text-base">Category</FormLabel>
-                      </div>
-                      <div>
-                        <Popover open={open} onOpenChange={setOpen}>
-                          <PopoverTrigger asChild>
-                            <Button
-                              disabled={allCategory.isLoading}
-                              variant="outline"
-                              role="combobox"
-                              aria-expanded={open}
-                              className="w-full justify-between"
-                            >
-                              {field.value
-                                ? allCategory?.data?.data?.find(
-                                    (location) => location.id === field.value
-                                  )?.name
-                                : "Select Category"}
-                              <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
-                            </Button>
-                          </PopoverTrigger>
-                          <PopoverContent className="w-full p-0">
-                            <Command>
-                              <CommandInput placeholder="Search Category" />
-                              <CommandList>
-                                <CommandEmpty>No Category found.</CommandEmpty>
-                                <CommandGroup>
-                                  {allCategory?.data?.data?.map((location) => {
-                                    return (
-                                      <CommandItem
-                                        key={location.name}
-                                        value={location.id}
-                                        onSelect={() => {
-                                          field.onChange(location.id);
-                                        }}
-                                      >
-                                        <Check
-                                          className={cn(
-                                            "mr-2 h-4 w-4",
-                                            field.value === location.id
-                                              ? "opacity-100"
-                                              : "opacity-0"
-                                          )}
-                                        />
-                                        {location.name}
-                                      </CommandItem>
-                                    );
-                                  })}
-                                </CommandGroup>
-                              </CommandList>
-                            </Command>
-                          </PopoverContent>
-                        </Popover>
-                      </div>
-                      {form.formState.errors.parentCategory && (
-                        <FormMessage>
-                          {form.formState.errors.parentCategory}
-                        </FormMessage>
-                      )}
-                    </FormItem>
-                  );
-                }}
-              />
-            </div> */}
-
             <div className="col-span-1 lg:col-span-2">
               <div className="flex items-center justify-between">
-                <Button size="sm" className="max-w-full">
+                <Button size="sm" className="max-w-full" type="button">
                   Cancel
                 </Button>
-                <Button size="sm" className="max-w-full">
+                <Button size="sm" className="max-w-full" type="submit">
                   Save
                 </Button>
               </div>
