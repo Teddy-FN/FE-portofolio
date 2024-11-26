@@ -1,11 +1,11 @@
 /* eslint-disable react-hooks/rules-of-hooks */
 "use client";
 
-import React, { useState, useMemo } from "react";
+import React, { useState, useMemo, useEffect } from "react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useMutation } from "@tanstack/react-query";
 
 // Components
 import { Input } from "@/components/ui/input";
@@ -32,9 +32,19 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 
+// Utils
+import { generateLinkImageFromGoogleDrive } from "@/utils/generateImageGoogleDrive";
+
+// Service
+import { getListAboutMe, postAboutMe, putAboutMe } from "@/service/about-me";
 import { nationality } from "@/service/nationality";
 
 const page = () => {
+  const geAboutMeData = useQuery({
+    queryKey: ["getListAboutMe"],
+    queryFn: getListAboutMe,
+  });
+
   const [imagePreview, setImagePreview] = useState(null);
 
   // Query
@@ -58,7 +68,7 @@ const page = () => {
       z.string().min(1, "Image URL is required").optional(),
     ]),
     name: z.string().min(4, "Enter a name with at least 4 characters."),
-    experience: z.string().min(4, "Enter an experience description (min 4)."),
+    experience: z.string().min(1, "Enter an experience description (min 4)."),
     email: z.string().email("Enter a valid email."),
     nationality: z.string().nonempty("Select a nationality."),
     languages: z.array(z.string()).min(1, "Select at least one language."),
@@ -74,8 +84,65 @@ const page = () => {
       experience: "",
       email: "",
       nationality: "",
-      languages: "",
+      languages: [],
       freelance: true,
+    },
+  });
+
+  useEffect(() => {
+    if (geAboutMeData.data && geAboutMeData.isSuccess) {
+      form.setValue("name", geAboutMeData?.data?.data?.name);
+      form.setValue("experience", geAboutMeData?.data?.data?.experience);
+      form.setValue("email", geAboutMeData?.data?.data?.email);
+      form.setValue("nationality", geAboutMeData?.data?.data?.nationality);
+      form.setValue("languages", geAboutMeData?.data?.data?.languages);
+      form.setValue("freelance", geAboutMeData?.data?.data?.freelance);
+      if (geAboutMeData?.data?.data?.photo) {
+        form.setValue("image", geAboutMeData?.data?.data?.photo);
+
+        const linkImage = generateLinkImageFromGoogleDrive(
+          geAboutMeData?.data?.data?.photo
+        );
+        setImagePreview(linkImage);
+      }
+    }
+  }, [geAboutMeData]);
+
+  const mutateAddAboutMe = useMutation({
+    mutationFn: postAboutMe,
+    onMutate: () => {
+      // setActive(true, null)
+    },
+    onSuccess: () => {
+      // setActive(false, "success");
+      // toast.success("Success", {
+      //   description: "Successfully added about me",
+      // });
+    },
+    onError: (err) => {
+      // setActive(false, "error");
+      // toast.error("Error", {
+      //   description: err.message,
+      // });
+    },
+  });
+
+  const mutateEditAboutMe = useMutation({
+    mutationFn: putAboutMe,
+    onMutate: () => {
+      // setActive(true, null)
+    },
+    onSuccess: () => {
+      // setActive(false, "success");
+      // toast.success("Success", {
+      //   description: "Successfully added about me",
+      // });
+    },
+    onError: (err) => {
+      // setActive(false, "error");
+      // toast.error("Error", {
+      //   description: err.message,
+      // });
     },
   });
 
@@ -83,34 +150,33 @@ const page = () => {
     console.log("values =>", values);
 
     const formData = new FormData();
-    // Append other fields
-    formData.append("nameProduct", values.nameProduct);
-    formData.append("category", values.category);
-    formData.append("description", values.description);
-    formData.append("status", values.status);
-    formData.append("price", values.price);
-    formData.append("isOption", values.isOption);
-    formData.append("option", values.subCategory);
-    formData.append("store", cookie?.user?.store);
-    formData.append("createdBy", cookie.user.userName); // Assuming you need this as well
 
-    // // Use mutate function to send the formData
-    // if (state?.data?.id) {
-    //   if (values.image instanceof File) {
-    //     formData.append("image", values.image);
-    //     formData.append("modifiedBy", cookie.user.userName);
-    //   } else {
-    //     formData.append("image", values.image);
-    //   }
-    //   formData.append("id", state.data.id);
-    //   mutateEditProduct.mutate(formData);
-    // } else {
-    //   if (values.image instanceof File) {
-    //     formData.append("image", values.image);
-    //   }
-    //   console.log("HELLO =>", formData.get("image"));
-    //   mutateAddProduct.mutate(formData);
-    // }
+    // Append other fields
+    formData.append("name", values.name);
+    formData.append("experience", values.experience);
+    formData.append("email", values.email);
+    formData.append("nationality", values.nationality);
+    formData.append("languages", values.languages);
+    formData.append("freelance", values.freelance);
+    formData.append("createdBy", "Teddy Ferdian"); // Assuming you need this as well
+
+    // Use mutate function to send the formData
+    if (geAboutMeData?.data?.id) {
+      if (values.image instanceof File) {
+        formData.append("image", values.image);
+        formData.append("modifiedBy", "Teddy Ferdian");
+      } else {
+        formData.append("image", values.image);
+      }
+      formData.append("id", state.data.id);
+      mutateEditAboutMe.mutate(formData);
+    } else {
+      if (values.image instanceof File) {
+        formData.append("image", values.image);
+      }
+      console.log("HELLO =>", formData.get("image"));
+      mutateAddAboutMe.mutate(formData);
+    }
   };
 
   const handleResetImage = () => {
@@ -164,6 +230,7 @@ const page = () => {
                       onChange={handleFileChange}
                       className="file:cursor-pointer file:px-4 file:rounded-lg file:border-none file:bg-blue-700 file:text-white hover:file:bg-blue-600 file:h-full p-0 h-10 w-full"
                       placeholder="imageName"
+                      name="image"
                     />
 
                     {form.formState.errors.image && (
@@ -413,7 +480,7 @@ const page = () => {
                   Cancel
                 </Button>
                 <Button size="sm" className="max-w-full" type="submit">
-                  Save
+                  {geAboutMeData?.data?.data?.id ? "Edit" : "Save"}
                 </Button>
               </div>
             </div>
