@@ -1,15 +1,15 @@
 /* eslint-disable react-hooks/rules-of-hooks */
 "use client";
 
-import React, { useEffect, useMemo } from "react";
+import React from "react";
 import { useQuery, useMutation } from "@tanstack/react-query";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
+
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import DashboardLayout from "@/components/DashboardTemplate";
-import { useParams } from "next/navigation";
 import {
   Form,
   // FormControl,
@@ -30,26 +30,23 @@ import {
 } from "@/components/ui/dropdown-menu";
 
 import { yearList } from "@/service/year";
-import { getExperienceById, putExperience } from "@/service/experience";
+import { educationDegree, postEducation } from "@/service/education";
 
 const page = () => {
-  const params = useParams();
-  console.log("params =>", params);
-
-  const { id } = params;
-
-  const currDate = new Date().getFullYear();
   // Query
   const yearListData = useQuery({
     queryKey: ["yearList"],
     queryFn: yearList,
   });
 
-  const getDataExperienceById = useQuery({
-    queryKey: ["getExperienceById", id],
-    queryFn: () => getExperienceById({ id }),
-    keepPreviousData: true,
+  const educationDegreeData = useQuery({
+    queryKey: ["educationDegree"],
+    queryFn: educationDegree,
   });
+
+  console.log("educationDegreeData =>", educationDegreeData);
+
+  const currDate = new Date().getFullYear();
 
   const formSchema = z.object({
     start: z.string().min(4, {
@@ -58,14 +55,11 @@ const page = () => {
     end: z.string().min(4, {
       message: "End Date Not Empty",
     }),
-    placeWork: z.string().min(4, {
-      message: "Enter Company Minimum 4 Character & Max 255 Character.",
+    education: z.string().min(4, {
+      message: "Enter Education Minimum 4 Character & Max 255 Character.",
     }),
-    position: z.string().min(4, {
-      message: "Enter Position Minimum 4 Character & Max 255 Character.",
-    }),
-    description: z.string().min(4, {
-      message: "Enter Description Minimum 4 Character & Max 255 Character.",
+    degree: z.string().min(2, {
+      message: "Enter Degree Minimum 2 Character & Max 255 Character.",
     }),
   });
 
@@ -75,37 +69,13 @@ const page = () => {
     defaultValues: {
       start: "" || currDate.toString(),
       end: "" || currDate.toString(),
-      placeWork: "",
-      position: "",
-      description: "",
+      education: "",
+      degree: "",
     },
   });
 
-  useMemo(() => {
-    if (getDataExperienceById.data) {
-      form.setValue(
-        "end",
-        getDataExperienceById?.data?.data?.endDate?.toString()
-      );
-      form.setValue(
-        "start",
-        getDataExperienceById?.data?.data?.startDate?.toString()
-      );
-      form.setValue("placeWork", getDataExperienceById?.data?.data?.company);
-      form.setValue("position", getDataExperienceById?.data?.data?.position);
-      form.setValue(
-        "description",
-        getDataExperienceById?.data?.data?.description
-      );
-    }
-  }, [getDataExperienceById.data]);
-
-  const mutateEditExperience = useMutation({
-    mutationFn: (payload) =>
-      putExperience({
-        id: id,
-        body: payload,
-      }),
+  const mutateAddEducation = useMutation({
+    mutationFn: postEducation,
     onMutate: () => {
       // setActive(true, null)
     },
@@ -128,21 +98,35 @@ const page = () => {
 
     const formData = new FormData();
     // Append other fields
-    formData.append("id", id);
     formData.append("start", values.start);
     formData.append("end", values.end);
-    formData.append("placeWork", values.placeWork);
-    formData.append("position", values.position);
-    formData.append("description", values.description);
+    formData.append("education", values.education);
+    formData.append("degree", values.degree);
     formData.append("createdBy", "Teddy Ferdian");
-    formData.append("modifiedBy", "Teddy Ferdian");
-    mutateEditExperience.mutate(formData);
+    mutateAddEducation.mutate(formData);
   };
 
   return (
     <DashboardLayout>
       <div className="flex flex-col gap-8">
-        <h1 className="text-2xl font-bold">Edit Experience Page</h1>
+        <h1 className="text-2xl font-bold">Education Page</h1>
+        {/* <form className="flex flex-col gap-6 p-10 bg-[#272729] rounded-xl">
+          <div className="grid grid-cols-1 gap-6">
+            <Input type="text" placeholder="Start - End" />
+            <Input type="text" placeholder="Name Education" />
+            <Input type="text" placeholder="Deggree" />
+          </div>
+
+          <div className="flex items-center justify-between">
+            <Button size="sm" className="max-w-full">
+              Cancel
+            </Button>
+            <Button size="sm" className="max-w-full">
+              Save
+            </Button>
+          </div>
+        </form> */}
+
         <Form {...form}>
           <form
             onSubmit={form.handleSubmit(onSubmit)}
@@ -251,22 +235,22 @@ const page = () => {
             <div className="col-span-2">
               <FormField
                 control={form.control}
-                name="placeWork"
+                name="education"
                 render={({ field }) => (
                   <FormItem>
                     <div className="mb-4 flex items-center gap-2">
-                      <FormLabel className="text-base">Company</FormLabel>
+                      <FormLabel className="text-base">Education</FormLabel>
                       {/* <Asterisk className="w-4 h-4 text-destructive" /> */}
                     </div>
                     <Input
                       type="text"
                       {...field}
-                      placeholder="Enter Company"
+                      placeholder="Enter Experience Product"
                       className="w-full"
                     />
-                    {form.formState.errors.placeWork && (
+                    {form.formState.errors.experience && (
                       <FormMessage>
-                        {form.formState.errors.placeWork}
+                        {form.formState.errors.experience}
                       </FormMessage>
                     )}
                   </FormItem>
@@ -276,48 +260,46 @@ const page = () => {
             <div className="col-span-2">
               <FormField
                 control={form.control}
-                name="position"
+                name="degree"
                 render={({ field }) => (
                   <FormItem>
                     <div className="mb-4 flex items-center gap-2">
-                      <FormLabel className="text-base">Position</FormLabel>
+                      <FormLabel className="text-base">Degree</FormLabel>
                       {/* <Asterisk className="w-4 h-4 text-destructive" /> */}
                     </div>
-                    <Input
-                      type="text"
-                      {...field}
-                      placeholder="Enter Company"
-                      className="w-full"
-                    />
-                    {form.formState.errors.position && (
-                      <FormMessage>
-                        {form.formState.errors.position}
-                      </FormMessage>
-                    )}
-                  </FormItem>
-                )}
-              />
-            </div>
-            <div className="col-span-2">
-              <FormField
-                control={form.control}
-                name="description"
-                render={({ field }) => (
-                  <FormItem>
-                    <div className="mb-4 flex items-center gap-2">
-                      <FormLabel className="text-base">Description</FormLabel>
-                      {/* <Asterisk className="w-4 h-4 text-destructive" /> */}
-                    </div>
-                    <Input
-                      type="text"
-                      {...field}
-                      placeholder="Enter Company"
-                      className="w-full"
-                    />
-                    {form.formState.errors.description && (
-                      <FormMessage>
-                        {form.formState.errors.description}
-                      </FormMessage>
+                    <DropdownMenu>
+                      <DropdownMenuTrigger asChild>
+                        <div>
+                          <Input
+                            {...field}
+                            placeholder="Degree"
+                            maxLength={30}
+                            className="w-full text-left"
+                          />
+                        </div>
+                      </DropdownMenuTrigger>
+                      <DropdownMenuContent className="w-56 h-60 overflow-scroll">
+                        <DropdownMenuLabel>Degree</DropdownMenuLabel>
+                        <DropdownMenuSeparator />
+                        <DropdownMenuRadioGroup
+                          value={field?.value}
+                          onValueChange={(value) => field.onChange(value)}
+                        >
+                          {educationDegreeData?.data?.map((items, index) => {
+                            return (
+                              <DropdownMenuRadioItem
+                                value={items.value}
+                                key={index}
+                              >
+                                {items.label}
+                              </DropdownMenuRadioItem>
+                            );
+                          })}
+                        </DropdownMenuRadioGroup>
+                      </DropdownMenuContent>
+                    </DropdownMenu>
+                    {form.formState.errors.degree && (
+                      <FormMessage>{form.formState.errors.degree}</FormMessage>
                     )}
                   </FormItem>
                 )}
