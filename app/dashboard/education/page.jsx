@@ -352,7 +352,8 @@ const page = () => {
               Previous
             </Button>
             <span>
-              Page {pagination.page} of {getEducation?.data?.meta?.totalPages}
+              Page {pagination.page} of{" "}
+              {getEducation?.data?.meta?.totalPages || "0"}
             </span>
             <Button
               onClick={() => updatePagination({ page: pagination.page + 1 })}
