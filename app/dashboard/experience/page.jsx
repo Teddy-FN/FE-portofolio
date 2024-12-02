@@ -355,7 +355,7 @@ const page = () => {
               onChange={(e) =>
                 updatePagination({ limit: parseInt(e.target.value), page: 1 })
               }
-              className="border rounded-md p-1"
+              className="border rounded-md p-1 bg-transparent"
             >
               {limitsOptions.map((limitOption) => (
                 <option key={limitOption} value={limitOption}>
@@ -374,7 +374,8 @@ const page = () => {
               Previous
             </Button>
             <span>
-              Page {pagination.page} of {geAboutMeData?.data?.meta?.totalPages}
+              Page {pagination.page} of{" "}
+              {geAboutMeData?.data?.meta?.totalPages || "0"}
             </span>
             <Button
               onClick={() => updatePagination({ page: pagination.page + 1 })}

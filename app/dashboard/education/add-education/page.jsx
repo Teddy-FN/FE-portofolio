@@ -44,8 +44,6 @@ const page = () => {
     queryFn: educationDegree,
   });
 
-  console.log("educationDegreeData =>", educationDegreeData);
-
   const currDate = new Date().getFullYear();
 
   const formSchema = z.object({

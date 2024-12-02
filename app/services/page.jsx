@@ -12,13 +12,13 @@ import { BsArrowDownRight } from "react-icons/bs";
 import Header from "@/components/Header";
 
 // Service
-import { service } from "@/service/service";
+import { getListService } from "@/service/service";
 
 const Services = () => {
   // Query
   const getServiceData = useQuery({
-    queryKey: ["service"],
-    queryFn: service,
+    queryKey: ["getListService"],
+    queryFn: getListService,
   });
 
   return (
