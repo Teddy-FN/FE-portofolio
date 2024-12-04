@@ -89,10 +89,13 @@ const page = () => {
     },
   });
 
-  useEffect(() => {
+  useMemo(() => {
     if (geAboutMeData.data && geAboutMeData.isSuccess) {
       form.setValue("name", geAboutMeData?.data?.data?.name);
-      form.setValue("experience", geAboutMeData?.data?.data?.experience);
+      form.setValue(
+        "experience",
+        Number(geAboutMeData?.data?.data?.experience)
+      );
       form.setValue("email", geAboutMeData?.data?.data?.email);
       form.setValue("nationality", geAboutMeData?.data?.data?.nationality);
       form.setValue("languages", geAboutMeData?.data?.data?.languages);
@@ -106,7 +109,7 @@ const page = () => {
         setImagePreview(linkImage);
       }
     }
-  }, [geAboutMeData]);
+  }, [geAboutMeData.data, geAboutMeData.isSuccess]);
 
   const mutateAddAboutMe = useMutation({
     mutationFn: postAboutMe,
