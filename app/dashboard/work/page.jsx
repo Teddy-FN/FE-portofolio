@@ -7,7 +7,7 @@ import { Button } from "@/components/ui/button";
 import DashboardLayout from "@/components/DashboardTemplate";
 
 import { FiEdit, FiTrash } from "react-icons/fi";
-
+import Image from "next/image";
 import {
   flexRender,
   getCoreRowModel,
