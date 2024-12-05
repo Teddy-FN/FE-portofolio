@@ -3,6 +3,7 @@ import "./globals.css";
 import PageTransition from "@/components/PageTransition";
 import StairTransition from "@/components/StairTransition";
 import ReactQueryProvider from "@/components/ReactQueryProvider";
+import { Toaster } from "@/components/ui/toaster";
 
 const geistSans = JetBrains_Mono({
   subsets: ["latin"],
@@ -19,6 +20,7 @@ export default function RootLayout({ children }) {
   return (
     <html lang="en">
       <body className={`${geistSans.variable} antialiased`}>
+        <Toaster />
         <ReactQueryProvider>
           <StairTransition />
           <PageTransition>{children}</PageTransition>

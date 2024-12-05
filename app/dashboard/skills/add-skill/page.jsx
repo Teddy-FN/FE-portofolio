@@ -2,7 +2,8 @@
 "use client";
 
 import React from "react";
-import { useQuery, useMutation } from "@tanstack/react-query";
+import { useMutation } from "@tanstack/react-query";
+
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
@@ -18,38 +19,12 @@ import {
   FormLabel,
   FormMessage,
 } from "@/components/ui/form";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuLabel,
-  DropdownMenuRadioGroup,
-  DropdownMenuRadioItem,
-  DropdownMenuSeparator,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
-import { yearList } from "@/service/year";
+import { useToast } from "@/hooks/use-toast";
 
 import { postSkills } from "@/service/skills";
 
 const page = () => {
-  const mutateAddSkills = useMutation({
-    mutationFn: postSkills,
-    onMutate: () => {
-      // setActive(true, null)
-    },
-    onSuccess: () => {
-      // setActive(false, "success");
-      // toast.success("Success", {
-      //   description: "Successfully added about me",
-      // });
-    },
-    onError: (err) => {
-      // setActive(false, "error");
-      // toast.error("Error", {
-      //   description: err.message,
-      // });
-    },
-  });
+  const { toast } = useToast();
 
   const formSchema = z.object({
     name: z.string().min(4, {
@@ -62,6 +37,32 @@ const page = () => {
     mode: "onChange",
     defaultValues: {
       name: "",
+    },
+  });
+
+  const mutateAddSkills = useMutation({
+    mutationFn: postSkills,
+    onMutate: () => {
+      // setActive(true, null)
+    },
+    onSuccess: () => {
+      console.log("HELLO");
+
+      // setActive(false, "success");
+      toast({
+        variant: "success",
+        title: "Success Add New Skills!",
+      });
+      window.location.href = "/dashboard/skills";
+    },
+    onError: (err) => {
+      // setActive(false, "error");
+      console.log("ERROR");
+      toast({
+        variant: "destructive",
+        title: "Uh oh! Something went wrong.",
+        description: err.message,
+      });
     },
   });
 
