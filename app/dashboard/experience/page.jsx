@@ -1,7 +1,7 @@
 /* eslint-disable react-hooks/rules-of-hooks */
 "use client";
 
-import React, { useState, useCallback, useEffect } from "react";
+import React, { useState, useCallback, useMemo, Fragment } from "react";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { Button } from "@/components/ui/button";
 import DashboardLayout from "@/components/DashboardTemplate";
@@ -11,9 +11,6 @@ import { FiEdit, FiTrash } from "react-icons/fi";
 import {
   flexRender,
   getCoreRowModel,
-  getFilteredRowModel,
-  getPaginationRowModel,
-  getSortedRowModel,
   useReactTable,
 } from "@tanstack/react-table";
 
@@ -32,34 +29,18 @@ const limitsOptions = [10, 20, 50];
 import { getListExperienceTable, deleteExperience } from "@/service/experience";
 
 const page = () => {
-  const [sorting, setSorting] = useState([]);
-  const [columnFilters, setColumnFilters] = useState([]);
-  const [columnVisibility, setColumnVisibility] = useState({});
-  const [rowSelection, setRowSelection] = useState({});
-  const [filterBy, setFilterBy] = useState({
-    value: "name",
-    name: "Name Category",
-  });
-
   const [pagination, setPagination] = useState({
     page: 1,
     limit: 10,
-    statusCategory: "all",
   });
 
-  const fetchListExperienceTable = useCallback(() => {
-    return getListExperienceTable({
-      page: pagination.page,
-      limit: pagination.limit,
-    });
-  }, [pagination]);
-
-  // QUERY
-  const geAboutMeData = useQuery({
-    queryKey: ["getListAboutMe", pagination.page, pagination.limit],
-    queryFn: fetchListExperienceTable,
-    keepPreviousData: true, // Prevent refetch while changing pages
-    refetchOnWindowFocus: false, // Avoid refetch on focus
+  const getListExperience = useQuery({
+    queryKey: ["getListExperience", pagination.page, pagination.limit],
+    queryFn: () =>
+      getListExperienceTable({
+        page: pagination.page,
+        limit: pagination.limit,
+      }),
   });
 
   const delExperience = useMutation({
@@ -82,15 +63,15 @@ const page = () => {
     },
   });
 
-  useEffect(() => {
-    if (geAboutMeData.isSuccess) {
-      console.log("Fetched data:", geAboutMeData.data);
-    }
-  }, [geAboutMeData.isSuccess, geAboutMeData.data]);
-
-  const updatePagination = (updates) => {
-    setPagination((prev) => ({ ...prev, ...updates }));
-  };
+  const updatePagination = useCallback(
+    (updates) => {
+      setPagination((prev) => ({
+        ...prev,
+        ...updates,
+      }));
+    },
+    [setPagination]
+  );
 
   const columns = [
     {
@@ -262,23 +243,110 @@ const page = () => {
   ];
 
   const table = useReactTable({
-    data: geAboutMeData?.data?.data || [],
+    data: getListExperience?.data?.data || [],
     columns,
-    onSortingChange: setSorting,
-    onColumnFiltersChange: setColumnFilters,
     getCoreRowModel: getCoreRowModel(),
-    getPaginationRowModel: getPaginationRowModel(),
-    getSortedRowModel: getSortedRowModel(),
-    getFilteredRowModel: getFilteredRowModel(),
-    onColumnVisibilityChange: setColumnVisibility,
-    onRowSelectionChange: setRowSelection,
-    state: {
-      sorting,
-      columnFilters,
-      columnVisibility,
-      rowSelection,
-    },
+    // getPaginationRowModel: getPaginationRowModel(),
+    state: { pagination },
   });
+
+  const TABLES_DATA = useMemo(() => {
+    if (getListExperience.isFetching && getListExperience.isLoading) {
+      return <h1>LOADING</h1>;
+    }
+
+    if (getListExperience.data && getListExperience.isSuccess) {
+      return (
+        <Fragment>
+          <div className="rounded-md border overflow-x-auto">
+            <Table className="min-w-full">
+              <TableHeader>
+                {table.getHeaderGroups().map((headerGroup) => (
+                  <TableRow key={headerGroup.id}>
+                    {headerGroup.headers.map((header) => (
+                      <TableHead key={header.id}>
+                        {flexRender(
+                          header.column.columnDef.header,
+                          header.getContext()
+                        )}
+                      </TableHead>
+                    ))}
+                  </TableRow>
+                ))}
+              </TableHeader>
+              <TableBody>
+                {table.getRowModel().rows.length ? (
+                  table.getRowModel().rows.map((row) => (
+                    <TableRow key={row.id}>
+                      {row.getVisibleCells().map((cell) => (
+                        <TableCell key={cell.id}>
+                          {flexRender(
+                            cell.column.columnDef.cell,
+                            cell.getContext()
+                          )}
+                        </TableCell>
+                      ))}
+                    </TableRow>
+                  ))
+                ) : (
+                  <TableRow>
+                    <TableCell colSpan={columns.length}>
+                      No data available.
+                    </TableCell>
+                  </TableRow>
+                )}
+              </TableBody>
+            </Table>
+          </div>
+
+          {/* Pagination */}
+          <div className="flex justify-between items-center">
+            <div className="flex items-center gap-2 flex-1">
+              <label htmlFor="limit" className="whitespace-nowrap">
+                Rows per page:
+              </label>
+              <select
+                id="limit"
+                value={pagination.limit}
+                onChange={(e) =>
+                  updatePagination({ limit: parseInt(e.target.value), page: 1 })
+                }
+                className="border rounded-md p-1 bg-transparent"
+              >
+                {limitsOptions.map((limitOption) => (
+                  <option key={limitOption} value={limitOption}>
+                    {limitOption}
+                  </option>
+                ))}
+              </select>
+            </div>
+            <div className="flex items-center gap-2 flex-1 justify-end">
+              <Button
+                onClick={() => updatePagination({ page: pagination.page - 1 })}
+                disabled={pagination.page === 1 || getListExperience.isFetching}
+              >
+                Previous
+              </Button>
+              <span>
+                Page {pagination.page} of{" "}
+                {getListExperience?.data?.meta?.totalPages || 1}
+              </span>
+              <Button
+                onClick={() => updatePagination({ page: pagination.page + 1 })}
+                disabled={
+                  pagination.page >=
+                    (getListExperience?.data?.meta?.totalPages || 1) ||
+                  getListExperience.isFetching
+                }
+              >
+                Next
+              </Button>
+            </div>
+          </div>
+        </Fragment>
+      );
+    }
+  }, [getListExperience, table]);
 
   return (
     <DashboardLayout>
@@ -294,100 +362,7 @@ const page = () => {
             </Link>
           </Button>
         </div>
-        <div className="rounded-md border overflow-x-auto">
-          <Table className="min-w-full">
-            <TableHeader>
-              {table.getHeaderGroups().map((headerGroup) => (
-                <TableRow key={headerGroup.id}>
-                  {headerGroup.headers.map((header) => (
-                    <TableHead key={header.id}>
-                      {!header.isPlaceholder &&
-                        flexRender(
-                          header.column.columnDef.header,
-                          header.getContext()
-                        )}
-                    </TableHead>
-                  ))}
-                </TableRow>
-              ))}
-            </TableHeader>
-            <TableBody>
-              {table.getRowModel().rows.length ? (
-                table.getRowModel().rows.map((row) => (
-                  <TableRow
-                    key={row.id}
-                    data-state={row.getIsSelected() && "selected"}
-                  >
-                    {row.getVisibleCells().map((cell) => (
-                      <TableCell key={cell.id}>
-                        {flexRender(
-                          cell.column.columnDef.cell,
-                          cell.getContext()
-                        )}
-                      </TableCell>
-                    ))}
-                  </TableRow>
-                ))
-              ) : (
-                <TableRow>
-                  <TableCell
-                    colSpan={columns.length}
-                    className="h-24 text-center"
-                  >
-                    No results.
-                  </TableCell>
-                </TableRow>
-              )}
-            </TableBody>
-          </Table>
-        </div>
-
-        {/* Pagination Section */}
-        <div className="flex flex-row flex-wrap items-center justify-center gap-4 py-4">
-          {/* Limit Selector */}
-          <div className="flex items-center gap-2 flex-1">
-            <label htmlFor="limit" className="whitespace-nowrap">
-              Rows per page:
-            </label>
-            <select
-              id="limit"
-              value={pagination.limit}
-              onChange={(e) =>
-                updatePagination({ limit: parseInt(e.target.value), page: 1 })
-              }
-              className="border rounded-md p-1 bg-transparent"
-            >
-              {limitsOptions.map((limitOption) => (
-                <option key={limitOption} value={limitOption}>
-                  {limitOption}
-                </option>
-              ))}
-            </select>
-          </div>
-
-          {/* Page Navigation */}
-          <div className="flex items-center gap-2 flex-1 justify-end">
-            <Button
-              onClick={() => updatePagination({ page: pagination.page - 1 })}
-              disabled={pagination.page === 1}
-            >
-              Previous
-            </Button>
-            <span>
-              Page {pagination.page} of{" "}
-              {geAboutMeData?.data?.meta?.totalPages || "0"}
-            </span>
-            <Button
-              onClick={() => updatePagination({ page: pagination.page + 1 })}
-              disabled={
-                pagination.page === geAboutMeData?.data?.meta?.totalPages
-              }
-              // Disable next if no more pages
-            >
-              Next
-            </Button>
-          </div>
-        </div>
+        {TABLES_DATA}
       </div>
     </DashboardLayout>
   );
