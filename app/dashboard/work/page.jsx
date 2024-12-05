@@ -5,7 +5,7 @@ import React, { useState, useCallback, useEffect } from "react";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { Button } from "@/components/ui/button";
 import DashboardLayout from "@/components/DashboardTemplate";
-
+import Image from "next/image";
 import { FiEdit, FiTrash } from "react-icons/fi";
 
 import {
@@ -30,6 +30,7 @@ import Link from "next/link";
 const limitsOptions = [10, 20, 50];
 
 import { getListTableProject, deleteProject } from "@/service/work";
+import { generateLinkImageFromGoogleDrive } from "@/utils/generateImageGoogleDrive";
 
 const page = () => {
   const [sorting, setSorting] = useState([]);
@@ -111,9 +112,19 @@ const page = () => {
           </div>
         );
       },
-      cell: ({ row }) => (
-        <div className="text-center">{row.getValue("img") || "-"}</div>
-      ),
+      cell: ({ row }) => {
+        const urlImage = generateLinkImageFromGoogleDrive(row.original.img);
+        return (
+          <div className="text-center">
+            <Image
+              src={urlImage}
+              width={200}
+              height={200}
+              alt={row.original.title}
+            />
+          </div>
+        );
+      },
     },
     {
       accessorKey: "title",
