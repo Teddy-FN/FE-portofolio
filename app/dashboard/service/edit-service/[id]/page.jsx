@@ -3,6 +3,7 @@
 
 import React, { useEffect, useMemo } from "react";
 import { useQuery, useMutation } from "@tanstack/react-query";
+import { useToast } from "@/hooks/use-toast";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
@@ -23,6 +24,7 @@ import {
 import { getServiceById, putService } from "@/service/service";
 
 const page = () => {
+  const { toast } = useToast();
   const params = useParams();
 
   const { id } = params;
@@ -68,16 +70,18 @@ const page = () => {
       // setActive(true, null)
     },
     onSuccess: () => {
-      // setActive(false, "success");
-      // toast.success("Success", {
-      //   description: "Successfully added about me",
-      // });
+      toast({
+        variant: "success",
+        title: "Success Edit Service!",
+      });
+      window.location.href = "/dashboard/service";
     },
     onError: (err) => {
-      // setActive(false, "error");
-      // toast.error("Error", {
-      //   description: err.message,
-      // });
+      toast({
+        variant: "destructive",
+        title: "Uh oh! Something went wrong.",
+        description: err.message,
+      });
     },
   });
 

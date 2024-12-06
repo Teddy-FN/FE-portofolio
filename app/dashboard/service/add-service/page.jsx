@@ -6,6 +6,7 @@ import { useMutation } from "@tanstack/react-query";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
+import { useToast } from "@/hooks/use-toast";
 
 import {
   Form,
@@ -21,6 +22,7 @@ import DashboardLayout from "@/components/DashboardTemplate";
 import { postService } from "@/service/service";
 
 const page = () => {
+  const { toast } = useToast();
   const formSchema = z.object({
     name: z.string().min(4, {
       message: "Enter Name Minimum 4 Character & Max 255 Character.",
@@ -45,16 +47,18 @@ const page = () => {
       // setActive(true, null)
     },
     onSuccess: () => {
-      // setActive(false, "success");
-      // toast.success("Success", {
-      //   description: "Successfully added about me",
-      // });
+      toast({
+        variant: "success",
+        title: "Success Edit Service!",
+      });
+      window.location.href = "/dashboard/service";
     },
     onError: (err) => {
-      // setActive(false, "error");
-      // toast.error("Error", {
-      //   description: err.message,
-      // });
+      toast({
+        variant: "destructive",
+        title: "Uh oh! Something went wrong.",
+        description: err.message,
+      });
     },
   });
 

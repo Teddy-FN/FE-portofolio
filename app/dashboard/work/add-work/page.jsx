@@ -32,6 +32,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import { useToast } from "@/hooks/use-toast";
 
 import { postProject } from "@/service/work";
 
@@ -67,6 +68,7 @@ const userInfoSchema = z.object({
 });
 
 const page = () => {
+  const { toast } = useToast();
   const [imagePreview, setImagePreview] = useState(null);
 
   const formSchema = z.object({
@@ -142,16 +144,19 @@ const page = () => {
       // setActive(true, null)
     },
     onSuccess: () => {
-      // setActive(false, "success");
-      // toast.success("Success", {
-      //   description: "Successfully added about me",
-      // });
+      toast({
+        variant: "success",
+        title: "Success Add New Work!",
+      });
+      window.location.href = "/dashboard/work";
     },
     onError: (err) => {
       // setActive(false, "error");
-      // toast.error("Error", {
-      //   description: err.message,
-      // });
+      toast({
+        variant: "destructive",
+        title: "Uh oh! Something went wrong.",
+        description: err.message,
+      });
     },
   });
 

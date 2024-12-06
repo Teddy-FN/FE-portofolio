@@ -3,6 +3,7 @@
 
 import React, { useMemo } from "react";
 import { useParams } from "next/navigation";
+import { useToast } from "@/hooks/use-toast";
 import { useQuery, useMutation } from "@tanstack/react-query";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
@@ -39,7 +40,7 @@ import {
 
 const page = () => {
   const params = useParams();
-  console.log("params =>", params);
+  const { toast } = useToast();
 
   const { id } = params;
   // Query
@@ -69,16 +70,18 @@ const page = () => {
       // setActive(true, null)
     },
     onSuccess: () => {
-      // setActive(false, "success");
-      // toast.success("Success", {
-      //   description: "Successfully added about me",
-      // });
+      toast({
+        variant: "success",
+        title: "Success Edit Education!",
+      });
+      window.location.href = "/dashboard/education";
     },
     onError: (err) => {
-      // setActive(false, "error");
-      // toast.error("Error", {
-      //   description: err.message,
-      // });
+      toast({
+        variant: "destructive",
+        title: "Uh oh! Something went wrong.",
+        description: err.message,
+      });
     },
   });
 
@@ -141,23 +144,6 @@ const page = () => {
     <DashboardLayout>
       <div className="flex flex-col gap-8">
         <h1 className="text-2xl font-bold">Edit Education Page</h1>
-        {/* <form className="flex flex-col gap-6 p-10 bg-[#272729] rounded-xl">
-          <div className="grid grid-cols-1 gap-6">
-            <Input type="text" placeholder="Start - End" />
-            <Input type="text" placeholder="Name Education" />
-            <Input type="text" placeholder="Deggree" />
-          </div>
-
-          <div className="flex items-center justify-between">
-            <Button size="sm" className="max-w-full">
-              Cancel
-            </Button>
-            <Button size="sm" className="max-w-full">
-              Save
-            </Button>
-          </div>
-        </form> */}
-
         <Form {...form}>
           <form
             onSubmit={form.handleSubmit(onSubmit)}

@@ -8,6 +8,7 @@ import { z } from "zod";
 import { useQuery, useMutation } from "@tanstack/react-query";
 
 // Components
+import { useToast } from "@/hooks/use-toast";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import DashboardLayout from "@/components/DashboardTemplate";
@@ -40,6 +41,7 @@ import { getListAboutMe, postAboutMe, putAboutMe } from "@/service/about-me";
 import { nationality } from "@/service/nationality";
 
 const page = () => {
+  const { toast } = useToast();
   const geAboutMeData = useQuery({
     queryKey: ["getListAboutMe"],
     queryFn: getListAboutMe,
@@ -117,16 +119,18 @@ const page = () => {
       // setActive(true, null)
     },
     onSuccess: () => {
-      // setActive(false, "success");
-      // toast.success("Success", {
-      //   description: "Successfully added about me",
-      // });
+      toast({
+        variant: "success",
+        title: "Success Add New About Me!",
+      });
+      window.location.href = "/dashboard";
     },
     onError: (err) => {
-      // setActive(false, "error");
-      // toast.error("Error", {
-      //   description: err.message,
-      // });
+      toast({
+        variant: "destructive",
+        title: "Uh oh! Something went wrong.",
+        description: err.message,
+      });
     },
   });
 
@@ -136,16 +140,22 @@ const page = () => {
       // setActive(true, null)
     },
     onSuccess: () => {
-      // setActive(false, "success");
-      // toast.success("Success", {
-      //   description: "Successfully added about me",
-      // });
+      toast({
+        variant: "success",
+        title: "Success Edit About Me!",
+      });
+      window.location.href = "/dashboard";
     },
     onError: (err) => {
       // setActive(false, "error");
       // toast.error("Error", {
       //   description: err.message,
       // });
+      toast({
+        variant: "destructive",
+        title: "Uh oh! Something went wrong.",
+        description: err.message,
+      });
     },
   });
 
