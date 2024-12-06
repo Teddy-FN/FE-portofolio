@@ -7,6 +7,7 @@ import { useForm, useFieldArray } from "react-hook-form";
 import { z } from "zod";
 import { FiPlus, FiTrash } from "react-icons/fi";
 import { useQuery, useMutation } from "@tanstack/react-query";
+import { useToast } from "@/hooks/use-toast";
 
 // Components
 import { Input } from "@/components/ui/input";
@@ -70,6 +71,7 @@ const userInfoSchema = z.object({
 });
 
 const page = () => {
+  const { toast } = useToast();
   const params = useParams();
   const [imagePreview, setImagePreview] = useState(null);
 
@@ -80,8 +82,6 @@ const page = () => {
     queryFn: () => getProjectById({ id }),
     keepPreviousData: true,
   });
-
-  console.log("getDataWorkById =>", getDataWorkById);
 
   const formSchema = z.object({
     image: z.union([
@@ -146,11 +146,6 @@ const page = () => {
   });
 
   useMemo(() => {
-    console.log(
-      "getDataWorkById?.data?.data?.stack =>",
-      getDataWorkById?.data?.data?.stack
-    );
-
     if (getDataWorkById.data && getDataWorkById.isSuccess) {
       form.setValue("title", getDataWorkById?.data?.data?.title);
       form.setValue("description", getDataWorkById?.data?.data?.description);
@@ -193,22 +188,26 @@ const page = () => {
       // setActive(true, null)
     },
     onSuccess: () => {
-      // setActive(false, "success");
-      // toast.success("Success", {
-      //   description: "Successfully added about me",
-      // });
+      toast({
+        variant: "success",
+        title: "Success Add New Work!",
+      });
+      window.location.href = "/dashboard/work";
     },
     onError: (err) => {
       // setActive(false, "error");
       // toast.error("Error", {
       //   description: err.message,
       // });
+      toast({
+        variant: "destructive",
+        title: "Uh oh! Something went wrong.",
+        description: err.message,
+      });
     },
   });
 
   const onSubmit = (values) => {
-    console.log("values =>", values);
-
     const formData = new FormData();
 
     // Append other fields

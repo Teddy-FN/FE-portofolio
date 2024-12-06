@@ -9,6 +9,7 @@ import { z } from "zod";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import DashboardLayout from "@/components/DashboardTemplate";
+import { useToast } from "@/hooks/use-toast";
 import {
   Form,
   // FormControl,
@@ -32,6 +33,7 @@ import { yearList } from "@/service/year";
 import { postExperience } from "@/service/experience";
 
 const page = () => {
+  const { toast } = useToast();
   const currDate = new Date().getFullYear();
   // Query
   const yearListData = useQuery({
@@ -45,16 +47,18 @@ const page = () => {
       // setActive(true, null)
     },
     onSuccess: () => {
-      // setActive(false, "success");
-      // toast.success("Success", {
-      //   description: "Successfully added about me",
-      // });
+      toast({
+        variant: "success",
+        title: "Success Add New Experience!",
+      });
+      window.location.href = "/dashboard/experience";
     },
     onError: (err) => {
-      // setActive(false, "error");
-      // toast.error("Error", {
-      //   description: err.message,
-      // });
+      toast({
+        variant: "destructive",
+        title: "Uh oh! Something went wrong.",
+        description: err.message,
+      });
     },
   });
 

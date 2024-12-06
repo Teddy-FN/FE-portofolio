@@ -4,6 +4,7 @@
 import React, { useEffect, useMemo } from "react";
 import { useQuery, useMutation } from "@tanstack/react-query";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { useToast } from "@/hooks/use-toast";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { Input } from "@/components/ui/input";
@@ -34,7 +35,8 @@ import { getExperienceById, putExperience } from "@/service/experience";
 
 const page = () => {
   const params = useParams();
-  console.log("params =>", params);
+
+  const { toast } = useToast();
 
   const { id } = params;
 
@@ -110,16 +112,23 @@ const page = () => {
       // setActive(true, null)
     },
     onSuccess: () => {
+      toast({
+        variant: "success",
+        title: "Success Edit Experience!",
+      });
+      window.location.href = "/dashboard/experience";
+
       // setActive(false, "success");
       // toast.success("Success", {
       //   description: "Successfully added about me",
       // });
     },
     onError: (err) => {
-      // setActive(false, "error");
-      // toast.error("Error", {
-      //   description: err.message,
-      // });
+      toast({
+        variant: "destructive",
+        title: "Uh oh! Something went wrong.",
+        description: err.message,
+      });
     },
   });
 

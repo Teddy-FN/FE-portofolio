@@ -4,6 +4,7 @@
 import React from "react";
 import { useQuery, useMutation } from "@tanstack/react-query";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { useToast } from "@/hooks/use-toast";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 
@@ -33,6 +34,7 @@ import { yearList } from "@/service/year";
 import { educationDegree, postEducation } from "@/service/education";
 
 const page = () => {
+  const { toast } = useToast();
   // Query
   const yearListData = useQuery({
     queryKey: ["yearList"],
@@ -78,16 +80,18 @@ const page = () => {
       // setActive(true, null)
     },
     onSuccess: () => {
-      // setActive(false, "success");
-      // toast.success("Success", {
-      //   description: "Successfully added about me",
-      // });
+      toast({
+        variant: "success",
+        title: "Success Add New Education!",
+      });
+      window.location.href = "/dashboard/education";
     },
     onError: (err) => {
-      // setActive(false, "error");
-      // toast.error("Error", {
-      //   description: err.message,
-      // });
+      toast({
+        variant: "destructive",
+        title: "Uh oh! Something went wrong.",
+        description: err.message,
+      });
     },
   });
 

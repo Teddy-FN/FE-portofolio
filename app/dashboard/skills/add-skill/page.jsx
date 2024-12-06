@@ -46,8 +46,6 @@ const page = () => {
       // setActive(true, null)
     },
     onSuccess: () => {
-      console.log("HELLO");
-
       // setActive(false, "success");
       toast({
         variant: "success",
@@ -56,8 +54,6 @@ const page = () => {
       window.location.href = "/dashboard/skills";
     },
     onError: (err) => {
-      // setActive(false, "error");
-      console.log("ERROR");
       toast({
         variant: "destructive",
         title: "Uh oh! Something went wrong.",
