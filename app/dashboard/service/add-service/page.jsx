@@ -47,11 +47,15 @@ const page = () => {
       // setActive(true, null)
     },
     onSuccess: () => {
-      toast({
-        variant: "success",
-        title: "Success Edit Service!",
-      });
-      window.location.href = "/dashboard/service";
+      setTimeout(() => {
+        toast({
+          variant: "success",
+          title: "Success Add Service!",
+        });
+      }, 1000);
+      setTimeout(() => {
+        window.location.href = "/dashboard/service";
+      }, 2000);
     },
     onError: (err) => {
       toast({

@@ -6,7 +6,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm, useFieldArray } from "react-hook-form";
 import { z } from "zod";
 import { FiPlus, FiTrash } from "react-icons/fi";
-import { useMutation } from "@tanstack/react-query";
+import { useQuery, useMutation } from "@tanstack/react-query";
 
 // Components
 import { Input } from "@/components/ui/input";
@@ -35,21 +35,8 @@ import {
 import { useToast } from "@/hooks/use-toast";
 
 import { postProject } from "@/service/work";
-
-const categories = [
-  {
-    name: "Full Stack",
-    value: "Full Stack",
-  },
-  {
-    name: "Frontend Developer",
-    value: "FE",
-  },
-  {
-    name: "Backend Developer",
-    value: "BE",
-  },
-];
+import { getListServiceInputWork } from "@/service/service";
+import { getListSkilsInputWork } from "@/service/skills";
 
 const stack = [
   {
@@ -138,17 +125,31 @@ const page = () => {
     control: form.control,
   });
 
+  const listService = useQuery({
+    queryKey: ["getListServiceInputWork"],
+    queryFn: getListServiceInputWork,
+  });
+
+  const listSkills = useQuery({
+    queryKey: ["getListSkilsInputWork"],
+    queryFn: getListSkilsInputWork,
+  });
+
   const mutateAddProject = useMutation({
     mutationFn: postProject,
     onMutate: () => {
       // setActive(true, null)
     },
     onSuccess: () => {
-      toast({
-        variant: "success",
-        title: "Success Add New Work!",
-      });
-      window.location.href = "/dashboard/work";
+      setTimeout(() => {
+        toast({
+          variant: "success",
+          title: "Success Add New Work!",
+        });
+      }, 1000);
+      setTimeout(() => {
+        window.location.href = "/dashboard/work";
+      }, 2000);
     },
     onError: (err) => {
       // setActive(false, "error");
@@ -488,7 +489,7 @@ const page = () => {
                       <DropdownMenuContent className="w-56 h-60 overflow-scroll">
                         <DropdownMenuLabel>Stack</DropdownMenuLabel>
                         <DropdownMenuSeparator />
-                        {stack?.map((item, index) => {
+                        {listSkills?.data?.map((item, index) => {
                           const isSelected =
                             Array.isArray(field.value) &&
                             field.value.includes(item.name);
@@ -548,7 +549,7 @@ const page = () => {
                           value={field.value}
                           onValueChange={(value) => field.onChange(value)}
                         >
-                          {categories?.map((item, index) => (
+                          {listService?.data?.map((item, index) => (
                             <DropdownMenuRadioItem
                               key={index}
                               value={item.name}

@@ -70,11 +70,15 @@ const page = () => {
       // setActive(true, null)
     },
     onSuccess: () => {
-      toast({
-        variant: "success",
-        title: "Success Edit Education!",
-      });
-      window.location.href = "/dashboard/education";
+      setTimeout(() => {
+        toast({
+          variant: "success",
+          title: "Success Edit Education!",
+        });
+      }, 1000);
+      setTimeout(() => {
+        window.location.href = "/dashboard/education";
+      }, 2000);
     },
     onError: (err) => {
       toast({

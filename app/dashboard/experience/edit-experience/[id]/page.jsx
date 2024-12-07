@@ -112,16 +112,15 @@ const page = () => {
       // setActive(true, null)
     },
     onSuccess: () => {
-      toast({
-        variant: "success",
-        title: "Success Edit Experience!",
-      });
-      window.location.href = "/dashboard/experience";
-
-      // setActive(false, "success");
-      // toast.success("Success", {
-      //   description: "Successfully added about me",
-      // });
+      setTimeout(() => {
+        toast({
+          variant: "success",
+          title: "Success Edit Experience!",
+        });
+      }, 1000);
+      setTimeout(() => {
+        window.location.href = "/dashboard/experience";
+      }, 2000);
     },
     onError: (err) => {
       toast({

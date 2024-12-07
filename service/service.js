@@ -41,6 +41,23 @@ export const getListService = async () => {
   return data;
 };
 
+export const getListServiceInputWork = async () => {
+  const { data, status } = await axiosInstance.get(
+    `/service/get-service?isTable=false`
+  );
+
+  if (status !== 200) throw Error(`${data.message}`);
+
+  const newFormatData = data.data.map((items) => {
+    return {
+      name: items.name,
+      value: items.name,
+    };
+  });
+
+  return newFormatData;
+};
+
 // Get List service In Table
 export const getListTableService = async ({ page, limit }) => {
   const { data, status } = await axiosInstance.get(

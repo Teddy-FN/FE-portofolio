@@ -119,11 +119,15 @@ const page = () => {
       // setActive(true, null)
     },
     onSuccess: () => {
-      toast({
-        variant: "success",
-        title: "Success Add New About Me!",
-      });
-      window.location.href = "/dashboard";
+      setTimeout(() => {
+        toast({
+          variant: "success",
+          title: "Success Add New About Me!",
+        });
+      }, 1000);
+      setTimeout(() => {
+        window.location.href = "/dashboard";
+      }, 2000);
     },
     onError: (err) => {
       toast({
@@ -140,11 +144,15 @@ const page = () => {
       // setActive(true, null)
     },
     onSuccess: () => {
-      toast({
-        variant: "success",
-        title: "Success Edit About Me!",
-      });
-      window.location.href = "/dashboard";
+      setTimeout(() => {
+        toast({
+          variant: "success",
+          title: "Success Edit About Me!",
+        });
+      }, 1000);
+      setTimeout(() => {
+        window.location.href = "/dashboard";
+      }, 2000);
     },
     onError: (err) => {
       // setActive(false, "error");

@@ -9,6 +9,24 @@ export const getListSkills = async () => {
   return data;
 };
 
+export const getListSkilsInputWork = async () => {
+  const { data, status } = await axiosInstance.get(
+    `/skills/get-skills?isTable=false`
+  );
+
+  console.log("DATA getListSkilsInputWork =>", data);
+  if (status !== 200) throw Error(`${data.message}`);
+
+  const newFormatData = data.data.map((items) => {
+    return {
+      name: items.name,
+      value: items.name,
+    };
+  });
+
+  return newFormatData;
+};
+
 // Get List skills In Table
 export const getListTableSkills = async ({ page, limit }) => {
   const { data, status } = await axiosInstance.get(

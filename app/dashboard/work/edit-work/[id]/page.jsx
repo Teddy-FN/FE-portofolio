@@ -188,11 +188,15 @@ const page = () => {
       // setActive(true, null)
     },
     onSuccess: () => {
-      toast({
-        variant: "success",
-        title: "Success Add New Work!",
-      });
-      window.location.href = "/dashboard/work";
+      setTimeout(() => {
+        toast({
+          variant: "success",
+          title: "Success Edit Work!",
+        });
+      }, 1000);
+      setTimeout(() => {
+        window.location.href = "/dashboard/work";
+      }, 2000);
     },
     onError: (err) => {
       // setActive(false, "error");
