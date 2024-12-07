@@ -7,7 +7,7 @@ import { Button } from "@/components/ui/button";
 import DashboardLayout from "@/components/DashboardTemplate";
 
 import { FiEdit, FiTrash } from "react-icons/fi";
-
+import AbortController from "@/components/AbortController";
 import {
   flexRender,
   getCoreRowModel,
@@ -232,6 +232,10 @@ const page = () => {
   const TABLES_DATA = useMemo(() => {
     if (getEducation.isFetching && getEducation.isLoading) {
       return <h1>LOADING</h1>;
+    }
+
+    if (getEducation.isError) {
+      return <AbortController refetch={() => getEducation.refetch()} />;
     }
 
     if (getEducation.data && getEducation.isSuccess) {

@@ -23,6 +23,7 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import Link from "next/link";
+import AbortController from "@/components/AbortController";
 
 const limitsOptions = [10, 20, 50];
 
@@ -194,6 +195,10 @@ const page = () => {
   const TABLES_DATA = useMemo(() => {
     if (getServiceData.isFetching && getServiceData.isLoading) {
       return <h1>LOADING</h1>;
+    }
+
+    if (getServiceData.isError) {
+      return <AbortController refetch={() => getServiceData.refetch()} />;
     }
 
     if (getServiceData.data && getServiceData.isSuccess) {

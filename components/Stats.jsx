@@ -7,7 +7,7 @@ const Stats = ({ data }) => {
     <section className="pt-4 pb-12 xl:pt-0 xl:pb-0">
       <div className="container mx-auto">
         <div className="flex flex-wrap gap-6 max-w-[80vw] mx-auto xl:max-w-none">
-          {data?.data?.map((items, index) => {
+          {data?.data?.data?.map((items, index) => {
             return (
               <div
                 className="flex-1 flex gap-4 items-center justify-center xl:justify-start"
