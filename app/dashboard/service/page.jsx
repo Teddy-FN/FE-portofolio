@@ -5,7 +5,7 @@ import React, { useState, useCallback, useMemo, Fragment } from "react";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { Button } from "@/components/ui/button";
 import DashboardLayout from "@/components/DashboardTemplate";
-
+import { Skeleton } from "@/components/ui/skeleton";
 import { FiEdit, FiTrash } from "react-icons/fi";
 
 import {
@@ -193,15 +193,27 @@ const page = () => {
   });
 
   const TABLES_DATA = useMemo(() => {
-    if (getServiceData.isFetching && getServiceData.isLoading) {
-      return <h1>LOADING</h1>;
+    if (getServiceData.isLoading) {
+      return (
+        <div className="flex flex-col gap-8">
+          <Skeleton className="w-full h-96 rounded-md bg-pink-50/20" />
+          <div className="flex justify-between items-center">
+            <Skeleton className="w-20 h-10 rounded-md bg-pink-50/20" />
+            <Skeleton className="w-20 h-10 rounded-md bg-pink-50/20" />
+          </div>
+        </div>
+      );
     }
 
     if (getServiceData.isError) {
-      return <AbortController refetch={() => getServiceData.refetch()} />;
+      return (
+        <div className="h-screen">
+          <AbortController refetch={() => getServiceData.refetch()} />
+        </div>
+      );
     }
 
-    if (getServiceData.data && getServiceData.isSuccess) {
+    if (getServiceData.data && getServiceData.data.data?.length > 0) {
       return (
         <Fragment>
           <div className="rounded-md border overflow-x-auto">
@@ -221,31 +233,21 @@ const page = () => {
                 ))}
               </TableHeader>
               <TableBody>
-                {table.getRowModel().rows.length ? (
-                  table.getRowModel().rows.map((row) => (
-                    <TableRow key={row.id}>
-                      {row.getVisibleCells().map((cell) => (
-                        <TableCell key={cell.id}>
-                          {flexRender(
-                            cell.column.columnDef.cell,
-                            cell.getContext()
-                          )}
-                        </TableCell>
-                      ))}
-                    </TableRow>
-                  ))
-                ) : (
-                  <TableRow>
-                    <TableCell colSpan={columns.length}>
-                      No data available.
-                    </TableCell>
+                {table.getRowModel().rows.map((row) => (
+                  <TableRow key={row.id}>
+                    {row.getVisibleCells().map((cell) => (
+                      <TableCell key={cell.id}>
+                        {flexRender(
+                          cell.column.columnDef.cell,
+                          cell.getContext()
+                        )}
+                      </TableCell>
+                    ))}
                   </TableRow>
-                )}
+                ))}
               </TableBody>
             </Table>
           </div>
-
-          {/* Pagination */}
           <div className="flex justify-between items-center">
             <div className="flex items-center gap-2 flex-1">
               <label htmlFor="limit" className="whitespace-nowrap">
@@ -269,20 +271,20 @@ const page = () => {
             <div className="flex items-center gap-2 flex-1 justify-end">
               <Button
                 onClick={() => updatePagination({ page: pagination.page - 1 })}
-                disabled={pagination.page === 1 || getServiceData.isFetching}
+                disabled={pagination.page === 1 || getEducation.isFetching}
               >
                 Previous
               </Button>
               <span>
                 Page {pagination.page} of{" "}
-                {getServiceData?.data?.meta?.totalPages || 1}
+                {getEducation?.data?.meta?.totalPages || 1}
               </span>
               <Button
                 onClick={() => updatePagination({ page: pagination.page + 1 })}
                 disabled={
                   pagination.page >=
-                    (getServiceData?.data?.meta?.totalPages || 1) ||
-                  getServiceData.isFetching
+                    (getEducation?.data?.meta?.totalPages || 1) ||
+                  getEducation.isFetching
                 }
               >
                 Next
@@ -292,7 +294,9 @@ const page = () => {
         </Fragment>
       );
     }
-  }, [getServiceData, table]);
+
+    return <div>No data available</div>;
+  }, [getServiceData, table, columns, pagination]);
 
   return (
     <DashboardLayout>
