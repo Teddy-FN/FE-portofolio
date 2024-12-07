@@ -363,7 +363,11 @@ const page = () => {
       );
     }
 
-    return <div>No data available</div>;
+    return (
+      <div className="h-96 flex items-center justify-center bg-pink-50/20 rounded-md">
+        <h1>No data available</h1>
+      </div>
+    );
   }, [getProject, table, columns, pagination]);
 
   return (

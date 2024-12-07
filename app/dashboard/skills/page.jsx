@@ -189,20 +189,20 @@ const page = () => {
             <div className="flex items-center gap-2 flex-1 justify-end">
               <Button
                 onClick={() => updatePagination({ page: pagination.page - 1 })}
-                disabled={pagination.page === 1 || getEducation.isFetching}
+                disabled={pagination.page === 1 || getSkillData.isFetching}
               >
                 Previous
               </Button>
               <span>
                 Page {pagination.page} of{" "}
-                {getEducation?.data?.meta?.totalPages || 1}
+                {getSkillData?.data?.meta?.totalPages || 1}
               </span>
               <Button
                 onClick={() => updatePagination({ page: pagination.page + 1 })}
                 disabled={
                   pagination.page >=
-                    (getEducation?.data?.meta?.totalPages || 1) ||
-                  getEducation.isFetching
+                    (getSkillData?.data?.meta?.totalPages || 1) ||
+                  getSkillData.isFetching
                 }
               >
                 Next
@@ -213,7 +213,11 @@ const page = () => {
       );
     }
 
-    return <div>No data available</div>;
+    return (
+      <div className="h-96 flex items-center justify-center bg-pink-50/20 rounded-md">
+        <h1>No data available</h1>
+      </div>
+    );
   }, [getSkillData, table, columns, pagination]);
 
   return (
