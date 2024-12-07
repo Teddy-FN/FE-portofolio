@@ -38,32 +38,8 @@ import { getProjectById, putProject } from "@/service/work";
 
 // Utils
 import { generateLinkImageFromGoogleDrive } from "@/utils/generateImageGoogleDrive";
-
-const categories = [
-  {
-    name: "Full Stack",
-    value: "Full Stack",
-  },
-  {
-    name: "Frontend Developer",
-    value: "FE",
-  },
-  {
-    name: "Backend Developer",
-    value: "BE",
-  },
-];
-
-const stack = [
-  {
-    name: "React JS",
-    value: "React JS",
-  },
-  {
-    name: "Tailwind",
-    value: "Tailwind",
-  },
-];
+import { getListServiceInputWork } from "@/service/service";
+import { getListSkilsInputWork } from "@/service/skills";
 
 const userInfoSchema = z.object({
   name: z.string().min(1, "Name cannot be empty"),
@@ -176,6 +152,16 @@ const page = () => {
   const { fields, append, remove, update } = useFieldArray({
     name: "github",
     control: form.control,
+  });
+
+  const listService = useQuery({
+    queryKey: ["getListServiceInputWork"],
+    queryFn: getListServiceInputWork,
+  });
+
+  const listSkills = useQuery({
+    queryKey: ["getListSkilsInputWork"],
+    queryFn: getListSkilsInputWork,
   });
 
   const mutateEditProject = useMutation({
@@ -601,6 +587,66 @@ const page = () => {
             <div className="col-span-1">
               <FormField
                 control={form.control}
+                name="stack"
+                render={({ field }) => (
+                  <FormItem>
+                    <div className="mb-4 flex items-center gap-2">
+                      <FormLabel className="text-base">Stack</FormLabel>
+                    </div>
+                    <DropdownMenu>
+                      <DropdownMenuTrigger asChild>
+                        <div>
+                          <Input
+                            value={
+                              Array.isArray(field.value)
+                                ? field.value.join(", ")
+                                : ""
+                            }
+                            readOnly
+                            placeholder="Select Stack"
+                            className="w-full text-left cursor-pointer"
+                          />
+                        </div>
+                      </DropdownMenuTrigger>
+                      <DropdownMenuContent className="w-56 h-60 overflow-scroll">
+                        <DropdownMenuLabel>Stack</DropdownMenuLabel>
+                        <DropdownMenuSeparator />
+                        {listSkills?.data?.map((item, index) => {
+                          const isSelected =
+                            Array.isArray(field.value) &&
+                            field.value.includes(item.name);
+                          return (
+                            <DropdownMenuCheckboxItem
+                              key={index}
+                              checked={isSelected}
+                              onCheckedChange={(checked) => {
+                                const updatedStack = checked
+                                  ? [...(field.value || []), item.name]
+                                  : (field.value || []).filter(
+                                      (lang) => lang !== item.name
+                                    );
+                                field.onChange(updatedStack);
+                              }}
+                              className="flex items-center gap-5"
+                            >
+                              <p>{item?.name}</p>
+                            </DropdownMenuCheckboxItem>
+                          );
+                        })}
+                      </DropdownMenuContent>
+                    </DropdownMenu>
+                    {form.formState.errors.stack && (
+                      <FormMessage>
+                        {form.formState.errors.stack.message}
+                      </FormMessage>
+                    )}
+                  </FormItem>
+                )}
+              />
+            </div>
+            <div className="col-span-1">
+              <FormField
+                control={form.control}
                 name="category"
                 render={({ field }) => (
                   <FormItem>
@@ -625,7 +671,7 @@ const page = () => {
                           value={field.value}
                           onValueChange={(value) => field.onChange(value)}
                         >
-                          {categories?.map((item, index) => (
+                          {listService?.data?.map((item, index) => (
                             <DropdownMenuRadioItem
                               key={index}
                               value={item.name}
