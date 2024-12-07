@@ -38,17 +38,6 @@ import { postProject } from "@/service/work";
 import { getListServiceInputWork } from "@/service/service";
 import { getListSkilsInputWork } from "@/service/skills";
 
-const stack = [
-  {
-    name: "React JS",
-    value: "React JS",
-  },
-  {
-    name: "Tailwind",
-    value: "Tailwind",
-  },
-];
-
 const userInfoSchema = z.object({
   name: z.string().min(1, "Name cannot be empty"),
   url: z.string().min(1, "URL cannot be empty"),

@@ -33,24 +33,24 @@ import EmptyData from "@/components/EmptyData";
 
 const aboutMe = {
   title: "About Me",
-  description: "Lore Ipsum",
+  description: "About Me",
 };
 
 const experience = {
   icon: "",
   title: "My Experience",
-  description: "Lorem Ipsum",
+  description: "My Experience",
 };
 
 const education = {
   icon: "",
   title: "My Education",
-  description: "Lorem Ipsum",
+  description: "My Education",
 };
 
 const skills = {
   title: "My Skills",
-  description: "Lorem Ipsum",
+  description: "My Skills",
   info: [
     {
       icon: <FaHtml5 />,
@@ -100,16 +100,19 @@ const Resume = () => {
   const getListExperienceData = useQuery({
     queryKey: ["getListExperience"],
     queryFn: getListExperience,
+    keepPreviousData: true,
   });
 
   const getListEducationData = useQuery({
     queryKey: ["getListEducation"],
     queryFn: getListEducation,
+    keepPreviousData: true,
   });
 
   const getListAboutMeData = useQuery({
     queryKey: ["getListAboutMe"],
     queryFn: getListAboutMe,
+    keepPreviousData: true,
   });
 
   return (
