@@ -13,7 +13,7 @@ import {
   getCoreRowModel,
   useReactTable,
 } from "@tanstack/react-table";
-
+import AbortController from "@/components/AbortController";
 import {
   Table,
   TableBody,
@@ -263,6 +263,10 @@ const page = () => {
   const TABLES_DATA = useMemo(() => {
     if (getProject.isFetching && getProject.isLoading) {
       return <h1>LOADING</h1>;
+    }
+
+    if (getProject.isError) {
+      return <AbortController refetch={() => getProject.refetch()} />;
     }
 
     if (getProject.data && getProject.isSuccess) {
