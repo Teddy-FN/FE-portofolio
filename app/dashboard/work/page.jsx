@@ -5,7 +5,7 @@ import React, { useState, useCallback, useMemo, Fragment } from "react";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { Button } from "@/components/ui/button";
 import DashboardLayout from "@/components/DashboardTemplate";
-
+import { Skeleton } from "@/components/ui/skeleton";
 import { FiEdit, FiTrash } from "react-icons/fi";
 import Image from "next/image";
 import {
@@ -261,15 +261,27 @@ const page = () => {
   });
 
   const TABLES_DATA = useMemo(() => {
-    if (getProject.isFetching && getProject.isLoading) {
-      return <h1>LOADING</h1>;
+    if (getProject.isLoading) {
+      return (
+        <div className="flex flex-col gap-8">
+          <Skeleton className="w-full h-96 rounded-md bg-pink-50/20" />
+          <div className="flex justify-between items-center">
+            <Skeleton className="w-20 h-10 rounded-md bg-pink-50/20" />
+            <Skeleton className="w-20 h-10 rounded-md bg-pink-50/20" />
+          </div>
+        </div>
+      );
     }
 
     if (getProject.isError) {
-      return <AbortController refetch={() => getProject.refetch()} />;
+      return (
+        <div className="h-screen">
+          <AbortController refetch={() => getProject.refetch()} />
+        </div>
+      );
     }
 
-    if (getProject.data && getProject.isSuccess) {
+    if (getProject.data && getProject.data.data?.length > 0) {
       return (
         <Fragment>
           <div className="rounded-md border overflow-x-auto">
@@ -289,31 +301,21 @@ const page = () => {
                 ))}
               </TableHeader>
               <TableBody>
-                {table.getRowModel().rows.length ? (
-                  table.getRowModel().rows.map((row) => (
-                    <TableRow key={row.id}>
-                      {row.getVisibleCells().map((cell) => (
-                        <TableCell key={cell.id}>
-                          {flexRender(
-                            cell.column.columnDef.cell,
-                            cell.getContext()
-                          )}
-                        </TableCell>
-                      ))}
-                    </TableRow>
-                  ))
-                ) : (
-                  <TableRow>
-                    <TableCell colSpan={columns.length}>
-                      No data available.
-                    </TableCell>
+                {table.getRowModel().rows.map((row) => (
+                  <TableRow key={row.id}>
+                    {row.getVisibleCells().map((cell) => (
+                      <TableCell key={cell.id}>
+                        {flexRender(
+                          cell.column.columnDef.cell,
+                          cell.getContext()
+                        )}
+                      </TableCell>
+                    ))}
                   </TableRow>
-                )}
+                ))}
               </TableBody>
             </Table>
           </div>
-
-          {/* Pagination */}
           <div className="flex justify-between items-center">
             <div className="flex items-center gap-2 flex-1">
               <label htmlFor="limit" className="whitespace-nowrap">
@@ -360,7 +362,9 @@ const page = () => {
         </Fragment>
       );
     }
-  }, [getProject, table]);
+
+    return <div>No data available</div>;
+  }, [getProject, table, columns, pagination]);
 
   return (
     <DashboardLayout>
