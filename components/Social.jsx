@@ -4,11 +4,11 @@ import { FaGithub, FaLinkedin } from "react-icons/fa";
 const socialMedia = [
   {
     icon: <FaGithub />,
-    path: "",
+    path: "https://github.com/Teddy-FN",
   },
   {
     icon: <FaLinkedin />,
-    path: "",
+    path: "https://www.linkedin.com/in/teddy-ferdian-abrar-amrullah",
   },
 ];
 
@@ -17,7 +17,12 @@ const Social = ({ containerStyles, iconStyles }) => {
     <div className={containerStyles}>
       {socialMedia.map((items, index) => {
         return (
-          <Link key={index} href={items.path} className={iconStyles}>
+          <Link
+            key={index}
+            href={items.path}
+            className={iconStyles}
+            target="_blank"
+          >
             {items.icon}
           </Link>
         );

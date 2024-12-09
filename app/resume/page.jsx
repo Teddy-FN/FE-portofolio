@@ -30,6 +30,7 @@ import AbortController from "@/components/AbortController";
 import { getListExperience } from "@/service/experience";
 import { getListEducation } from "@/service/education";
 import { getListAboutMe } from "@/service/about-me";
+import { getListSkills } from "@/service/skills";
 import EmptyData from "@/components/EmptyData";
 
 const array = Array(8).fill(null);
@@ -51,51 +52,23 @@ const education = {
   description: "My Education",
 };
 
+const iconsMap = {
+  "React js": <FaReact />,
+  "Node JS": <FaNodeJs />,
+  "Next JS": <FaNodeJs />,
+  "HTML 5": <FaHtml5 />,
+  "CSS 3": <FaCss3 />,
+  Tailwind: <SiTailwindcss />,
+  Javascript: <FaJs />,
+  "Next Js": <SiNextdotjs />,
+  "Vuew JS": <SiVuedotjs />,
+  "Postgree SQL": <SiPostgresql />,
+  Sequelize: <SiSequelize />,
+};
+
 const skills = {
   title: "My Skills",
   description: "My Skills",
-  info: [
-    {
-      icon: <FaHtml5 />,
-      name: "HTML 5",
-    },
-    {
-      icon: <FaCss3 />,
-      name: "CSS 3",
-    },
-    {
-      icon: <SiTailwindcss />,
-      name: "Tailwind CSS",
-    },
-    {
-      icon: <FaJs />,
-      name: "Javascript",
-    },
-    {
-      icon: <FaReact />,
-      name: "React JS",
-    },
-    {
-      icon: <FaNodeJs />,
-      name: "Node JS",
-    },
-    {
-      icon: <SiNextdotjs />,
-      name: "Next Js",
-    },
-    {
-      icon: <SiVuedotjs />,
-      name: "Vuew Js",
-    },
-    {
-      icon: <SiPostgresql />,
-      name: "Postgree SQL",
-    },
-    {
-      icon: <SiSequelize />,
-      name: "Sequelize (ORM)",
-    },
-  ],
 };
 
 const Resume = () => {
@@ -114,6 +87,13 @@ const Resume = () => {
     queryFn: getListEducation,
     keepPreviousData: true,
     enabled: activeTab === "education",
+  });
+
+  const getListSkillData = useQuery({
+    queryKey: ["getListSkills"],
+    queryFn: getListSkills,
+    keepPreviousData: true,
+    enabled: activeTab === "skills",
   });
 
   const getListAboutMeData = useQuery({
@@ -263,6 +243,77 @@ const Resume = () => {
     );
   }, [getListEducationData]);
 
+  const RENDER_SKILLS = useMemo(() => {
+    if (getListSkillData?.isLoading || getListSkillData.isFetching) {
+      return (
+        <div className="flex flex-col gap-[30px] text-center xl:text-left">
+          <Skeleton className="bg-pink-50/20 h-28 w-full rounded-md" />
+          <Skeleton className="bg-pink-50/20 h-28 w-full rounded-md" />
+          <div className="grid grid-cols-1 md:grid-cols-2 w-full gap-6 py-6">
+            {array.map((_, index) => {
+              return (
+                <Skeleton
+                  className="bg-pink-50/20 h-72 w-full rounded-md"
+                  key={index}
+                />
+              );
+            })}
+          </div>
+        </div>
+      );
+    }
+
+    if (getListSkillData?.isError) {
+      return (
+        <div className="h-screen">
+          <AbortController refetch={() => getListSkillData.refetch()} />
+        </div>
+      );
+    }
+
+    if (getListSkillData?.data && getListSkillData?.data?.data?.length > 0) {
+      return (
+        <div className="flex flex-col gap-[30px] text-center xl:text-left">
+          <div className="flex flex-col gap-[30px]">
+            <h3 className="text-4xl font-bold">{skills.title}</h3>
+            <p className="max-w-[600px] text-white/60 mx-auto xl:mx-0">
+              {skills.description}
+            </p>
+          </div>
+
+          <div className="h-[400px]">
+            <ul className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 xl:gap-[30px] gap-4">
+              {getListSkillData?.data?.data?.map((items, index) => {
+                return (
+                  <li key={index}>
+                    <TooltipProvider delayDuration={100}>
+                      <Tooltip>
+                        <TooltipTrigger className="w-full h-[150px] bg-[#232329] rounded-xl flex justify-center items-center group">
+                          <div className="text-6xl group-hover:text-accent transition-all duration-500">
+                            {iconsMap[items.name] || <span>?</span>}
+                          </div>
+                        </TooltipTrigger>
+                        <TooltipContent>
+                          <p className="capitalize">{items.name}</p>
+                        </TooltipContent>
+                      </Tooltip>
+                    </TooltipProvider>
+                  </li>
+                );
+              })}
+            </ul>
+          </div>
+        </div>
+      );
+    }
+
+    return (
+      <div className="h-96 flex items-center justify-center bg-pink-50/20 rounded-md">
+        <h1>No data available</h1>
+      </div>
+    );
+  }, [getListSkillData]);
+
   const RENDER_ABOUT_ME = useMemo(() => {
     if (getListAboutMeData?.isLoading || getListAboutMeData.isFetching) {
       return (
@@ -403,37 +454,7 @@ const Resume = () => {
               </TabsContent>
 
               <TabsContent value="skills" className="w-full h-full">
-                <div className="flex flex-col gap-[30px] text-center xl:text-left">
-                  <div className="flex flex-col gap-[30px]">
-                    <h3 className="text-4xl font-bold">{skills.title}</h3>
-                    <p className="max-w-[600px] text-white/60 mx-auto xl:mx-0">
-                      {skills.description}
-                    </p>
-                  </div>
-
-                  <div className="h-[400px]">
-                    <ul className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 xl:gap-[30px] gap-4">
-                      {skills.info.map((items, index) => {
-                        return (
-                          <li key={index}>
-                            <TooltipProvider delayDuration={100}>
-                              <Tooltip>
-                                <TooltipTrigger className="w-full h-[150px] bg-[#232329] rounded-xl flex justify-center items-center group">
-                                  <div className="text-6xl group-hover:text-accent transition-all duration-500">
-                                    {items.icon}
-                                  </div>
-                                </TooltipTrigger>
-                                <TooltipContent>
-                                  <p className="capitalize">{items.name}</p>
-                                </TooltipContent>
-                              </Tooltip>
-                            </TooltipProvider>
-                          </li>
-                        );
-                      })}
-                    </ul>
-                  </div>
-                </div>
+                {RENDER_SKILLS}
               </TabsContent>
 
               <TabsContent
