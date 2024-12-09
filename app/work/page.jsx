@@ -31,20 +31,18 @@ const Work = () => {
     queryFn: workList,
   });
 
-  console.log("getWorkData =>", getWorkData);
-
   const [project, setProject] = useState({});
 
   const handleSlideChnage = (swiper) => {
     const currentIndex = swiper.activeIndex;
-    setProject(getWorkData?.data[currentIndex]);
+    setProject(getWorkData?.data?.data[currentIndex]);
   };
-
-  console.log("project =>", project);
 
   useEffect(() => {
     if (getWorkData?.data && getWorkData?.isSuccess) {
-      setProject(getWorkData.data.length > 0 ? getWorkData.data[0] : {});
+      setProject(
+        getWorkData?.data?.data?.length > 0 ? getWorkData?.data?.data[0] : {}
+      );
     }
   }, [getWorkData.data, getWorkData?.isSuccess]);
 
@@ -66,7 +64,7 @@ const Work = () => {
         className="min-h-[80vh] flex flex-col justify-center py-12 xl:px-0"
       >
         <div className="container mx-auto">
-          {getWorkData?.data?.length > 0 ? (
+          {getWorkData?.data?.data?.length > 0 ? (
             <div className="flex flex-col xl:flex-row xl:gap-[30px]">
               <div className="w-full xl:w-[50%] xl:h-[460px] flex flex-col xl:justify-between order-2 xl:order-none">
                 <div className="flex flex-col gap-[30px]">
@@ -74,14 +72,17 @@ const Work = () => {
                     {project?.num}
                   </div>
                   <h2 className="text-[42px] font-bold leading-none text-white group-hover:text-accent transition-all duration-500 capitalize">
-                    {project?.category} Project
+                    {project?.title} Project
                   </h2>
+                  <p className="font-bold leading-none text-white group-hover:text-accent transition-all duration-500 capitalize">
+                    {project?.category} Project
+                  </p>
                   <p className="text-white/60">{project?.description}</p>
                   <ul className="flex gap-4">
                     {project?.stack?.map((items, index) => {
                       return (
                         <li key={index} className="text-accent text-xl">
-                          {items.name}
+                          {items}
                           {index !== project?.stack?.length - 1 && ","}
                         </li>
                       );
@@ -101,19 +102,26 @@ const Work = () => {
                         </Tooltip>
                       </TooltipProvider>
                     </Link>
-
-                    <Link href={project?.github || ""}>
-                      <TooltipProvider delayDuration={100}>
-                        <Tooltip>
-                          <TooltipTrigger className="w-[70px] h-[70px] rounded-full bg-white/5 flex justify-center items-center group">
-                            <BsGithub className="text-white text-3xl group-hover:text-accent" />
-                          </TooltipTrigger>
-                          <TooltipContent>
-                            <p>Github Repo</p>
-                          </TooltipContent>
-                        </Tooltip>
-                      </TooltipProvider>
-                    </Link>
+                    {project?.github
+                      ? JSON?.parse(project?.github || "").map(
+                          (items, index) => {
+                            return (
+                              <Link href={items.url || ""} key={index}>
+                                <TooltipProvider delayDuration={100}>
+                                  <Tooltip>
+                                    <TooltipTrigger className="w-[70px] h-[70px] rounded-full bg-white/5 flex justify-center items-center group">
+                                      <BsGithub className="text-white text-3xl group-hover:text-accent" />
+                                    </TooltipTrigger>
+                                    <TooltipContent>
+                                      <p>Github Repo {items.name}</p>
+                                    </TooltipContent>
+                                  </Tooltip>
+                                </TooltipProvider>
+                              </Link>
+                            );
+                          }
+                        )
+                      : null}
                   </div>
                 </div>
               </div>
@@ -124,7 +132,7 @@ const Work = () => {
                   className="xl:h-[520px] mb-12"
                   onSlideChange={handleSlideChnage}
                 >
-                  {getWorkData?.data?.map((items, index) => {
+                  {getWorkData?.data?.data?.map((items, index) => {
                     return (
                       <SwiperSlide key={index} className="w-full">
                         <div className="h-[460px] relative group flex justify-center items-center bg-pink-50/20 rounded-lg">

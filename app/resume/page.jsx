@@ -1,6 +1,6 @@
 "use client";
 
-import React, { Fragment } from "react";
+import React, { Fragment, useMemo, useState } from "react";
 import { motion } from "framer-motion";
 import { useQuery } from "@tanstack/react-query";
 
@@ -16,7 +16,6 @@ import {
 
 // Components
 import Header from "@/components/Header";
-
 import {
   Tooltip,
   TooltipContent,
@@ -24,12 +23,16 @@ import {
   TooltipTrigger,
 } from "@/components/ui/tooltip";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Skeleton } from "@/components/ui/skeleton";
+import AbortController from "@/components/AbortController";
 
 // Service
 import { getListExperience } from "@/service/experience";
 import { getListEducation } from "@/service/education";
 import { getListAboutMe } from "@/service/about-me";
 import EmptyData from "@/components/EmptyData";
+
+const array = Array(8).fill(null);
 
 const aboutMe = {
   title: "About Me",
@@ -96,24 +99,268 @@ const skills = {
 };
 
 const Resume = () => {
+  const [activeTab, setActiveTab] = useState("experience");
+
   // Query
   const getListExperienceData = useQuery({
     queryKey: ["getListExperience"],
     queryFn: getListExperience,
     keepPreviousData: true,
+    enabled: activeTab === "experience",
   });
 
   const getListEducationData = useQuery({
     queryKey: ["getListEducation"],
     queryFn: getListEducation,
     keepPreviousData: true,
+    enabled: activeTab === "education",
   });
 
   const getListAboutMeData = useQuery({
     queryKey: ["getListAboutMe"],
     queryFn: getListAboutMe,
     keepPreviousData: true,
+    enabled: activeTab === "about",
   });
+
+  const RENDER_EXPERIENCE = useMemo(() => {
+    if (getListExperienceData?.isLoading || getListExperienceData.isFetching) {
+      return (
+        <div className="flex flex-col gap-[30px] text-center xl:text-left">
+          <Skeleton className="bg-pink-50/20 h-28 w-full rounded-md" />
+          <Skeleton className="bg-pink-50/20 h-28 w-full rounded-md" />
+          <div className="grid grid-cols-1 md:grid-cols-2 w-full gap-6 py-6">
+            {array.map((_, index) => {
+              return (
+                <Skeleton
+                  className="bg-pink-50/20 h-72 w-full rounded-md"
+                  key={index}
+                />
+              );
+            })}
+          </div>
+        </div>
+      );
+    }
+
+    if (getListExperienceData?.isError) {
+      return (
+        <div className="h-screen">
+          <AbortController refetch={() => getListExperienceData.refetch()} />
+        </div>
+      );
+    }
+
+    if (
+      getListExperienceData?.data &&
+      getListExperienceData?.data?.data?.length > 0
+    ) {
+      return (
+        <div className="flex flex-col gap-[30px] text-center xl:text-left">
+          <h3 className="text-4xl font-bold">{experience.title}</h3>
+          <p className="max-w-[600px] text-white/60 mx-auto xl:mx-0">
+            {experience.description}
+          </p>
+          <div className="h-[400px]">
+            <ul className="grid grid-cols-1 lg:grid-cols-2 gap-[30px]">
+              {getListExperienceData?.data?.data?.map((items, index) => {
+                return (
+                  <li
+                    key={index}
+                    className="bg-[#232329] h-[184px] py-6 px-10 rounded-xl flex flex-col justify-center items-center lg:items-start gap-1"
+                  >
+                    <span className="text-accent">{items.duration}</span>
+                    <h3 className="text-xl max-w-[260px] min-h-[60px] text-center lg:text-left">
+                      {items.position}
+                    </h3>
+                    <div className="flex items-center gap-3">
+                      <span className="w-[6px] h-[6px] rounded-full bg-accent"></span>
+                      <p className="text-white/60">{items.company}</p>
+                    </div>
+                  </li>
+                );
+              })}
+            </ul>
+          </div>
+        </div>
+      );
+    }
+
+    return (
+      <div className="h-96 flex items-center justify-center bg-pink-50/20 rounded-md">
+        <h1>No data available</h1>
+      </div>
+    );
+  }, [getListExperienceData]);
+
+  const RENDER_EDUCATION = useMemo(() => {
+    if (getListEducationData?.isLoading || getListEducationData.isFetching) {
+      return (
+        <div className="flex flex-col gap-[30px] text-center xl:text-left">
+          <Skeleton className="bg-pink-50/20 h-28 w-full rounded-md" />
+          <Skeleton className="bg-pink-50/20 h-28 w-full rounded-md" />
+          <div className="grid grid-cols-1 md:grid-cols-2 w-full gap-6 py-6">
+            {array.map((_, index) => {
+              return (
+                <Skeleton
+                  className="bg-pink-50/20 h-72 w-full rounded-md"
+                  key={index}
+                />
+              );
+            })}
+          </div>
+        </div>
+      );
+    }
+
+    if (getListEducationData?.isError) {
+      return (
+        <div className="h-screen">
+          <AbortController refetch={() => getListEducationData.refetch()} />
+        </div>
+      );
+    }
+
+    if (
+      getListEducationData?.data &&
+      getListEducationData?.data?.data?.length > 0
+    ) {
+      return (
+        <div className="flex flex-col gap-[30px] text-center xl:text-left">
+          <h3 className="text-4xl font-bold">{education.title}</h3>
+          <p className="max-w-[600px] text-white/60 mx-auto xl:mx-0">
+            {education.description}
+          </p>
+          <div className="h-[400px]">
+            <ul className="grid grid-cols-1 lg:grid-cols-2 gap-[30px]">
+              {getListEducationData?.data?.data?.map((items, index) => {
+                return (
+                  <li
+                    key={index}
+                    className="bg-[#232329] h-[184px] py-6 px-10 rounded-xl flex flex-col justify-center items-center lg:items-start gap-1"
+                  >
+                    <span className="text-accent">{items.duration}</span>
+                    <h3 className="text-xl max-w-[260px] min-h-[60px] text-center lg:text-left">
+                      {items.degree}
+                    </h3>
+                    <div className="flex items-center gap-3">
+                      <span className="w-[6px] h-[6px] rounded-full bg-accent"></span>
+                      <p className="text-white/60">{items.institution}</p>
+                    </div>
+                  </li>
+                );
+              })}
+            </ul>
+          </div>
+        </div>
+      );
+    }
+
+    return (
+      <div className="h-96 flex items-center justify-center bg-pink-50/20 rounded-md">
+        <h1>No data available</h1>
+      </div>
+    );
+  }, [getListEducationData]);
+
+  const RENDER_ABOUT_ME = useMemo(() => {
+    if (getListAboutMeData?.isLoading || getListAboutMeData.isFetching) {
+      return (
+        <div className="flex flex-col gap-[30px] text-center xl:text-left">
+          <Skeleton className="bg-pink-50/20 h-28 w-full rounded-md" />
+          <Skeleton className="bg-pink-50/20 h-28 w-full rounded-md" />
+          <div className="grid grid-cols-1 md:grid-cols-2 w-full gap-6 py-6">
+            {array.map((_, index) => {
+              return (
+                <Skeleton
+                  className="bg-pink-50/20 h-72 w-full rounded-md"
+                  key={index}
+                />
+              );
+            })}
+          </div>
+        </div>
+      );
+    }
+
+    if (getListAboutMeData?.isError) {
+      return (
+        <div className="h-screen">
+          <AbortController refetch={() => getListAboutMeData.refetch()} />
+        </div>
+      );
+    }
+
+    if (getListAboutMeData?.data) {
+      return (
+        <div className="flex flex-col gap-[30px] text-center xl:text-left">
+          <h3 className="text-4xl font-bold">{aboutMe.title}</h3>
+          <p className="max-w-[600px] text-white/60 mx-auto xl:mx-0">
+            {aboutMe.description}
+          </p>
+          <div className="h-[400px]">
+            <ul className="grid grid-cols-1 xl:grid-cols-2 gap-y-6 gap-x-6 max-w-[620px] mx-auto xl:mx-0">
+              <li className="flex items-center justify-center xl:justify-start gap-4">
+                <span className="text-white/60">Name</span>
+                <span className="text-xl">
+                  {getListAboutMeData?.data?.data?.name}
+                </span>
+              </li>
+              <li className="flex items-center justify-center xl:justify-start gap-4">
+                <span className="text-white/60">Phone</span>
+                <span className="text-xl">
+                  {getListAboutMeData?.data?.data?.phone}
+                </span>
+              </li>
+              <li className="flex items-center justify-center xl:justify-start gap-4">
+                <span className="text-white/60">Experience</span>
+                <span className="text-xl">
+                  {getListAboutMeData?.data?.data?.experience}
+                </span>
+              </li>
+              <li className="flex items-center justify-center xl:justify-start gap-4">
+                <span className="text-white/60">Nationality</span>
+                <span className="text-xl">
+                  {getListAboutMeData?.data?.data?.nationality}
+                </span>
+              </li>
+              <li className="flex items-center justify-center xl:justify-start gap-4">
+                <span className="text-white/60">Email</span>
+                <span className="text-xl">
+                  {getListAboutMeData?.data?.data?.email}
+                </span>
+              </li>
+              <li className="flex items-center justify-center xl:justify-start gap-4">
+                <span className="text-white/60">Freelance</span>
+                <span className="text-xl">
+                  {getListAboutMeData?.data?.data?.freelance
+                    ? "Available"
+                    : "Not Available"}
+                </span>
+              </li>
+              <li className="flex items-center justify-center xl:justify-start gap-4">
+                <span className="text-white/60">Languages</span>
+                <span className="text-xl">
+                  {getListAboutMeData?.data?.data?.languages.length > 0
+                    ? getListAboutMeData?.data?.data?.languages.map(
+                        (items, index) => (
+                          <span key={index}>
+                            {index !==
+                            getListAboutMeData?.data?.data?.languages.length - 1
+                              ? `${items}, `
+                              : items}
+                          </span>
+                        )
+                      )
+                    : "-"}
+                </span>
+              </li>
+            </ul>
+          </div>
+        </div>
+      );
+    }
+  }, [getListAboutMeData]);
 
   return (
     <Fragment>
@@ -135,7 +382,9 @@ const Resume = () => {
         <div className="container mx-auto">
           <Tabs
             defaultValue="experience"
+            value={activeTab}
             className="flex flex-col xl:flex-row gap-[60px]"
+            onValueChange={(tab) => setActiveTab(tab)}
           >
             <TabsList className="flex flex-col w-full max-w-[380px] mx-auto xl:mx-0 gap-6">
               <TabsTrigger value="experience">Experience</TabsTrigger>
@@ -146,83 +395,11 @@ const Resume = () => {
 
             <div className="min-h-[70vh] w-full">
               <TabsContent value="experience" className="w-full">
-                <div className="flex flex-col gap-[30px] text-center xl:text-left">
-                  <h3 className="text-4xl font-bold">{experience.title}</h3>
-                  <p className="max-w-[600px] text-white/60 mx-auto xl:mx-0">
-                    {experience.description}
-                  </p>
-                  {getListExperienceData?.data?.data?.length > 0 ? (
-                    <div className="h-[400px]">
-                      <ul className="grid grid-cols-1 lg:grid-cols-2 gap-[30px]">
-                        {getListExperienceData?.data?.data?.map(
-                          (items, index) => {
-                            return (
-                              <li
-                                key={index}
-                                className="bg-[#232329] h-[184px] py-6 px-10 rounded-xl flex flex-col justify-center items-center lg:items-start gap-1"
-                              >
-                                <span className="text-accent">
-                                  {items.duration}
-                                </span>
-                                <h3 className="text-xl max-w-[260px] min-h-[60px] text-center lg:text-left">
-                                  {items.position}
-                                </h3>
-                                <div className="flex items-center gap-3">
-                                  <span className="w-[6px] h-[6px] rounded-full bg-accent"></span>
-                                  <p className="text-white/60">
-                                    {items.company}
-                                  </p>
-                                </div>
-                              </li>
-                            );
-                          }
-                        )}
-                      </ul>
-                    </div>
-                  ) : (
-                    <EmptyData text="Experience Still Empty" />
-                  )}
-                </div>
+                {RENDER_EXPERIENCE}
               </TabsContent>
 
               <TabsContent value="education" className="w-full">
-                <div className="flex flex-col gap-[30px] text-center xl:text-left">
-                  <h3 className="text-4xl font-bold">{education.title}</h3>
-                  <p className="max-w-[600px] text-white/60 mx-auto xl:mx-0">
-                    {education.description}
-                  </p>
-                  {getListEducationData?.data?.data?.length > 0 ? (
-                    <div className="h-[400px]">
-                      <ul className="grid grid-cols-1 lg:grid-cols-2 gap-[30px]">
-                        {getListEducationData?.data?.data?.map(
-                          (items, index) => {
-                            return (
-                              <li
-                                key={index}
-                                className="bg-[#232329] h-[184px] py-6 px-10 rounded-xl flex flex-col justify-center items-center lg:items-start gap-1"
-                              >
-                                <span className="text-accent">
-                                  {items.duration}
-                                </span>
-                                <h3 className="text-xl max-w-[260px] min-h-[60px] text-center lg:text-left">
-                                  {items.degree}
-                                </h3>
-                                <div className="flex items-center gap-3">
-                                  <span className="w-[6px] h-[6px] rounded-full bg-accent"></span>
-                                  <p className="text-white/60">
-                                    {items.institution}
-                                  </p>
-                                </div>
-                              </li>
-                            );
-                          }
-                        )}
-                      </ul>
-                    </div>
-                  ) : (
-                    <EmptyData text="Education Still Empty" />
-                  )}
-                </div>
+                {RENDER_EDUCATION}
               </TabsContent>
 
               <TabsContent value="skills" className="w-full h-full">
@@ -263,73 +440,7 @@ const Resume = () => {
                 value="about"
                 className="w-full text-center xl:text-left"
               >
-                <div className="flex flex-col gap-[30px] text-center xl:text-left">
-                  <h3 className="text-4xl font-bold">{aboutMe.title}</h3>
-                  <p className="max-w-[600px] text-white/60 mx-auto xl:mx-0">
-                    {aboutMe.description}
-                  </p>
-                  <div className="h-[400px]">
-                    <ul className="grid grid-cols-1 xl:grid-cols-2 gap-y-6 gap-x-6 max-w-[620px] mx-auto xl:mx-0">
-                      <li className="flex items-center justify-center xl:justify-start gap-4">
-                        <span className="text-white/60">Name</span>
-                        <span className="text-xl">
-                          {getListAboutMeData?.data?.data?.name}
-                        </span>
-                      </li>
-                      <li className="flex items-center justify-center xl:justify-start gap-4">
-                        <span className="text-white/60">Phone</span>
-                        <span className="text-xl">
-                          {getListAboutMeData?.data?.data?.phone}
-                        </span>
-                      </li>
-                      <li className="flex items-center justify-center xl:justify-start gap-4">
-                        <span className="text-white/60">Experience</span>
-                        <span className="text-xl">
-                          {getListAboutMeData?.data?.data?.experience}
-                        </span>
-                      </li>
-                      <li className="flex items-center justify-center xl:justify-start gap-4">
-                        <span className="text-white/60">Nationality</span>
-                        <span className="text-xl">
-                          {getListAboutMeData?.data?.data?.nationality}
-                        </span>
-                      </li>
-                      <li className="flex items-center justify-center xl:justify-start gap-4">
-                        <span className="text-white/60">Email</span>
-                        <span className="text-xl">
-                          {getListAboutMeData?.data?.data?.email}
-                        </span>
-                      </li>
-                      <li className="flex items-center justify-center xl:justify-start gap-4">
-                        <span className="text-white/60">Freelance</span>
-                        <span className="text-xl">
-                          {getListAboutMeData?.data?.data?.freelance
-                            ? "Available"
-                            : "Not Available"}
-                        </span>
-                      </li>
-                      <li className="flex items-center justify-center xl:justify-start gap-4">
-                        <span className="text-white/60">Languages</span>
-                        <span className="text-xl">
-                          {getListAboutMeData?.data?.data?.languages.length > 0
-                            ? getListAboutMeData?.data?.data?.languages.map(
-                                (items, index) => (
-                                  <span key={index}>
-                                    {index !==
-                                    getListAboutMeData?.data?.data?.languages
-                                      .length -
-                                      1
-                                      ? `${items}, `
-                                      : items}
-                                  </span>
-                                )
-                              )
-                            : "-"}
-                        </span>
-                      </li>
-                    </ul>
-                  </div>
-                </div>
+                {RENDER_ABOUT_ME}
               </TabsContent>
             </div>
           </Tabs>
