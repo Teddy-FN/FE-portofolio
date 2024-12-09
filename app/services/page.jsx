@@ -52,6 +52,8 @@ const Services = () => {
       return (
         <div className="grid grid-cols-1 md:grid-cols-2 gap-[60px]">
           {getServiceData?.data?.data?.map((items, index) => {
+            console.log("ITEMS =>", items);
+
             const numb = index + 1 < 10 ? `0${index + 1}` : index;
             return (
               <div
@@ -63,7 +65,10 @@ const Services = () => {
                     {numb}
                   </div>
                   <Link
-                    href={items.href || ""}
+                    href={{
+                      pathname: `/work/${items.name}`,
+                      query: items.name,
+                    }}
                     className="w-[70px] h-[70px] rounded-full bg-white group-hover:bg-accent transition-all duration-500 flex justify-center items-center hover:-rotate-45"
                   >
                     <BsArrowDownRight className="text-primary text-3xl" />
