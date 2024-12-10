@@ -4,6 +4,8 @@
 import React, { useState, useCallback, useMemo, Fragment } from "react";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { Button } from "@/components/ui/button";
+import { useToast } from "@/hooks/use-toast";
+import { useLoading } from "@/components/Loading";
 import DashboardLayout from "@/components/DashboardTemplate";
 import { Skeleton } from "@/components/ui/skeleton";
 import { FiEdit, FiTrash } from "react-icons/fi";
@@ -30,6 +32,8 @@ const limitsOptions = [10, 20, 50];
 import { getListTableService, deleteService } from "@/service/service";
 
 const page = () => {
+  const { setActive } = useLoading();
+  const { toast } = useToast();
   const [pagination, setPagination] = useState({
     page: 1,
     limit: 10,
@@ -55,20 +59,32 @@ const page = () => {
   const delService = useMutation({
     mutationFn: deleteService,
     onMutate: () => {
-      // setActive(true, null)
+      setActive(true, null);
     },
     onSuccess: () => {
-      getServiceData.refetch();
-      // setActive(false, "success");
-      // toast.success("Success", {
-      //   description: "Successfully added about me",
-      // });
+      setTimeout(() => {
+        toast({
+          variant: "success",
+          title: "Successfully Delete Data Service",
+        });
+      }, 1000);
+
+      setTimeout(() => {
+        setActive(null, null);
+        getServiceData.refetch();
+      }, 2000);
     },
     onError: (err) => {
-      // setActive(false, "error");
-      // toast.error("Error", {
-      //   description: err.message,
-      // });
+      setTimeout(() => {
+        toast({
+          variant: "destructive",
+          title: "Uh oh! Something went wrong.",
+          description: err.message,
+        });
+      }, 1000);
+      setTimeout(() => {
+        setActive(null, null);
+      }, 2000);
     },
   });
 

@@ -3,6 +3,8 @@
 
 import React, { useState, useCallback, useMemo, Fragment } from "react";
 import { useMutation, useQuery } from "@tanstack/react-query";
+import { useToast } from "@/hooks/use-toast";
+import { useLoading } from "@/components/Loading";
 import { Button } from "@/components/ui/button";
 import DashboardLayout from "@/components/DashboardTemplate";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -28,6 +30,8 @@ const limitsOptions = [10, 20, 50];
 import { getListTableSkills, deleteSkills } from "@/service/skills";
 
 const page = () => {
+  const { toast } = useToast();
+  const { setActive } = useLoading();
   const [pagination, setPagination] = useState({
     page: 1,
     limit: 10,
@@ -43,11 +47,34 @@ const page = () => {
       }),
   });
 
-  const delExperience = useMutation({
-    mutationFn: (payload) => deleteSkills(payload),
+  const delSkills = useMutation({
+    mutationFn: deleteSkills,
+    onMutate: () => {
+      setActive(true, null);
+    },
     onSuccess: () => {
-      // Refetch data after successful deletion
-      getSkillData.refetch();
+      setTimeout(() => {
+        toast({
+          variant: "success",
+          title: "Successfully Delete Data Skills!",
+        });
+      }, 1000);
+      setTimeout(() => {
+        setActive(null, null);
+        getSkillData.refetch();
+      }, 2000);
+    },
+    onError: (err) => {
+      setTimeout(() => {
+        toast({
+          variant: "destructive",
+          title: "Uh oh! Something went wrong.",
+          description: err.message,
+        });
+      }, 1000);
+      setTimeout(() => {
+        setActive(null, null);
+      }, 2000);
     },
   });
 
@@ -92,7 +119,7 @@ const page = () => {
           <Button
             variants="outline"
             className="bg-red-500 text-white cursor-pointer flex items-center gap-6 w-max"
-            onClick={() => delExperience.mutate({ id: row.original.id })}
+            onClick={() => delSkills.mutate({ id: row.original.id })}
           >
             <FiTrash />
             Delete
