@@ -7,6 +7,8 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useToast } from "@/hooks/use-toast";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
+
+import { useLoading } from "@/components/Loading";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import DashboardLayout from "@/components/DashboardTemplate";
@@ -34,8 +36,8 @@ import { yearList } from "@/service/year";
 import { getExperienceById, putExperience } from "@/service/experience";
 
 const page = () => {
+  const { setActive } = useLoading();
   const params = useParams();
-
   const { toast } = useToast();
 
   const { id } = params;
@@ -109,7 +111,7 @@ const page = () => {
         body: payload,
       }),
     onMutate: () => {
-      // setActive(true, null)
+      setActive(true, null);
     },
     onSuccess: () => {
       setTimeout(() => {
@@ -119,15 +121,21 @@ const page = () => {
         });
       }, 1000);
       setTimeout(() => {
+        setActive(null, null);
         window.location.href = "/dashboard/experience";
       }, 2000);
     },
     onError: (err) => {
-      toast({
-        variant: "destructive",
-        title: "Uh oh! Something went wrong.",
-        description: err.message,
-      });
+      setTimeout(() => {
+        toast({
+          variant: "destructive",
+          title: "Uh oh! Something went wrong.",
+          description: err.message,
+        });
+      }, 1000);
+      setTimeout(() => {
+        setActive(null, null);
+      }, 2000);
     },
   });
 

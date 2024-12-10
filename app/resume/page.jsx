@@ -106,9 +106,9 @@ const Resume = () => {
   const RENDER_EXPERIENCE = useMemo(() => {
     if (getListExperienceData?.isLoading || getListExperienceData.isFetching) {
       return (
-        <div className="flex flex-col gap-[30px] text-center xl:text-left">
-          <Skeleton className="bg-pink-50/20 h-28 w-full rounded-md" />
-          <Skeleton className="bg-pink-50/20 h-28 w-full rounded-md" />
+        <div className="flex flex-col gap-[20px] py-8 text-center xl:text-left">
+          <Skeleton className="bg-pink-50/20 h-8 w-full rounded-md" />
+          <Skeleton className="bg-pink-50/20 h-8 w-full rounded-md" />
           <div className="grid grid-cols-1 md:grid-cols-2 w-full gap-6 py-6">
             {array.map((_, index) => {
               return (
@@ -176,9 +176,9 @@ const Resume = () => {
   const RENDER_EDUCATION = useMemo(() => {
     if (getListEducationData?.isLoading || getListEducationData.isFetching) {
       return (
-        <div className="flex flex-col gap-[30px] text-center xl:text-left">
-          <Skeleton className="bg-pink-50/20 h-28 w-full rounded-md" />
-          <Skeleton className="bg-pink-50/20 h-28 w-full rounded-md" />
+        <div className="flex flex-col gap-[20px] py-8 text-center xl:text-left">
+          <Skeleton className="bg-pink-50/20 h-8 w-full rounded-md" />
+          <Skeleton className="bg-pink-50/20 h-8 w-full rounded-md" />
           <div className="grid grid-cols-1 md:grid-cols-2 w-full gap-6 py-6">
             {array.map((_, index) => {
               return (
@@ -246,9 +246,9 @@ const Resume = () => {
   const RENDER_SKILLS = useMemo(() => {
     if (getListSkillData?.isLoading || getListSkillData.isFetching) {
       return (
-        <div className="flex flex-col gap-[30px] text-center xl:text-left">
-          <Skeleton className="bg-pink-50/20 h-28 w-full rounded-md" />
-          <Skeleton className="bg-pink-50/20 h-28 w-full rounded-md" />
+        <div className="flex flex-col gap-[20px] py-8 text-center xl:text-left">
+          <Skeleton className="bg-pink-50/20 h-8 w-full rounded-md" />
+          <Skeleton className="bg-pink-50/20 h-8 w-full rounded-md" />
           <div className="grid grid-cols-1 md:grid-cols-2 w-full gap-6 py-6">
             {array.map((_, index) => {
               return (
@@ -317,9 +317,9 @@ const Resume = () => {
   const RENDER_ABOUT_ME = useMemo(() => {
     if (getListAboutMeData?.isLoading || getListAboutMeData.isFetching) {
       return (
-        <div className="flex flex-col gap-[30px] text-center xl:text-left">
-          <Skeleton className="bg-pink-50/20 h-28 w-full rounded-md" />
-          <Skeleton className="bg-pink-50/20 h-28 w-full rounded-md" />
+        <div className="flex flex-col gap-[20px] py-8 text-center xl:text-left">
+          <Skeleton className="bg-pink-50/20 h-8 w-full rounded-md" />
+          <Skeleton className="bg-pink-50/20 h-8 w-full rounded-md" />
           <div className="grid grid-cols-1 md:grid-cols-2 w-full gap-6 py-6">
             {array.map((_, index) => {
               return (

@@ -3,6 +3,9 @@
 
 import React, { useState, useCallback, useMemo, Fragment } from "react";
 import { useMutation, useQuery } from "@tanstack/react-query";
+import { useToast } from "@/hooks/use-toast";
+
+import { useLoading } from "@/components/Loading";
 import { Button } from "@/components/ui/button";
 import DashboardLayout from "@/components/DashboardTemplate";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -29,6 +32,8 @@ const limitsOptions = [10, 20, 50];
 import { getListExperienceTable, deleteExperience } from "@/service/experience";
 
 const page = () => {
+  const { toast } = useToast();
+  const { setActive } = useLoading();
   const [pagination, setPagination] = useState({
     page: 1,
     limit: 10,
@@ -44,22 +49,33 @@ const page = () => {
   });
 
   const delExperience = useMutation({
-    mutationFn: deleteExperience,
+    mutationFn: (payload) => deleteExperience({ id: payload?.id }),
     onMutate: () => {
-      // setActive(true, null)
+      setActive(true, null);
     },
     onSuccess: () => {
-      geAboutMeData.refetch();
-      // setActive(false, "success");
-      // toast.success("Success", {
-      //   description: "Successfully added about me",
-      // });
+      setTimeout(() => {
+        toast({
+          variant: "success",
+          title: "Successfully Deleted Data Experience!",
+        });
+      }, 1000);
+      setTimeout(() => {
+        setActive(null, null);
+        getListExperience.refetch();
+      }, 2000);
     },
     onError: (err) => {
-      // setActive(false, "error");
-      // toast.error("Error", {
-      //   description: err.message,
-      // });
+      setTimeout(() => {
+        toast({
+          variant: "destructive",
+          title: "Uh oh! Something went wrong.",
+          description: err.message,
+        });
+      }, 1000);
+      setTimeout(() => {
+        setActive(null, null);
+      }, 2000);
     },
   });
 

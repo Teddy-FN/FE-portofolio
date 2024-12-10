@@ -10,14 +10,13 @@ import { useQuery, useMutation } from "@tanstack/react-query";
 import { useToast } from "@/hooks/use-toast";
 
 // Components
+import { useLoading } from "@/components/Loading";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import DashboardLayout from "@/components/DashboardTemplate";
 import { Separator } from "@/components/ui/separator";
 import {
   Form,
-  // FormControl,
-  // FormDescription,
   FormField,
   FormItem,
   FormLabel,
@@ -47,6 +46,7 @@ const userInfoSchema = z.object({
 });
 
 const page = () => {
+  const { setActive } = useLoading();
   const { toast } = useToast();
   const params = useParams();
   const [imagePreview, setImagePreview] = useState(null);
@@ -171,7 +171,7 @@ const page = () => {
         body: payload,
       }),
     onMutate: () => {
-      // setActive(true, null)
+      setActive(true, null);
     },
     onSuccess: () => {
       setTimeout(() => {
@@ -181,19 +181,21 @@ const page = () => {
         });
       }, 1000);
       setTimeout(() => {
+        setActive(null, null);
         window.location.href = "/dashboard/work";
       }, 2000);
     },
     onError: (err) => {
-      // setActive(false, "error");
-      // toast.error("Error", {
-      //   description: err.message,
-      // });
-      toast({
-        variant: "destructive",
-        title: "Uh oh! Something went wrong.",
-        description: err.message,
-      });
+      setTimeout(() => {
+        toast({
+          variant: "destructive",
+          title: "Uh oh! Something went wrong.",
+          description: err.message,
+        });
+      }, 1000);
+      setTimeout(() => {
+        setActive(null, null);
+      }, 2000);
     },
   });
 

@@ -7,13 +7,13 @@ import { useMutation } from "@tanstack/react-query";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
+
+import { useLoading } from "@/components/Loading";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import DashboardLayout from "@/components/DashboardTemplate";
 import {
   Form,
-  // FormControl,
-  // FormDescription,
   FormField,
   FormItem,
   FormLabel,
@@ -24,6 +24,7 @@ import { useToast } from "@/hooks/use-toast";
 import { postSkills } from "@/service/skills";
 
 const page = () => {
+  const { setActive } = useLoading();
   const { toast } = useToast();
 
   const formSchema = z.object({
@@ -43,7 +44,7 @@ const page = () => {
   const mutateAddSkills = useMutation({
     mutationFn: postSkills,
     onMutate: () => {
-      // setActive(true, null)
+      setActive(true, null);
     },
     onSuccess: () => {
       setTimeout(() => {
@@ -53,15 +54,21 @@ const page = () => {
         });
       }, 1000);
       setTimeout(() => {
+        setActive(null, null);
         window.location.href = "/dashboard/skills";
       }, 2000);
     },
     onError: (err) => {
-      toast({
-        variant: "destructive",
-        title: "Uh oh! Something went wrong.",
-        description: err.message,
-      });
+      setTimeout(() => {
+        toast({
+          variant: "destructive",
+          title: "Uh oh! Something went wrong.",
+          description: err.message,
+        });
+      }, 1000);
+      setTimeout(() => {
+        setActive(null, null);
+      }, 2000);
     },
   });
 

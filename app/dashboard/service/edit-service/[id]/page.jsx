@@ -1,20 +1,20 @@
 /* eslint-disable react-hooks/rules-of-hooks */
 "use client";
 
-import React, { useEffect, useMemo } from "react";
+import React, { useMemo } from "react";
 import { useQuery, useMutation } from "@tanstack/react-query";
 import { useToast } from "@/hooks/use-toast";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
+
+import { useLoading } from "@/components/Loading";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import DashboardLayout from "@/components/DashboardTemplate";
 import { useParams } from "next/navigation";
 import {
   Form,
-  // FormControl,
-  // FormDescription,
   FormField,
   FormItem,
   FormLabel,
@@ -24,6 +24,7 @@ import {
 import { getServiceById, putService } from "@/service/service";
 
 const page = () => {
+  const { setActive } = useLoading();
   const { toast } = useToast();
   const params = useParams();
 
@@ -67,7 +68,7 @@ const page = () => {
         body: payload,
       }),
     onMutate: () => {
-      // setActive(true, null)
+      setActive(true, null);
     },
     onSuccess: () => {
       setTimeout(() => {
@@ -77,15 +78,21 @@ const page = () => {
         });
       }, 1000);
       setTimeout(() => {
+        setActive(null, null);
         window.location.href = "/dashboard/service";
       }, 2000);
     },
     onError: (err) => {
-      toast({
-        variant: "destructive",
-        title: "Uh oh! Something went wrong.",
-        description: err.message,
-      });
+      setTimeout(() => {
+        toast({
+          variant: "destructive",
+          title: "Uh oh! Something went wrong.",
+          description: err.message,
+        });
+      }, 1000);
+      setTimeout(() => {
+        setActive(null, null);
+      }, 2000);
     },
   });
 

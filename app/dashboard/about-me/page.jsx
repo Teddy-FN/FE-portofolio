@@ -1,21 +1,20 @@
 /* eslint-disable react-hooks/rules-of-hooks */
 "use client";
 
-import React, { useState, useMemo, useEffect } from "react";
+import React, { useState, useMemo } from "react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { useQuery, useMutation } from "@tanstack/react-query";
 
 // Components
+import { useLoading } from "@/components/Loading";
 import { useToast } from "@/hooks/use-toast";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import DashboardLayout from "@/components/DashboardTemplate";
 import {
   Form,
-  // FormControl,
-  // FormDescription,
   FormField,
   FormItem,
   FormLabel,
@@ -42,6 +41,7 @@ import { nationality } from "@/service/nationality";
 
 const page = () => {
   const { toast } = useToast();
+  const { setActive } = useLoading();
   const geAboutMeData = useQuery({
     queryKey: ["getListAboutMe"],
     queryFn: getListAboutMe,
@@ -54,8 +54,6 @@ const page = () => {
     queryKey: ["nationality"],
     queryFn: nationality,
   });
-
-  console.log("nationalityData =>", nationalityData);
 
   // Sort nationality data once for reuse
   const sortedNationalities = useMemo(() => {
@@ -116,7 +114,7 @@ const page = () => {
   const mutateAddAboutMe = useMutation({
     mutationFn: postAboutMe,
     onMutate: () => {
-      // setActive(true, null)
+      setActive(true, null);
     },
     onSuccess: () => {
       setTimeout(() => {
@@ -126,22 +124,28 @@ const page = () => {
         });
       }, 1000);
       setTimeout(() => {
+        setActive(null, null);
         window.location.href = "/dashboard";
       }, 2000);
     },
     onError: (err) => {
-      toast({
-        variant: "destructive",
-        title: "Uh oh! Something went wrong.",
-        description: err.message,
-      });
+      setTimeout(() => {
+        toast({
+          variant: "destructive",
+          title: "Uh oh! Something went wrong.",
+          description: err.message,
+        });
+      }, 1000);
+      setTimeout(() => {
+        setActive(null, null);
+      }, 2000);
     },
   });
 
   const mutateEditAboutMe = useMutation({
     mutationFn: putAboutMe,
     onMutate: () => {
-      // setActive(true, null)
+      setActive(true, null);
     },
     onSuccess: () => {
       setTimeout(() => {
@@ -151,19 +155,21 @@ const page = () => {
         });
       }, 1000);
       setTimeout(() => {
+        setActive(null, null);
         window.location.href = "/dashboard";
       }, 2000);
     },
     onError: (err) => {
-      // setActive(false, "error");
-      // toast.error("Error", {
-      //   description: err.message,
-      // });
-      toast({
-        variant: "destructive",
-        title: "Uh oh! Something went wrong.",
-        description: err.message,
-      });
+      setTimeout(() => {
+        toast({
+          variant: "destructive",
+          title: "Uh oh! Something went wrong.",
+          description: err.message,
+        });
+      }, 1000);
+      setTimeout(() => {
+        setActive(null, null);
+      }, 2000);
     },
   });
 

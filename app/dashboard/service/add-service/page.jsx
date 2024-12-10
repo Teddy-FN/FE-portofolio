@@ -8,6 +8,7 @@ import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { useToast } from "@/hooks/use-toast";
 
+import { useLoading } from "@/components/Loading";
 import {
   Form,
   FormField,
@@ -22,6 +23,7 @@ import DashboardLayout from "@/components/DashboardTemplate";
 import { postService } from "@/service/service";
 
 const page = () => {
+  const { setActive } = useLoading();
   const { toast } = useToast();
   const formSchema = z.object({
     name: z.string().min(4, {
@@ -44,7 +46,7 @@ const page = () => {
   const mutateAddService = useMutation({
     mutationFn: postService,
     onMutate: () => {
-      // setActive(true, null)
+      setActive(true, null);
     },
     onSuccess: () => {
       setTimeout(() => {
@@ -54,15 +56,21 @@ const page = () => {
         });
       }, 1000);
       setTimeout(() => {
+        setActive(null, null);
         window.location.href = "/dashboard/service";
       }, 2000);
     },
     onError: (err) => {
-      toast({
-        variant: "destructive",
-        title: "Uh oh! Something went wrong.",
-        description: err.message,
-      });
+      setTimeout(() => {
+        toast({
+          variant: "destructive",
+          title: "Uh oh! Something went wrong.",
+          description: err.message,
+        });
+      }, 1000);
+      setTimeout(() => {
+        setActive(null, null);
+      }, 2000);
     },
   });
 

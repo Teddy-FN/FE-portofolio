@@ -4,6 +4,7 @@ import PageTransition from "@/components/PageTransition";
 import StairTransition from "@/components/StairTransition";
 import ReactQueryProvider from "@/components/ReactQueryProvider";
 import { Toaster } from "@/components/ui/toaster";
+import { LoadingProvider } from "@/components/Loading";
 
 const geistSans = JetBrains_Mono({
   subsets: ["latin"],
@@ -23,7 +24,9 @@ export default function RootLayout({ children }) {
         <Toaster />
         <ReactQueryProvider>
           <StairTransition />
-          <PageTransition>{children}</PageTransition>
+          <PageTransition>
+            <LoadingProvider>{children}</LoadingProvider>
+          </PageTransition>
         </ReactQueryProvider>
       </body>
     </html>
