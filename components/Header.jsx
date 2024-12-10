@@ -43,16 +43,16 @@ const Header = () => {
     if (titleHome?.isLoading || titleHome.isFetching) {
       return (
         <div className="grid grid-cols-1 md:grid-cols-2 w-full gap-6 py-6">
-          <Skeleton className="bg-pink-50/20 h-72 w-40 rounded-md" />
+          <Skeleton className="bg-pink-50/20 h-8 w-40 rounded-md" />
         </div>
       );
     }
 
     if (titleHome?.isError) {
       return (
-        <div className="h-screen">
-          <AbortController refetch={() => titleHome.refetch()} />
-        </div>
+        <h1 className="text-4xl font-semibold">
+          - <span className="text-accent">.</span>
+        </h1>
       );
     }
 
@@ -60,7 +60,8 @@ const Header = () => {
       return (
         <Link href="/">
           <h1 className="text-4xl font-semibold">
-            {titleHome?.data?.data?.name} <span className="text-accent">.</span>
+            {titleHome?.data?.data?.name || "-"}{" "}
+            <span className="text-accent">.</span>
           </h1>
         </Link>
       );
