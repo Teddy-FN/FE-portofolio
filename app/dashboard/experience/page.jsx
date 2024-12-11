@@ -4,7 +4,16 @@
 import React, { useState, useCallback, useMemo, Fragment } from "react";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { useToast } from "@/hooks/use-toast";
+import Link from "next/link";
 
+import {
+  Breadcrumb,
+  BreadcrumbItem,
+  BreadcrumbLink,
+  BreadcrumbList,
+  BreadcrumbPage,
+  BreadcrumbSeparator,
+} from "@/components/ui/breadcrumb";
 import { useLoading } from "@/components/Loading";
 import { Button } from "@/components/ui/button";
 import DashboardLayout from "@/components/DashboardTemplate";
@@ -25,7 +34,6 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import Link from "next/link";
 
 const limitsOptions = [10, 20, 50];
 
@@ -379,8 +387,23 @@ const page = () => {
   return (
     <DashboardLayout>
       <div className="flex flex-col gap-8">
-        <div className="flex justify-between items-center">
-          <h1 className="text-2xl font-bold">Experience Page</h1>
+        <div className="flex justify-between">
+          <div className="flex-col flex gap-4">
+            <h1 className="text-2xl font-bold">Experience Page</h1>
+            <Breadcrumb>
+              <BreadcrumbList>
+                <BreadcrumbItem>
+                  <BreadcrumbLink>
+                    <Link href="/dashboard">Home</Link>
+                  </BreadcrumbLink>
+                </BreadcrumbItem>
+                <BreadcrumbSeparator />
+                <BreadcrumbItem>
+                  <BreadcrumbPage>Experience Page</BreadcrumbPage>
+                </BreadcrumbItem>
+              </BreadcrumbList>
+            </Breadcrumb>
+          </div>
           <Button>
             <Link
               href="/dashboard/experience/add-experience"

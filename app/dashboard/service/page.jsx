@@ -3,6 +3,16 @@
 
 import React, { useState, useCallback, useMemo, Fragment } from "react";
 import { useMutation, useQuery } from "@tanstack/react-query";
+import Link from "next/link";
+
+import {
+  Breadcrumb,
+  BreadcrumbItem,
+  BreadcrumbLink,
+  BreadcrumbList,
+  BreadcrumbPage,
+  BreadcrumbSeparator,
+} from "@/components/ui/breadcrumb";
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/hooks/use-toast";
 import { useLoading } from "@/components/Loading";
@@ -24,12 +34,11 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import Link from "next/link";
 import AbortController from "@/components/AbortController";
 
-const limitsOptions = [10, 20, 50];
-
 import { getListTableService, deleteService } from "@/service/service";
+
+const limitsOptions = [10, 20, 50];
 
 const page = () => {
   const { setActive } = useLoading();
@@ -321,8 +330,24 @@ const page = () => {
   return (
     <DashboardLayout>
       <div className="flex flex-col gap-8">
-        <div className="flex justify-between items-center">
-          <h1 className="text-2xl font-bold">Service Page</h1>
+        <div className="flex justify-between">
+          <div className="flex-col flex gap-4">
+            <h1 className="text-2xl font-bold">Service Page</h1>
+            <Breadcrumb>
+              <BreadcrumbList>
+                <BreadcrumbItem>
+                  <BreadcrumbLink>
+                    <Link href="/dashboard">Home</Link>
+                  </BreadcrumbLink>
+                </BreadcrumbItem>
+                <BreadcrumbSeparator />
+                <BreadcrumbItem>
+                  <BreadcrumbPage>Service Page</BreadcrumbPage>
+                </BreadcrumbItem>
+              </BreadcrumbList>
+            </Breadcrumb>
+          </div>
+
           <Button>
             <Link
               href="/dashboard/service/add-service"
