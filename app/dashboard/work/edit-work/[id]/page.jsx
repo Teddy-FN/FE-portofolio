@@ -8,8 +8,18 @@ import { z } from "zod";
 import { FiPlus, FiTrash } from "react-icons/fi";
 import { useQuery, useMutation } from "@tanstack/react-query";
 import { useToast } from "@/hooks/use-toast";
+import Link from "next/link";
 
 // Components
+import {
+  Breadcrumb,
+  BreadcrumbItem,
+  BreadcrumbLink,
+  BreadcrumbList,
+  BreadcrumbPage,
+  BreadcrumbSeparator,
+} from "@/components/ui/breadcrumb";
+import { Textarea } from "@/components/ui/textarea";
 import { useLoading } from "@/components/Loading";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
@@ -404,6 +414,25 @@ const page = () => {
     <DashboardLayout>
       <div className="flex flex-col gap-8">
         <h1 className="text-2xl font-bold">Work / Project Page</h1>
+        <Breadcrumb>
+          <BreadcrumbList>
+            <BreadcrumbItem>
+              <BreadcrumbLink>
+                <Link href="/dashboard">Home</Link>
+              </BreadcrumbLink>
+            </BreadcrumbItem>
+            <BreadcrumbSeparator />
+            <BreadcrumbItem>
+              <BreadcrumbLink>
+                <Link href="/dashboard/work">Project / Work List</Link>
+              </BreadcrumbLink>
+            </BreadcrumbItem>
+            <BreadcrumbSeparator />
+            <BreadcrumbItem>
+              <BreadcrumbPage>Edit Project / Work</BreadcrumbPage>
+            </BreadcrumbItem>
+          </BreadcrumbList>
+        </Breadcrumb>
 
         <Form {...form}>
           <form
@@ -490,9 +519,9 @@ const page = () => {
                       <FormLabel className="text-base">Description</FormLabel>
                       {/* <Asterisk className="w-4 h-4 text-destructive" /> */}
                     </div>
-                    <Input
-                      type="text"
+                    <Textarea
                       {...field}
+                      type="text"
                       placeholder="Enter Name Product"
                       maxLength={30}
                       className="w-full"

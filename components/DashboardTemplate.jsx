@@ -23,6 +23,11 @@ const menus = [
     path: "/dashboard",
   },
   {
+    icon: <FaUser />,
+    name: "About Me",
+    path: "/dashboard/about-me",
+  },
+  {
     icon: <FaGlobe />,
     name: "Experience",
     path: "/dashboard/experience",
@@ -36,11 +41,6 @@ const menus = [
     icon: <FaBook />,
     name: "Skills",
     path: "/dashboard/skills",
-  },
-  {
-    icon: <FaUser />,
-    name: "About Me",
-    path: "/dashboard/about-me",
   },
   {
     icon: <FaSlidersH />,
