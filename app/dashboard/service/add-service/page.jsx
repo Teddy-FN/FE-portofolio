@@ -8,6 +8,7 @@ import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { useToast } from "@/hooks/use-toast";
 import Link from "next/link";
+import { LuAsterisk } from "react-icons/lu";
 
 import {
   Breadcrumb,
@@ -96,26 +97,28 @@ const page = () => {
   return (
     <DashboardLayout>
       <div className="flex flex-col gap-8">
-        <h1 className="text-2xl font-bold">Service Page</h1>
-        <Breadcrumb>
-          <BreadcrumbList>
-            <BreadcrumbItem>
-              <BreadcrumbLink>
-                <Link href="/dashboard">Home</Link>
-              </BreadcrumbLink>
-            </BreadcrumbItem>
-            <BreadcrumbSeparator />
-            <BreadcrumbItem>
-              <BreadcrumbLink>
-                <Link href="/dashboard/service">Service List</Link>
-              </BreadcrumbLink>
-            </BreadcrumbItem>
-            <BreadcrumbSeparator />
-            <BreadcrumbItem>
-              <BreadcrumbPage>Add Service</BreadcrumbPage>
-            </BreadcrumbItem>
-          </BreadcrumbList>
-        </Breadcrumb>
+        <div className="flex-col flex gap-4">
+          <h1 className="text-2xl font-bold">Service Page</h1>
+          <Breadcrumb>
+            <BreadcrumbList>
+              <BreadcrumbItem>
+                <BreadcrumbLink>
+                  <Link href="/dashboard">Home</Link>
+                </BreadcrumbLink>
+              </BreadcrumbItem>
+              <BreadcrumbSeparator />
+              <BreadcrumbItem>
+                <BreadcrumbLink>
+                  <Link href="/dashboard/service">Service List</Link>
+                </BreadcrumbLink>
+              </BreadcrumbItem>
+              <BreadcrumbSeparator />
+              <BreadcrumbItem>
+                <BreadcrumbPage>Add Service</BreadcrumbPage>
+              </BreadcrumbItem>
+            </BreadcrumbList>
+          </Breadcrumb>
+        </div>
 
         <Form {...form}>
           <form
@@ -130,7 +133,7 @@ const page = () => {
                   <FormItem>
                     <div className="mb-4 flex items-center gap-2">
                       <FormLabel className="text-base">Title</FormLabel>
-                      {/* <Asterisk className="w-4 h-4 text-destructive" /> */}
+                      <LuAsterisk className="w-4 h-4 text-red-600" />
                     </div>
                     <Input
                       type="text"
@@ -153,7 +156,7 @@ const page = () => {
                   <FormItem>
                     <div className="mb-4 flex items-center gap-2">
                       <FormLabel className="text-base">Description</FormLabel>
-                      {/* <Asterisk className="w-4 h-4 text-destructive" /> */}
+                      <LuAsterisk className="w-4 h-4 text-red-600" />
                     </div>
                     <Textarea
                       {...field}

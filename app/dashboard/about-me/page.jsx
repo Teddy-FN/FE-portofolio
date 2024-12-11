@@ -7,6 +7,7 @@ import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { useQuery, useMutation } from "@tanstack/react-query";
 import Link from "next/link";
+import { LuAsterisk } from "react-icons/lu";
 
 // Components
 import { useLoading } from "@/components/Loading";
@@ -242,20 +243,22 @@ const page = () => {
   return (
     <DashboardLayout>
       <div className="flex flex-col gap-8">
-        <h1 className="text-2xl font-bold">About Me Page</h1>
-        <Breadcrumb>
-          <BreadcrumbList>
-            <BreadcrumbItem>
-              <BreadcrumbLink>
-                <Link href="/dashboard">Home</Link>
-              </BreadcrumbLink>
-            </BreadcrumbItem>
-            <BreadcrumbSeparator />
-            <BreadcrumbItem>
-              <BreadcrumbPage>About Me Page</BreadcrumbPage>
-            </BreadcrumbItem>
-          </BreadcrumbList>
-        </Breadcrumb>
+        <div className="flex-col flex gap-4">
+          <h1 className="text-2xl font-bold">About Me Page</h1>
+          <Breadcrumb>
+            <BreadcrumbList>
+              <BreadcrumbItem>
+                <BreadcrumbLink>
+                  <Link href="/dashboard">Home</Link>
+                </BreadcrumbLink>
+              </BreadcrumbItem>
+              <BreadcrumbSeparator />
+              <BreadcrumbItem>
+                <BreadcrumbPage>About Me Page</BreadcrumbPage>
+              </BreadcrumbItem>
+            </BreadcrumbList>
+          </Breadcrumb>
+        </div>
 
         <Form {...form}>
           <form
@@ -270,7 +273,7 @@ const page = () => {
                   <FormItem>
                     <div className="mb-4 flex items-center gap-2">
                       <FormLabel className="text-base">Photo</FormLabel>
-                      {/* <Asterisk className="w-4 h-4 text-destructive" /> */}
+                      <LuAsterisk className="w-4 h-4 text-red-600" />
                     </div>
 
                     <Input
@@ -316,7 +319,7 @@ const page = () => {
                   <FormItem>
                     <div className="mb-4 flex items-center gap-2">
                       <FormLabel className="text-base">Name</FormLabel>
-                      {/* <Asterisk className="w-4 h-4 text-destructive" /> */}
+                      <LuAsterisk className="w-4 h-4 text-red-600" />
                     </div>
                     <Input
                       type="text"
@@ -340,7 +343,7 @@ const page = () => {
                   <FormItem>
                     <div className="mb-4 flex items-center gap-2">
                       <FormLabel className="text-base">Email</FormLabel>
-                      {/* <Asterisk className="w-4 h-4 text-destructive" /> */}
+                      <LuAsterisk className="w-4 h-4 text-red-600" />
                     </div>
                     <Input
                       type="email"
@@ -365,7 +368,7 @@ const page = () => {
                   <FormItem>
                     <div className="mb-4 flex items-center gap-2">
                       <FormLabel className="text-base">Experience</FormLabel>
-                      {/* <Asterisk className="w-4 h-4 text-destructive" /> */}
+                      <LuAsterisk className="w-4 h-4 text-red-600" />
                     </div>
                     <Input
                       type="text"
@@ -389,8 +392,9 @@ const page = () => {
                 name="freelance"
                 render={({ field }) => (
                   <FormItem className="flex-1">
-                    <div className="mb-4">
+                    <div className="mb-4 flex items-center gap-2">
                       <FormLabel className="text-base">Freelance</FormLabel>
+                      <LuAsterisk className="w-4 h-4 text-red-600" />
                     </div>
                     <div className="flex items-center gap-6 mb-4">
                       <p>No</p>
@@ -418,7 +422,10 @@ const page = () => {
                 name="nationality"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Nationality</FormLabel>
+                    <div className="mb-4 flex items-center gap-2">
+                      <FormLabel className="text-base">Nationality</FormLabel>
+                      <LuAsterisk className="w-4 h-4 text-red-600" />
+                    </div>
                     <DropdownMenu>
                       <DropdownMenuTrigger asChild>
                         <div>
@@ -465,6 +472,7 @@ const page = () => {
                   <FormItem>
                     <div className="mb-4 flex items-center gap-2">
                       <FormLabel className="text-base">Languages</FormLabel>
+                      <LuAsterisk className="w-4 h-4 text-red-600" />
                     </div>
                     <DropdownMenu>
                       <DropdownMenuTrigger asChild>

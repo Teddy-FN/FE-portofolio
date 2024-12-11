@@ -9,6 +9,7 @@ import { FiPlus, FiTrash } from "react-icons/fi";
 import { useQuery, useMutation } from "@tanstack/react-query";
 import Link from "next/link";
 import { useToast } from "@/hooks/use-toast";
+import { LuAsterisk } from "react-icons/lu";
 
 // Components
 import {
@@ -215,10 +216,11 @@ const page = () => {
                 >
                   <div className="flex-1">
                     <FormItem>
-                      <div className="mb-4">
+                      <div className="mb-4 flex items-center gap-2">
                         <FormLabel className="text-base">
                           Name Github {numb}
                         </FormLabel>
+                        <LuAsterisk className="w-4 h-4 text-red-600" />
                       </div>
                       <Input
                         type="text"
@@ -256,10 +258,11 @@ const page = () => {
                   </div>
                   <div className="flex-1">
                     <FormItem>
-                      <div className="mb-4">
+                      <div className="mb-4 flex items-center gap-2">
                         <FormLabel className="text-base">
                           URL Github {numb}
                         </FormLabel>
+                        <LuAsterisk className="w-4 h-4 text-red-600" />
                       </div>
                       <Input
                         type="text"
@@ -363,26 +366,28 @@ const page = () => {
   return (
     <DashboardLayout>
       <div className="flex flex-col gap-8">
-        <h1 className="text-2xl font-bold">Work / Project Page</h1>
-        <Breadcrumb>
-          <BreadcrumbList>
-            <BreadcrumbItem>
-              <BreadcrumbLink>
-                <Link href="/dashboard">Home</Link>
-              </BreadcrumbLink>
-            </BreadcrumbItem>
-            <BreadcrumbSeparator />
-            <BreadcrumbItem>
-              <BreadcrumbLink>
-                <Link href="/dashboard/work">Project / Work List</Link>
-              </BreadcrumbLink>
-            </BreadcrumbItem>
-            <BreadcrumbSeparator />
-            <BreadcrumbItem>
-              <BreadcrumbPage>Add Project / Work</BreadcrumbPage>
-            </BreadcrumbItem>
-          </BreadcrumbList>
-        </Breadcrumb>
+        <div className="flex-col flex gap-4">
+          <h1 className="text-2xl font-bold">Work / Project Page</h1>
+          <Breadcrumb>
+            <BreadcrumbList>
+              <BreadcrumbItem>
+                <BreadcrumbLink>
+                  <Link href="/dashboard">Home</Link>
+                </BreadcrumbLink>
+              </BreadcrumbItem>
+              <BreadcrumbSeparator />
+              <BreadcrumbItem>
+                <BreadcrumbLink>
+                  <Link href="/dashboard/work">Project / Work List</Link>
+                </BreadcrumbLink>
+              </BreadcrumbItem>
+              <BreadcrumbSeparator />
+              <BreadcrumbItem>
+                <BreadcrumbPage>Add Project / Work</BreadcrumbPage>
+              </BreadcrumbItem>
+            </BreadcrumbList>
+          </Breadcrumb>
+        </div>
 
         <Form {...form}>
           <form
@@ -397,7 +402,7 @@ const page = () => {
                   <FormItem>
                     <div className="mb-4 flex items-center gap-2">
                       <FormLabel className="text-base">Image Project</FormLabel>
-                      {/* <Asterisk className="w-4 h-4 text-destructive" /> */}
+                      <LuAsterisk className="w-4 h-4 text-red-600" />
                     </div>
 
                     <Input
@@ -442,7 +447,7 @@ const page = () => {
                   <FormItem>
                     <div className="mb-4 flex items-center gap-2">
                       <FormLabel className="text-base">Name</FormLabel>
-                      {/* <Asterisk className="w-4 h-4 text-destructive" /> */}
+                      <LuAsterisk className="w-4 h-4 text-red-600" />
                     </div>
                     <Input
                       type="text"
@@ -466,7 +471,7 @@ const page = () => {
                   <FormItem>
                     <div className="mb-4 flex items-center gap-2">
                       <FormLabel className="text-base">Description</FormLabel>
-                      {/* <Asterisk className="w-4 h-4 text-destructive" /> */}
+                      <LuAsterisk className="w-4 h-4 text-red-600" />
                     </div>
                     <Textarea
                       {...field}
@@ -493,6 +498,7 @@ const page = () => {
                   <FormItem>
                     <div className="mb-4 flex items-center gap-2">
                       <FormLabel className="text-base">Stack</FormLabel>
+                      <LuAsterisk className="w-4 h-4 text-red-600" />
                     </div>
                     <DropdownMenu>
                       <DropdownMenuTrigger asChild>
@@ -553,6 +559,7 @@ const page = () => {
                   <FormItem>
                     <div className="mb-4 flex items-center gap-2">
                       <FormLabel className="text-base">Category</FormLabel>
+                      <LuAsterisk className="w-4 h-4 text-red-600" />
                     </div>
                     <DropdownMenu>
                       <DropdownMenuTrigger asChild>
@@ -600,7 +607,7 @@ const page = () => {
                   <FormItem>
                     <div className="mb-4 flex items-center gap-2">
                       <FormLabel className="text-base">Live URL</FormLabel>
-                      {/* <Asterisk className="w-4 h-4 text-destructive" /> */}
+                      <LuAsterisk className="w-4 h-4 text-red-600" />
                     </div>
                     <Input
                       type="text"

@@ -9,6 +9,7 @@ import { FiPlus, FiTrash } from "react-icons/fi";
 import { useQuery, useMutation } from "@tanstack/react-query";
 import { useToast } from "@/hooks/use-toast";
 import Link from "next/link";
+import { LuAsterisk } from "react-icons/lu";
 
 // Components
 import {
@@ -265,10 +266,11 @@ const page = () => {
                 >
                   <div className="flex-1">
                     <FormItem>
-                      <div className="mb-4">
+                      <div className="mb-4 flex items-center gap-2">
                         <FormLabel className="text-base">
                           Name Github {numb}
                         </FormLabel>
+                        <LuAsterisk className="w-4 h-4 text-red-600" />
                       </div>
                       <Input
                         type="text"
@@ -306,10 +308,11 @@ const page = () => {
                   </div>
                   <div className="flex-1">
                     <FormItem>
-                      <div className="mb-4">
+                      <div className="mb-4 flex items-center gap-2">
                         <FormLabel className="text-base">
                           URL Github {numb}
                         </FormLabel>
+                        <LuAsterisk className="w-4 h-4 text-red-600" />
                       </div>
                       <Input
                         type="text"
@@ -413,26 +416,28 @@ const page = () => {
   return (
     <DashboardLayout>
       <div className="flex flex-col gap-8">
-        <h1 className="text-2xl font-bold">Work / Project Page</h1>
-        <Breadcrumb>
-          <BreadcrumbList>
-            <BreadcrumbItem>
-              <BreadcrumbLink>
-                <Link href="/dashboard">Home</Link>
-              </BreadcrumbLink>
-            </BreadcrumbItem>
-            <BreadcrumbSeparator />
-            <BreadcrumbItem>
-              <BreadcrumbLink>
-                <Link href="/dashboard/work">Project / Work List</Link>
-              </BreadcrumbLink>
-            </BreadcrumbItem>
-            <BreadcrumbSeparator />
-            <BreadcrumbItem>
-              <BreadcrumbPage>Edit Project / Work</BreadcrumbPage>
-            </BreadcrumbItem>
-          </BreadcrumbList>
-        </Breadcrumb>
+        <div className="flex-col flex gap-4">
+          <h1 className="text-2xl font-bold">Work / Project Page</h1>
+          <Breadcrumb>
+            <BreadcrumbList>
+              <BreadcrumbItem>
+                <BreadcrumbLink>
+                  <Link href="/dashboard">Home</Link>
+                </BreadcrumbLink>
+              </BreadcrumbItem>
+              <BreadcrumbSeparator />
+              <BreadcrumbItem>
+                <BreadcrumbLink>
+                  <Link href="/dashboard/work">Project / Work List</Link>
+                </BreadcrumbLink>
+              </BreadcrumbItem>
+              <BreadcrumbSeparator />
+              <BreadcrumbItem>
+                <BreadcrumbPage>Edit Project / Work</BreadcrumbPage>
+              </BreadcrumbItem>
+            </BreadcrumbList>
+          </Breadcrumb>
+        </div>
 
         <Form {...form}>
           <form
@@ -446,8 +451,8 @@ const page = () => {
                 render={() => (
                   <FormItem>
                     <div className="mb-4 flex items-center gap-2">
-                      <FormLabel className="text-base">Photo</FormLabel>
-                      {/* <Asterisk className="w-4 h-4 text-destructive" /> */}
+                      <FormLabel className="text-base">Image Project</FormLabel>
+                      <LuAsterisk className="w-4 h-4 text-red-600" />
                     </div>
 
                     <Input
@@ -493,7 +498,7 @@ const page = () => {
                   <FormItem>
                     <div className="mb-4 flex items-center gap-2">
                       <FormLabel className="text-base">Name</FormLabel>
-                      {/* <Asterisk className="w-4 h-4 text-destructive" /> */}
+                      <LuAsterisk className="w-4 h-4 text-red-600" />
                     </div>
                     <Input
                       type="text"
@@ -517,7 +522,7 @@ const page = () => {
                   <FormItem>
                     <div className="mb-4 flex items-center gap-2">
                       <FormLabel className="text-base">Description</FormLabel>
-                      {/* <Asterisk className="w-4 h-4 text-destructive" /> */}
+                      <LuAsterisk className="w-4 h-4 text-red-600" />
                     </div>
                     <Textarea
                       {...field}
@@ -544,85 +549,7 @@ const page = () => {
                   <FormItem>
                     <div className="mb-4 flex items-center gap-2">
                       <FormLabel className="text-base">Stack</FormLabel>
-                    </div>
-                    <DropdownMenu>
-                      <DropdownMenuTrigger asChild>
-                        <div>
-                          <Input
-                            value={
-                              Array.isArray(field.value)
-                                ? field.value.join(", ")
-                                : ""
-                            }
-                            readOnly
-                            placeholder="Select Stack"
-                            className="w-full text-left cursor-pointer"
-                          />
-                        </div>
-                      </DropdownMenuTrigger>
-                      <DropdownMenuContent className="w-56 h-60 overflow-scroll">
-                        <DropdownMenuLabel>Stack</DropdownMenuLabel>
-                        <DropdownMenuSeparator />
-                        {stack?.map((item, index) => {
-                          const isSelected =
-                            Array.isArray(field.value) &&
-                            field.value.includes(item.name);
-                          return (
-                            <DropdownMenuCheckboxItem
-                              key={index}
-                              checked={isSelected}
-                              onCheckedChange={(checked) => {
-                                let updatedStack;
-
-                                // If checked, add the item to the array
-                                if (checked) {
-                                  updatedStack = [
-                                    ...(field.value || []),
-                                    item.name,
-                                  ];
-                                } else {
-                                  // If unchecked, remove the item from the array
-                                  updatedStack = (field.value || []).filter(
-                                    (lang) => lang !== item.name
-                                  );
-                                }
-
-                                // Update the field value
-                                field.onChange(updatedStack);
-
-                                // To handle the case where you might want to delete data from another context
-                                // For example, if you are managing some state or doing an API call to update the data
-                                if (!checked) {
-                                  // Code to handle deleting the item from your data source
-                                  // You can handle deletion here or trigger a separate function to delete data
-                                  deleteItemFromData(item.name); // This would be a function to delete the item from data
-                                }
-                              }}
-                              className="flex items-center gap-5"
-                            >
-                              <p>{item?.name}</p>
-                            </DropdownMenuCheckboxItem>
-                          );
-                        })}
-                      </DropdownMenuContent>
-                    </DropdownMenu>
-                    {form.formState.errors.stack && (
-                      <FormMessage>
-                        {form.formState.errors.stack.message}
-                      </FormMessage>
-                    )}
-                  </FormItem>
-                )}
-              />
-            </div>
-            <div className="col-span-1">
-              <FormField
-                control={form.control}
-                name="stack"
-                render={({ field }) => (
-                  <FormItem>
-                    <div className="mb-4 flex items-center gap-2">
-                      <FormLabel className="text-base">Stack</FormLabel>
+                      <LuAsterisk className="w-4 h-4 text-red-600" />
                     </div>
                     <DropdownMenu>
                       <DropdownMenuTrigger asChild>
@@ -683,6 +610,7 @@ const page = () => {
                   <FormItem>
                     <div className="mb-4 flex items-center gap-2">
                       <FormLabel className="text-base">Category</FormLabel>
+                      <LuAsterisk className="w-4 h-4 text-red-600" />
                     </div>
                     <DropdownMenu>
                       <DropdownMenuTrigger asChild>
@@ -730,7 +658,7 @@ const page = () => {
                   <FormItem>
                     <div className="mb-4 flex items-center gap-2">
                       <FormLabel className="text-base">Live URL</FormLabel>
-                      {/* <Asterisk className="w-4 h-4 text-destructive" /> */}
+                      <LuAsterisk className="w-4 h-4 text-red-600" />
                     </div>
                     <Input
                       type="text"

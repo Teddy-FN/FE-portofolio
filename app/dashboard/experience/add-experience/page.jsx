@@ -7,6 +7,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import Link from "next/link";
+import { LuAsterisk } from "react-icons/lu";
 
 import {
   Breadcrumb,
@@ -130,26 +131,28 @@ const page = () => {
   return (
     <DashboardLayout>
       <div className="flex flex-col gap-8">
-        <h1 className="text-2xl font-bold">Experience Page</h1>
-        <Breadcrumb>
-          <BreadcrumbList>
-            <BreadcrumbItem>
-              <BreadcrumbLink>
-                <Link href="/dashboard">Home</Link>
-              </BreadcrumbLink>
-            </BreadcrumbItem>
-            <BreadcrumbSeparator />
-            <BreadcrumbItem>
-              <BreadcrumbLink>
-                <Link href="/dashboard/experience">Experience List</Link>
-              </BreadcrumbLink>
-            </BreadcrumbItem>
-            <BreadcrumbSeparator />
-            <BreadcrumbItem>
-              <BreadcrumbPage>Add Experience</BreadcrumbPage>
-            </BreadcrumbItem>
-          </BreadcrumbList>
-        </Breadcrumb>
+        <div className="flex-col flex gap-4">
+          <h1 className="text-2xl font-bold">Experience Page</h1>
+          <Breadcrumb>
+            <BreadcrumbList>
+              <BreadcrumbItem>
+                <BreadcrumbLink>
+                  <Link href="/dashboard">Home</Link>
+                </BreadcrumbLink>
+              </BreadcrumbItem>
+              <BreadcrumbSeparator />
+              <BreadcrumbItem>
+                <BreadcrumbLink>
+                  <Link href="/dashboard/experience">Experience List</Link>
+                </BreadcrumbLink>
+              </BreadcrumbItem>
+              <BreadcrumbSeparator />
+              <BreadcrumbItem>
+                <BreadcrumbPage>Add Experience</BreadcrumbPage>
+              </BreadcrumbItem>
+            </BreadcrumbList>
+          </Breadcrumb>
+        </div>
 
         <Form {...form}>
           <form
@@ -164,7 +167,7 @@ const page = () => {
                   <FormItem>
                     <div className="mb-4 flex items-center gap-2">
                       <FormLabel className="text-base">Start Date</FormLabel>
-                      {/* <Asterisk className="w-4 h-4 text-destructive" /> */}
+                      <LuAsterisk className="w-4 h-4 text-red-600" />
                     </div>
                     <DropdownMenu>
                       <DropdownMenuTrigger asChild>
@@ -214,7 +217,7 @@ const page = () => {
                   <FormItem>
                     <div className="mb-4 flex items-center gap-2">
                       <FormLabel className="text-base">End Date</FormLabel>
-                      {/* <Asterisk className="w-4 h-4 text-destructive" /> */}
+                      <LuAsterisk className="w-4 h-4 text-red-600" />
                     </div>
                     <DropdownMenu>
                       <DropdownMenuTrigger asChild>
@@ -264,7 +267,7 @@ const page = () => {
                   <FormItem>
                     <div className="mb-4 flex items-center gap-2">
                       <FormLabel className="text-base">Company</FormLabel>
-                      {/* <Asterisk className="w-4 h-4 text-destructive" /> */}
+                      <LuAsterisk className="w-4 h-4 text-red-600" />
                     </div>
                     <Input
                       type="text"
@@ -289,7 +292,7 @@ const page = () => {
                   <FormItem>
                     <div className="mb-4 flex items-center gap-2">
                       <FormLabel className="text-base">Position</FormLabel>
-                      {/* <Asterisk className="w-4 h-4 text-destructive" /> */}
+                      <LuAsterisk className="w-4 h-4 text-red-600" />
                     </div>
                     <Input
                       type="text"
@@ -314,7 +317,7 @@ const page = () => {
                   <FormItem>
                     <div className="mb-4 flex items-center gap-2">
                       <FormLabel className="text-base">Description</FormLabel>
-                      {/* <Asterisk className="w-4 h-4 text-destructive" /> */}
+                      <LuAsterisk className="w-4 h-4 text-red-600" />
                     </div>
                     <Textarea
                       type="text"
