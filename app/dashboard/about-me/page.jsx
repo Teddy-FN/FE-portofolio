@@ -80,6 +80,7 @@ const page = () => {
     name: z.string().min(4, "Enter a name with at least 4 characters."),
     experience: z.string().min(1, "Enter an experience description (min 4)."),
     email: z.string().email("Enter a valid email."),
+    phoneNumber: z.string().min(4, "Enter a name with at least 4 characters."),
     nationality: z.string().nonempty("Select a nationality."),
     languages: z.array(z.string()).min(1, "Select at least one language."),
     freelance: z.boolean(),
@@ -91,6 +92,8 @@ const page = () => {
     defaultValues: {
       image: "",
       name: "",
+      phoneNumber: "",
+      address: "",
       experience: "",
       email: "",
       nationality: "",
@@ -104,9 +107,11 @@ const page = () => {
       form.setValue("name", geAboutMeData?.data?.data?.name);
       form.setValue(
         "experience",
-        Number(geAboutMeData?.data?.data?.experience)
+        Number(geAboutMeData?.data?.data?.experience || 0)
       );
       form.setValue("email", geAboutMeData?.data?.data?.email);
+      form.setValue("phoneNumber", geAboutMeData?.data?.data?.phoneNumber);
+      form.setValue("address", geAboutMeData?.data?.data?.address);
       form.setValue("nationality", geAboutMeData?.data?.data?.nationality);
       form.setValue("languages", geAboutMeData?.data?.data?.languages);
       form.setValue("freelance", geAboutMeData?.data?.data?.freelance);
@@ -192,6 +197,8 @@ const page = () => {
     formData.append("name", values.name);
     formData.append("experience", values.experience);
     formData.append("email", values.email);
+    formData.append("phoneNumber", values.phoneNumber);
+    formData.append("address", values.address);
     formData.append("nationality", values.nationality);
     formData.append("languages", values.languages);
     formData.append("freelance", values.freelance);
@@ -411,6 +418,55 @@ const page = () => {
                       />
                       <p>Yes</p>
                     </div>
+                  </FormItem>
+                )}
+              />
+            </div>
+            <div className="col-span-1">
+              <FormField
+                control={form.control}
+                name="phoneNumber"
+                render={({ field }) => (
+                  <FormItem className="flex-1">
+                    <div className="mb-4 flex items-center gap-2">
+                      <FormLabel className="text-base">Phone Number</FormLabel>
+                      <LuAsterisk className="w-4 h-4 text-red-600" />
+                    </div>
+                    <Input
+                      type="text"
+                      {...field}
+                      placeholder="Enter Phone Number"
+                      onInput={handleInput}
+                      className="w-full"
+                    />
+                    {form.formState.errors.phoneNumber && (
+                      <FormMessage>
+                        {form.formState.errors.phoneNumber}
+                      </FormMessage>
+                    )}
+                  </FormItem>
+                )}
+              />
+            </div>
+            <div className="col-span-1">
+              <FormField
+                control={form.control}
+                name="address"
+                render={({ field }) => (
+                  <FormItem className="flex-1">
+                    <div className="mb-4 flex items-center gap-2">
+                      <FormLabel className="text-base">Address</FormLabel>
+                      <LuAsterisk className="w-4 h-4 text-red-600" />
+                    </div>
+                    <Input
+                      type="text"
+                      {...field}
+                      placeholder="Enter Address"
+                      className="w-full"
+                    />
+                    {form.formState.errors.address && (
+                      <FormMessage>{form.formState.errors.address}</FormMessage>
+                    )}
                   </FormItem>
                 )}
               />
