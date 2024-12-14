@@ -1,7 +1,7 @@
 /* eslint-disable react-hooks/rules-of-hooks */
 "use client";
 
-import React, { useMemo } from "react";
+import React, { Fragment, useMemo } from "react";
 import { useParams } from "next/navigation";
 import { useToast } from "@/hooks/use-toast";
 import { useQuery, useMutation } from "@tanstack/react-query";
@@ -45,6 +45,9 @@ import {
   educationDegree,
   getEducationById,
   putEducation,
+  typeEducation,
+  formalMajorList,
+  nonFormalEducation,
 } from "@/service/education";
 
 const page = () => {
@@ -68,6 +71,21 @@ const page = () => {
     queryKey: ["getEducationById", id],
     queryFn: () => getEducationById({ id }),
     keepPreviousData: true,
+  });
+
+  const educationTypeData = useQuery({
+    queryKey: ["typeEducation"],
+    queryFn: typeEducation,
+  });
+
+  const educationMajorData = useQuery({
+    queryKey: ["formalMajorList"],
+    queryFn: formalMajorList,
+  });
+
+  const educationNonFormalData = useQuery({
+    queryKey: ["nonFormalEducation"],
+    queryFn: nonFormalEducation,
   });
 
   const mutateEditEducation = useMutation({
@@ -109,16 +127,22 @@ const page = () => {
 
   const formSchema = z.object({
     start: z.string().min(4, {
-      message: "Enter Name Product Minimum Character 4 and max character 30.",
+      message: "Start Date Not Empty",
     }),
     end: z.string().min(4, {
-      message: "Enter Name Product Minimum Character 4 and max character 30.",
+      message: "End Date Not Empty",
     }),
     education: z.string().min(4, {
-      message: "Enter Description Minimum 4 Character & Max 255 Character.",
+      message: "Enter Education Minimum 4 Character & Max 255 Character.",
     }),
-    degree: z.string().min(4, {
-      message: "Enter Description Minimum 4 Character & Max 255 Character.",
+    typeEducation: z.string().min(4, {
+      message: "Enter Type Education Minimum 4 Character & Max 255 Character.",
+    }),
+    major: z.string().min(2, {
+      message: "Enter Major Minimum 2 Character & Max 255 Character.",
+    }),
+    degree: z.string().min(2, {
+      message: "Enter Degree Minimum 2 Character & Max 255 Character.",
     }),
   });
 
@@ -126,9 +150,11 @@ const page = () => {
     resolver: zodResolver(formSchema),
     mode: "onChange",
     defaultValues: {
-      start: "" || currDate,
-      end: "" || currDate,
+      start: "" || currDate.toString(),
+      end: "" || currDate.toString(),
+      typeEducation: "",
       education: "",
+      major: "",
       degree: "",
     },
   });
@@ -144,6 +170,11 @@ const page = () => {
         getDataEducationById?.data?.data?.startDate?.toString()
       );
       form.setValue("education", getDataEducationById?.data?.data?.institution);
+      form.setValue("major", getDataEducationById?.data?.data?.major);
+      form.setValue(
+        "typeEducation",
+        getDataEducationById?.data?.data?.typeEducation
+      );
       form.setValue("degree", getDataEducationById?.data?.data?.degree);
     }
   }, [getDataEducationById.data]);
@@ -159,6 +190,201 @@ const page = () => {
     formData.append("modifiedBy", "Teddy Ferdian");
     mutateEditEducation.mutate(formData);
   };
+
+  const MAJORING_LIST = useMemo(() => {
+    if (form.getValues("typeEducation") === "Primary education") {
+      return (
+        <Fragment>
+          <div className="col-span-1">
+            <FormField
+              control={form.control}
+              name="degree"
+              render={({ field }) => (
+                <FormItem>
+                  <div className="mb-4 flex items-center gap-2">
+                    <FormLabel className="text-base">Degree</FormLabel>
+                    <LuAsterisk className="w-4 h-4 text-red-600" />
+                  </div>
+                  <DropdownMenu>
+                    <DropdownMenuTrigger asChild>
+                      <div>
+                        <Input
+                          {...field}
+                          placeholder="Degree"
+                          maxLength={30}
+                          className="w-full text-left"
+                        />
+                      </div>
+                    </DropdownMenuTrigger>
+                    <DropdownMenuContent className="w-56 h-60 overflow-scroll">
+                      <DropdownMenuLabel>Degree</DropdownMenuLabel>
+                      <DropdownMenuSeparator />
+                      <DropdownMenuRadioGroup
+                        value={field?.value}
+                        onValueChange={(value) => field.onChange(value)}
+                      >
+                        {educationDegreeData?.data?.map((items, index) => {
+                          return (
+                            <DropdownMenuRadioItem
+                              value={items.value}
+                              key={index}
+                            >
+                              {items.label}
+                            </DropdownMenuRadioItem>
+                          );
+                        })}
+                      </DropdownMenuRadioGroup>
+                    </DropdownMenuContent>
+                  </DropdownMenu>
+                  {form.formState.errors.degree && (
+                    <FormMessage>{form.formState.errors.degree}</FormMessage>
+                  )}
+                </FormItem>
+              )}
+            />
+          </div>
+          <div className="col-span-1">
+            <FormField
+              control={form.control}
+              name="major"
+              render={({ field }) => (
+                <FormItem>
+                  <div className="mb-4 flex items-center gap-2">
+                    <FormLabel className="text-base">Major</FormLabel>
+                    <LuAsterisk className="w-4 h-4 text-red-600" />
+                  </div>
+                  <DropdownMenu>
+                    <DropdownMenuTrigger asChild>
+                      <div>
+                        <Input
+                          {...field}
+                          placeholder="Major"
+                          maxLength={30}
+                          className="w-full text-left"
+                        />
+                      </div>
+                    </DropdownMenuTrigger>
+                    <DropdownMenuContent className="w-56 h-60 overflow-scroll">
+                      <DropdownMenuLabel>Major</DropdownMenuLabel>
+                      <DropdownMenuSeparator />
+                      <DropdownMenuRadioGroup
+                        value={field?.value}
+                        onValueChange={(value) => field.onChange(value)}
+                      >
+                        {educationMajorData?.data?.data?.map((items, index) => {
+                          return (
+                            <DropdownMenuRadioItem
+                              value={items.value}
+                              key={index}
+                            >
+                              {items.label}
+                            </DropdownMenuRadioItem>
+                          );
+                        })}
+                      </DropdownMenuRadioGroup>
+                    </DropdownMenuContent>
+                  </DropdownMenu>
+                  {form.formState.errors.degree && (
+                    <FormMessage>{form.formState.errors.degree}</FormMessage>
+                  )}
+                </FormItem>
+              )}
+            />
+          </div>
+        </Fragment>
+      );
+    }
+
+    if (form.getValues("typeEducation") === "No formal education") {
+      return (
+        <Fragment>
+          <div className="col-span-1">
+            <FormField
+              control={form.control}
+              name="degree"
+              render={({ field }) => (
+                <FormItem>
+                  <div className="mb-4 flex items-center gap-2">
+                    <FormLabel className="text-base">
+                      Type Non Formal Education
+                    </FormLabel>
+                    <LuAsterisk className="w-4 h-4 text-red-600" />
+                  </div>
+                  <DropdownMenu>
+                    <DropdownMenuTrigger asChild>
+                      <div>
+                        <Input
+                          {...field}
+                          placeholder="Select Type Non Formal Education"
+                          maxLength={30}
+                          className="w-full text-left"
+                        />
+                      </div>
+                    </DropdownMenuTrigger>
+                    <DropdownMenuContent className="w-56 h-60 overflow-scroll">
+                      <DropdownMenuLabel>
+                        Type Non Formal Education
+                      </DropdownMenuLabel>
+                      <DropdownMenuSeparator />
+                      <DropdownMenuRadioGroup
+                        value={field?.value}
+                        onValueChange={(value) => field.onChange(value)}
+                      >
+                        {educationNonFormalData?.data?.map((items, index) => {
+                          return (
+                            <DropdownMenuRadioItem
+                              value={items.value}
+                              key={index}
+                            >
+                              {items.label}
+                            </DropdownMenuRadioItem>
+                          );
+                        })}
+                      </DropdownMenuRadioGroup>
+                    </DropdownMenuContent>
+                  </DropdownMenu>
+                  {form.formState.errors.degree && (
+                    <FormMessage>{form.formState.errors.degree}</FormMessage>
+                  )}
+                </FormItem>
+              )}
+            />
+          </div>
+          <div className="col-span-1">
+            <FormField
+              control={form.control}
+              name="major"
+              render={({ field }) => (
+                <FormItem>
+                  <div className="mb-4 flex items-center gap-2">
+                    <FormLabel className="text-base">
+                      Name Education (Non Formal Education)
+                    </FormLabel>
+                    <LuAsterisk className="w-4 h-4 text-red-600" />
+                  </div>
+                  <Input
+                    type="text"
+                    {...field}
+                    placeholder="Enter Name Education"
+                    className="w-full"
+                  />
+                  {form.formState.errors.degree && (
+                    <FormMessage>{form.formState.errors.degree}</FormMessage>
+                  )}
+                </FormItem>
+              )}
+            />
+          </div>
+        </Fragment>
+      );
+    }
+  }, [
+    form.getValues("education"),
+    form,
+    educationDegreeData,
+    educationMajorData,
+    educationNonFormalData,
+  ]);
 
   return (
     <DashboardLayout>
@@ -298,7 +524,7 @@ const page = () => {
                 render={({ field }) => (
                   <FormItem>
                     <div className="mb-4 flex items-center gap-2">
-                      <FormLabel className="text-base">Education</FormLabel>
+                      <FormLabel className="text-base">Institute</FormLabel>
                       <LuAsterisk className="w-4 h-4 text-red-600" />
                     </div>
                     <Input
@@ -319,11 +545,13 @@ const page = () => {
             <div className="col-span-2">
               <FormField
                 control={form.control}
-                name="degree"
+                name="typeEducation"
                 render={({ field }) => (
                   <FormItem>
                     <div className="mb-4 flex items-center gap-2">
-                      <FormLabel className="text-base">Degree</FormLabel>
+                      <FormLabel className="text-base">
+                        Type Education
+                      </FormLabel>
                       <LuAsterisk className="w-4 h-4 text-red-600" />
                     </div>
                     <DropdownMenu>
@@ -338,13 +566,13 @@ const page = () => {
                         </div>
                       </DropdownMenuTrigger>
                       <DropdownMenuContent className="w-56 h-60 overflow-scroll">
-                        <DropdownMenuLabel>Degree</DropdownMenuLabel>
+                        <DropdownMenuLabel>Type Education</DropdownMenuLabel>
                         <DropdownMenuSeparator />
                         <DropdownMenuRadioGroup
                           value={field?.value}
                           onValueChange={(value) => field.onChange(value)}
                         >
-                          {educationDegreeData?.data?.map((items, index) => {
+                          {educationTypeData?.data?.map((items, index) => {
                             return (
                               <DropdownMenuRadioItem
                                 value={items.value}
@@ -357,13 +585,17 @@ const page = () => {
                         </DropdownMenuRadioGroup>
                       </DropdownMenuContent>
                     </DropdownMenu>
-                    {form.formState.errors.degree && (
-                      <FormMessage>{form.formState.errors.degree}</FormMessage>
+                    {form.formState.errors.typeEducation && (
+                      <FormMessage>
+                        {form.formState.errors.typeEducation}
+                      </FormMessage>
                     )}
                   </FormItem>
                 )}
               />
             </div>
+
+            {MAJORING_LIST}
 
             <div className="col-span-2">
               <div className="flex items-center justify-between">
