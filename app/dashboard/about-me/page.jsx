@@ -78,12 +78,15 @@ const page = () => {
       z.string().min(1, "Image URL is required").optional(),
     ]),
     name: z.string().min(4, "Enter a name with at least 4 characters."),
-    experience: z.string().min(1, "Enter an experience description (min 4)."),
+    experience: z.string().min(1, "Enter an experience description."),
     email: z.string().email("Enter a valid email."),
-    phoneNumber: z.string().min(4, "Enter a name with at least 4 characters."),
+    address: z.string().min(4, "Enter a Address with at least 4 characters."),
+    phoneNumber: z
+      .string()
+      .min(4, "Enter a Phone Number at least 4 characters."),
     nationality: z.string().nonempty("Select a nationality."),
     languages: z.array(z.string()).min(1, "Select at least one language."),
-    freelance: z.boolean(),
+    freelance: z.boolean().default(true),
   });
 
   const form = useForm({
@@ -107,7 +110,7 @@ const page = () => {
       form.setValue("name", geAboutMeData?.data?.data?.name);
       form.setValue(
         "experience",
-        Number(geAboutMeData?.data?.data?.experience || 0)
+        geAboutMeData?.data?.data?.experience?.toString() || "0"
       );
       form.setValue("email", geAboutMeData?.data?.data?.email);
       form.setValue("phoneNumber", geAboutMeData?.data?.data?.phoneNumber);
@@ -195,7 +198,7 @@ const page = () => {
 
     // Append other fields
     formData.append("name", values.name);
-    formData.append("experience", values.experience);
+    formData.append("experience", Number(values.experience));
     formData.append("email", values.email);
     formData.append("phoneNumber", values.phoneNumber);
     formData.append("address", values.address);
@@ -331,7 +334,7 @@ const page = () => {
                     <Input
                       type="text"
                       {...field}
-                      placeholder="Enter Name Product"
+                      placeholder="Enter Name"
                       maxLength={30}
                       className="w-full"
                     />
@@ -355,7 +358,7 @@ const page = () => {
                     <Input
                       type="email"
                       {...field}
-                      placeholder="Enter Name Product"
+                      placeholder="Enter Name Email"
                       maxLength={30}
                       className="w-full"
                     />
@@ -380,7 +383,7 @@ const page = () => {
                     <Input
                       type="text"
                       {...field}
-                      placeholder="Enter Experience Product"
+                      placeholder="Enter Experience"
                       onInput={handleInput}
                       className="w-full"
                     />
@@ -409,12 +412,7 @@ const page = () => {
                         name={field.name}
                         id={field.name}
                         checked={field.value}
-                        onCheckedChange={(val) => {
-                          if (!val) {
-                            form.setValue("subCategory", []);
-                          }
-                          field.onChange(val);
-                        }}
+                        onCheckedChange={(val) => field.onChange(val)}
                       />
                       <p>Yes</p>
                     </div>
