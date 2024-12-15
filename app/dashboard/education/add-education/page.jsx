@@ -94,12 +94,18 @@ const page = () => {
     typeEducation: z.string().min(4, {
       message: "Enter Type Education Minimum 4 Character & Max 255 Character.",
     }),
-    major: z.string().min(2, {
-      message: "Enter Major Minimum 2 Character & Max 255 Character.",
-    }),
-    degree: z.string().min(2, {
-      message: "Enter Degree Minimum 2 Character & Max 255 Character.",
-    }),
+    major: z
+      .string()
+      .optional()
+      .refine((value) => value === "" || value.length >= 2, {
+        message: "Enter Major Minimum 2 Characters if not empty.",
+      }),
+    degree: z
+      .string()
+      .optional()
+      .refine((value) => value === "" || value.length >= 2, {
+        message: "Enter Degree Minimum 2 Characters if not empty.",
+      }),
   });
 
   const form = useForm({
@@ -162,7 +168,7 @@ const page = () => {
   };
 
   const MAJORING_LIST = useMemo(() => {
-    if (form.getValues("typeEducation") === "Primary education") {
+    if (form.watch("typeEducation") === "Primary education") {
       return (
         <Fragment>
           <div className="col-span-1">
@@ -265,7 +271,7 @@ const page = () => {
       );
     }
 
-    if (form.getValues("typeEducation") === "No formal education") {
+    if (form.watch("typeEducation") === "No formal education") {
       return (
         <Fragment>
           <div className="col-span-1">
@@ -348,8 +354,9 @@ const page = () => {
         </Fragment>
       );
     }
+    return null;
   }, [
-    form.getValues("education"),
+    form.watch("typeEducation"),
     form,
     educationDegreeData,
     educationMajorData,

@@ -154,6 +154,10 @@ export const nonFormalEducation = async () => {
       label: "Mentorship Programs",
     },
     {
+      value: "Bootcamp",
+      label: "Bootcamp",
+    },
+    {
       value: "Self-Directed Learning",
       label: "Self-Directed Learning",
     },
