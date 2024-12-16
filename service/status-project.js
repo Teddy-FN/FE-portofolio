@@ -9,12 +9,11 @@ export const getListStatusProject = async () => {
   return data;
 };
 
-export const getListSkilsInputWork = async () => {
+export const getListStatusProjectInputWork = async () => {
   const { data, status } = await axiosInstance.get(
     `/status-project/get-status-project?isTable=false`
   );
 
-  console.log("DATA getListSkilsInputWork =>", data);
   if (status !== 200) throw Error(`${data.message}`);
 
   const newFormatData = data.data.map((items) => {
