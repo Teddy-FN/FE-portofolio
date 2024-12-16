@@ -50,6 +50,7 @@ import { getProjectById, putProject } from "@/service/work";
 import { generateLinkImageFromGoogleDrive } from "@/utils/generateImageGoogleDrive";
 import { getListServiceInputWork } from "@/service/service";
 import { getListSkilsInputWork } from "@/service/skills";
+import { getListStatusProjectInputWork } from "@/service/status-project";
 
 const userInfoSchema = z.object({
   name: z.string().min(1, "Name cannot be empty"),
@@ -76,14 +77,17 @@ const page = () => {
       z.string().min(1, "Image URL is required").optional(),
     ]),
     title: z.string().min(4, {
-      message: "Enter Name Product Minimum Character 4 and max character 30.",
+      message: "Enter Title Project Minimum Character 4 and max character 30.",
     }),
     description: z.string().min(4, {
-      message: "Enter Name Product Minimum Character 4 and max character 30.",
+      message: "Enter Description Minimum Character 4 and max character 30.",
     }),
-    stack: z.array(z.string()).min(1, "Select at least one language."),
+    stack: z.array(z.string()).min(1, "Select at least one stack."),
     live: z.string().min(4, {
-      message: "Enter Description Minimum 4 Character & Max 255 Character.",
+      message: "Enter Live URL Minimum 4 Character & Max 255 Character.",
+    }),
+    status: z.string().min(4, {
+      message: "Enter Status Minimum 4 Character & Max 255 Character.",
     }),
     category: z.string().min(4, {
       message: "Enter Category",
@@ -120,6 +124,7 @@ const page = () => {
       image: "",
       title: "",
       description: "",
+      status: "",
       stack: "",
       live: "",
       category: "",
@@ -139,6 +144,7 @@ const page = () => {
       form.setValue("stack", getDataWorkById?.data?.data?.stack);
       form.setValue("live", getDataWorkById?.data?.data?.live);
       form.setValue("category", getDataWorkById?.data?.data?.category);
+      form.setValue("status", getDataWorkById?.data?.data?.status);
       form.setValue("image", getDataWorkById?.data?.data?.image);
 
       const dataGithub = getDataWorkById?.data?.data?.github
@@ -173,6 +179,11 @@ const page = () => {
   const listSkills = useQuery({
     queryKey: ["getListSkilsInputWork"],
     queryFn: getListSkilsInputWork,
+  });
+
+  const listStatus = useQuery({
+    queryKey: ["getListStatusProjectInputWork"],
+    queryFn: getListStatusProjectInputWork,
   });
 
   const mutateEditProject = useMutation({
@@ -219,6 +230,7 @@ const page = () => {
     formData.append("title", values.title);
     formData.append("live", values.live);
     formData.append("stack", values.stack);
+    formData.append("status", values.status);
     formData.append("github", JSON.stringify(values.github));
     formData.append("description", values.description);
     formData.append("category", values.category);
@@ -503,7 +515,7 @@ const page = () => {
                     <Input
                       type="text"
                       {...field}
-                      placeholder="Enter Name Product"
+                      placeholder="Enter Name Project"
                       maxLength={30}
                       className="w-full"
                     />
@@ -527,7 +539,7 @@ const page = () => {
                     <Textarea
                       {...field}
                       type="text"
-                      placeholder="Enter Name Product"
+                      placeholder="Enter Description project"
                       maxLength={30}
                       className="w-full"
                     />
@@ -617,7 +629,7 @@ const page = () => {
                         <div>
                           <Input
                             {...field}
-                            placeholder="Select nationality"
+                            placeholder="Select Category"
                             readOnly
                             className="w-full text-left cursor-pointer"
                           />
@@ -663,11 +675,62 @@ const page = () => {
                     <Input
                       type="text"
                       {...field}
-                      placeholder="Enter Experience Product"
+                      placeholder="Enter Live URL Project"
                       className="w-full"
                     />
                     {form.formState.errors.live && (
                       <FormMessage>{form.formState.errors.live}</FormMessage>
+                    )}
+                  </FormItem>
+                )}
+              />
+            </div>
+
+            <div className="col-span-1">
+              <FormField
+                control={form.control}
+                name="status"
+                render={({ field }) => (
+                  <FormItem>
+                    <div className="mb-4 flex items-center gap-2">
+                      <FormLabel className="text-base">
+                        Status Project
+                      </FormLabel>
+                      <LuAsterisk className="w-4 h-4 text-red-600" />
+                    </div>
+                    <DropdownMenu>
+                      <DropdownMenuTrigger asChild>
+                        <div>
+                          <Input
+                            {...field}
+                            placeholder="Select Status Project"
+                            readOnly
+                            className="w-full text-left cursor-pointer"
+                          />
+                        </div>
+                      </DropdownMenuTrigger>
+                      <DropdownMenuContent className="w-56 h-60 overflow-scroll">
+                        <DropdownMenuLabel>Status Project</DropdownMenuLabel>
+                        <DropdownMenuSeparator />
+                        <DropdownMenuRadioGroup
+                          value={field.value}
+                          onValueChange={(value) => field.onChange(value)}
+                        >
+                          {listStatus?.data?.map((item, index) => (
+                            <DropdownMenuRadioItem
+                              key={index}
+                              value={item.name}
+                            >
+                              {item?.name}
+                            </DropdownMenuRadioItem>
+                          ))}
+                        </DropdownMenuRadioGroup>
+                      </DropdownMenuContent>
+                    </DropdownMenu>
+                    {form.formState.errors.status && (
+                      <FormMessage>
+                        {form.formState.errors.status.message}
+                      </FormMessage>
                     )}
                   </FormItem>
                 )}
