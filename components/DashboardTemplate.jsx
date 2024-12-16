@@ -1,3 +1,4 @@
+/* eslint-disable react/jsx-key */
 "use client";
 
 import React, { Fragment } from "react";
@@ -11,13 +12,19 @@ import {
   SidebarContent,
   SidebarGroup,
   SidebarGroupContent,
-  // SidebarGroupLabel,
+  SidebarGroupLabel,
   SidebarMenu,
   SidebarMenuButton,
   SidebarMenuItem,
 } from "@/components/ui/sidebar";
+import {
+  Collapsible,
+  CollapsibleContent,
+  CollapsibleTrigger,
+} from "@/components/ui/collapsible";
 
 import {
+  FaChevronDown,
   FaHome,
   FaGlobe,
   FaSchool,
@@ -68,11 +75,11 @@ const menus = [
   },
   {
     icon: <FaBriefcase />,
-    name: "Work / Project",
+    name: "Project",
     path: "/dashboard/work",
     children: [
       {
-        name: "Work / Project List",
+        name: "Project List",
         path: "/dashboard/work",
       },
       {
@@ -104,27 +111,64 @@ const DashboardLayout = ({ children }) => {
               {/* <SidebarGroupLabel>Application</SidebarGroupLabel> */}
               <SidebarGroupContent>
                 <SidebarMenu>
-                  {menus.map((items, index) => (
-                    <SidebarMenuItem key={index}>
-                      <SidebarMenuButton
-                        asChild
-                        className={`${
-                          items.path === pathName
-                            ? "text-accent border-b-2 border-accent"
-                            : "text-white"
-                        } border-none rounded-none hover:text-primary hover:border-accent hover:bg-accent hover:rounded-md`}
-                      >
-                        <Link
-                          href={items.path}
-                          key={index}
-                          className="text-xl capitalize hover:text-accent transition-all flex items-center gap-4"
-                        >
-                          {items.icon}
-                          {items.name}
-                        </Link>
-                      </SidebarMenuButton>
-                    </SidebarMenuItem>
-                  ))}
+                  {menus.map((items, index) => {
+                    console.log("ITEMS =>", items);
+                    if (items?.children?.length === 0) {
+                      return (
+                        <SidebarMenuItem key={index}>
+                          <SidebarMenuButton
+                            asChild
+                            className={`${
+                              items.path === pathName
+                                ? "text-accent border-b-2 border-accent"
+                                : "text-white"
+                            } border-none rounded-none hover:text-primary hover:border-accent hover:bg-accent hover:rounded-md`}
+                          >
+                            <Link
+                              href={items.path}
+                              key={index}
+                              className="text-xl capitalize hover:text-accent transition-all flex items-center gap-4"
+                            >
+                              {items.icon}
+                              {items.name}
+                            </Link>
+                          </SidebarMenuButton>
+                        </SidebarMenuItem>
+                      );
+                    } else {
+                      return (
+                        <Collapsible defaultOpen className="group/collapsible">
+                          <SidebarGroupLabel asChild>
+                            <CollapsibleTrigger className="w-full">
+                              <div className="text-xl capitalize text-white hover:text-accent transition-all flex items-center justify-between gap-4 w-full">
+                                {items.icon}
+                                {items.name}
+
+                                <FaChevronDown className="ml-auto transition-transform group-data-[state=open]/collapsible:rotate-180" />
+                              </div>
+                            </CollapsibleTrigger>
+                          </SidebarGroupLabel>
+                          <CollapsibleContent className="ml-11 mt-4 flex flex-col gap-4">
+                            {items.children.map((items, index) => {
+                              return (
+                                <Link
+                                  href={items.path}
+                                  key={index}
+                                  className={`${
+                                    items.path === pathName
+                                      ? "text-accent border-b-2 border-accent"
+                                      : "text-white"
+                                  } text-xl capitalize hover:text-accent transition-all flex items-center gap-4`}
+                                >
+                                  {items.name}
+                                </Link>
+                              );
+                            })}
+                          </CollapsibleContent>
+                        </Collapsible>
+                      );
+                    }
+                  })}
                 </SidebarMenu>
               </SidebarGroupContent>
             </SidebarGroup>
