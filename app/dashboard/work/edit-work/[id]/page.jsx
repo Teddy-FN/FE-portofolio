@@ -11,7 +11,6 @@ import { useQuery, useMutation } from "@tanstack/react-query";
 import { useToast } from "@/hooks/use-toast";
 import Link from "next/link";
 import { LuAsterisk } from "react-icons/lu";
-import { Editor } from "react-draft-wysiwyg";
 import {
   EditorState,
   convertToRaw,
@@ -60,6 +59,13 @@ import { generateLinkImageFromGoogleDrive } from "@/utils/generateImageGoogleDri
 import { getListServiceInputWork } from "@/service/service";
 import { getListSkilsInputWork } from "@/service/skills";
 import { getListStatusProjectInputWork } from "@/service/status-project";
+
+const Editor = dynamic(
+  () => import("react-draft-wysiwyg").then((mod) => mod.Editor),
+  {
+    ssr: false,
+  }
+);
 
 const userInfoSchema = z.object({
   name: z.string().min(1, "Name cannot be empty"),
@@ -176,13 +182,13 @@ const page = () => {
       }
 
       if (getDataWorkById?.data?.data?.description) {
-        form.setValue("description", getDataWorkById.data.data.description);
+        form.setValue("description", getDataWorkById?.data?.data?.description);
         const blocksFromHTML = convertFromHTML(
-          getDataWorkById.data.data.description
+          getDataWorkById?.data?.data?.description
         );
         const contentState = ContentState.createFromBlockArray(
-          blocksFromHTML.contentBlocks,
-          blocksFromHTML.entityMap
+          blocksFromHTML?.contentBlocks,
+          blocksFromHTML?.entityMap
         );
         setEditorState(EditorState.createWithContent(contentState));
       }
@@ -750,16 +756,16 @@ const page = () => {
                 name="description"
                 render={() => (
                   <FormItem>
-                    <div className="mb-4 flex items-center gap-2 ">
+                    <div className="mb-4 flex items-center gap-2">
                       <FormLabel className="text-base">Description</FormLabel>
                       <LuAsterisk className="w-4 h-4 text-red-600" />
                     </div>
                     <Editor
                       editorState={editorState}
                       onEditorStateChange={handleEditorChange}
-                      editorClassName="bg-primary rounded-md min-h-96"
-                      wrapperClassName="flex flex-col gap-0"
-                      toolbarClassName="bg-blue-500"
+                      editorClassName="bg-primary rounded-md min-h-96 max-h-96 overflow-auto"
+                      wrapperClassName="flex flex-col gap-0 w-full"
+                      toolbarClassName="bg-blue-500 flex-wrap"
                       toolbar={{
                         options: [
                           "inline",
@@ -780,23 +786,15 @@ const page = () => {
                             "H5",
                             "H6",
                           ],
-                          className:
-                            "bg-gray-100 border border-gray-300 rounded-md text-gray-700",
-                          dropdownClassName:
-                            "bg-white border border-gray-300 shadow-md rounded-md",
                         },
                         fontSize: {
                           options: [8, 9, 10, 11, 12, 14, 16, 18, 24, 30, 36],
-                          className:
-                            "bg-gray-100 border border-gray-300 rounded-md text-gray-700",
-                          dropdownClassName:
-                            "bg-white border border-gray-300 shadow-md rounded-md",
                         },
                       }}
                     />
                     {form.formState.errors.description && (
                       <FormMessage>
-                        {form.formState.errors.description}
+                        {form.formState.errors.description.message}
                       </FormMessage>
                     )}
                   </FormItem>
