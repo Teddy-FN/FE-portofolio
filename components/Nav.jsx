@@ -12,7 +12,6 @@ const link = [
 
 const Nav = () => {
   const pathName = usePathname();
-  console.log("pathName =>", pathName);
 
   return (
     <div className="flex items-center gap-8">

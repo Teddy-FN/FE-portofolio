@@ -115,8 +115,6 @@ const page = () => {
   });
 
   const onSubmit = (values) => {
-    console.log("values =>", values);
-
     const formData = new FormData();
     // Append other fields
     formData.append("start", values.start);

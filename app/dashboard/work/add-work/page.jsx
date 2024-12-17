@@ -1,15 +1,21 @@
 /* eslint-disable react-hooks/rules-of-hooks */
 "use client";
 
-import React, { useState, useMemo } from "react";
+import React, { useState, useMemo, useEffect } from "react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm, useFieldArray } from "react-hook-form";
 import { z } from "zod";
+import { useRouter } from "next/navigation";
+import dynamic from "next/dynamic";
 import { FiPlus, FiTrash } from "react-icons/fi";
 import { useQuery, useMutation } from "@tanstack/react-query";
 import Link from "next/link";
 import { useToast } from "@/hooks/use-toast";
 import { LuAsterisk } from "react-icons/lu";
+import draftToHtml from "draftjs-to-html";
+import { EditorState, convertToRaw } from "draft-js";
+// import { Editor } from "react-draft-wysiwyg";
+import "react-draft-wysiwyg/dist/react-draft-wysiwyg.css";
 
 // Components
 import {
@@ -20,7 +26,6 @@ import {
   BreadcrumbPage,
   BreadcrumbSeparator,
 } from "@/components/ui/breadcrumb";
-import { Textarea } from "@/components/ui/textarea";
 import { useLoading } from "@/components/Loading";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
@@ -49,6 +54,11 @@ import { getListServiceInputWork } from "@/service/service";
 import { getListSkilsInputWork } from "@/service/skills";
 import { getListStatusProjectInputWork } from "@/service/status-project";
 
+const Editor = dynamic(
+  () => import("react-draft-wysiwyg").then((mod) => mod.Editor),
+  { ssr: false }
+);
+
 const userInfoSchema = z.object({
   name: z.string().min(1, "Name cannot be empty"),
   url: z.string().min(1, "URL cannot be empty"),
@@ -57,7 +67,9 @@ const userInfoSchema = z.object({
 const page = () => {
   const { setActive } = useLoading();
   const { toast } = useToast();
+  const router = useRouter();
   const [imagePreview, setImagePreview] = useState(null);
+  const [editorState, setEditorState] = useState(EditorState.createEmpty());
 
   const formSchema = z.object({
     image: z.union([
@@ -145,6 +157,12 @@ const page = () => {
     queryFn: getListStatusProjectInputWork,
   });
 
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      console.log("Running on client side");
+    }
+  }, []);
+
   const mutateAddProject = useMutation({
     mutationFn: postProject,
     onMutate: () => {
@@ -159,7 +177,9 @@ const page = () => {
       }, 1000);
       setTimeout(() => {
         setActive(null, null);
-        window.location.href = "/dashboard/work";
+        if (typeof window !== "undefined") {
+          router.push("/dashboard/work");
+        }
       }, 2000);
     },
     onError: (err) => {
@@ -210,6 +230,12 @@ const page = () => {
       reader.onload = () => setImagePreview(reader.result);
       reader.readAsDataURL(file);
     }
+  };
+
+  const handleEditorChange = (state) => {
+    setEditorState(state);
+    const data = draftToHtml(convertToRaw(state.getCurrentContent()));
+    form.setValue("description", data, { shouldValidate: true });
   };
 
   const ADDING_OPTION = useMemo(() => {
@@ -474,32 +500,6 @@ const page = () => {
                 )}
               />
             </div>
-            <div className="col-span-1">
-              <FormField
-                control={form.control}
-                name="description"
-                render={({ field }) => (
-                  <FormItem>
-                    <div className="mb-4 flex items-center gap-2">
-                      <FormLabel className="text-base">Description</FormLabel>
-                      <LuAsterisk className="w-4 h-4 text-red-600" />
-                    </div>
-                    <Textarea
-                      {...field}
-                      type="text"
-                      placeholder="Enter Description project"
-                      maxLength={30}
-                      className="w-full"
-                    />
-                    {form.formState.errors.description && (
-                      <FormMessage>
-                        {form.formState.errors.description}
-                      </FormMessage>
-                    )}
-                  </FormItem>
-                )}
-              />
-            </div>
 
             <div className="col-span-1">
               <FormField
@@ -678,6 +678,66 @@ const page = () => {
                     {form.formState.errors.status && (
                       <FormMessage>
                         {form.formState.errors.status.message}
+                      </FormMessage>
+                    )}
+                  </FormItem>
+                )}
+              />
+            </div>
+
+            <div className="col-span-1 lg:col-span-2">
+              <FormField
+                control={form.control}
+                name="description"
+                render={() => (
+                  <FormItem>
+                    <div className="mb-4 flex items-center gap-2">
+                      <FormLabel className="text-base">Description</FormLabel>
+                      <LuAsterisk className="w-4 h-4 text-red-600" />
+                    </div>
+                    <Editor
+                      editorState={editorState}
+                      onEditorStateChange={handleEditorChange}
+                      editorClassName="bg-primary rounded-md min-h-96"
+                      wrapperClassName="flex flex-col gap-0"
+                      toolbarClassName="bg-blue-500"
+                      toolbar={{
+                        options: [
+                          "inline",
+                          "blockType",
+                          "fontSize",
+                          "list",
+                          "textAlign",
+                          "history",
+                        ],
+                        blockType: {
+                          inDropdown: true,
+                          options: [
+                            "Normal",
+                            "H1",
+                            "H2",
+                            "H3",
+                            "H4",
+                            "H5",
+                            "H6",
+                          ],
+                          className:
+                            "bg-gray-100 border border-gray-300 rounded-md text-gray-700",
+                          dropdownClassName:
+                            "bg-white border border-gray-300 shadow-md rounded-md",
+                        },
+                        fontSize: {
+                          options: [8, 9, 10, 11, 12, 14, 16, 18, 24, 30, 36],
+                          className:
+                            "bg-gray-100 border border-gray-300 rounded-md text-gray-700",
+                          dropdownClassName:
+                            "bg-white border border-gray-300 shadow-md rounded-md",
+                        },
+                      }}
+                    />
+                    {form.formState.errors.description && (
+                      <FormMessage>
+                        {form.formState.errors.description.message}
                       </FormMessage>
                     )}
                   </FormItem>

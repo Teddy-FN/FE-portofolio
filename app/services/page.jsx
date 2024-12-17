@@ -52,8 +52,6 @@ const Services = () => {
       return (
         <div className="grid grid-cols-1 md:grid-cols-2 gap-[60px]">
           {getServiceData?.data?.data?.map((items, index) => {
-            console.log("ITEMS =>", items);
-
             const numb = index + 1 < 10 ? `0${index + 1}` : index;
             return (
               <div
