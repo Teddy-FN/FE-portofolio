@@ -6,12 +6,18 @@ import { useQuery, useMutation } from "@tanstack/react-query";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useToast } from "@/hooks/use-toast";
 import { useForm } from "react-hook-form";
+import dynamic from "next/dynamic";
 import { useRouter } from "next/navigation";
 import { z } from "zod";
 import Link from "next/link";
 import { LuAsterisk } from "react-icons/lu";
 import draftToHtml from "draftjs-to-html";
-import { EditorState, convertToRaw } from "draft-js";
+import {
+  EditorState,
+  convertToRaw,
+  ContentState,
+  convertFromHTML,
+} from "draft-js";
 // import { Editor } from "react-draft-wysiwyg";
 import "react-draft-wysiwyg/dist/react-draft-wysiwyg.css";
 
@@ -122,10 +128,20 @@ const page = () => {
       );
       form.setValue("placeWork", getDataExperienceById?.data?.data?.company);
       form.setValue("position", getDataExperienceById?.data?.data?.position);
-      form.setValue(
-        "description",
-        getDataExperienceById?.data?.data?.description
-      );
+      if (getDataExperienceById?.data?.data?.description) {
+        form.setValue(
+          "description",
+          getDataExperienceById?.data?.data?.description
+        );
+        const blocksFromHTML = convertFromHTML(
+          getDataExperienceById?.data?.data?.description
+        );
+        const contentState = ContentState.createFromBlockArray(
+          blocksFromHTML?.contentBlocks,
+          blocksFromHTML?.entityMap
+        );
+        setEditorState(EditorState.createWithContent(contentState));
+      }
     }
   }, [getDataExperienceById.data]);
 

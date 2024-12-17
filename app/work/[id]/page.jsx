@@ -79,9 +79,12 @@ const Work = () => {
                     {project?.title} Project
                   </h2>
                   <p className="font-bold leading-none text-white group-hover:text-accent transition-all duration-500 capitalize">
-                    {project?.category} Project
+                    category: {project?.category}
                   </p>
-                  <p className="text-white/60">{project?.description}</p>
+                  <div
+                    className="text-white/60"
+                    dangerouslySetInnerHTML={{ __html: project?.description }}
+                  />
                   <ul className="flex gap-4">
                     {project?.stack?.map((items, index) => {
                       return (
