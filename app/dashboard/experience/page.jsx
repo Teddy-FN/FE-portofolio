@@ -142,28 +142,28 @@ const page = () => {
         <div className="text-center">{row.getValue("position") || "-"}</div>
       ),
     },
-    {
-      accessorKey: "description",
-      header: ({ column }) => {
-        return (
-          <div className="justify-center flex">
-            <Button
-              variant="ghost"
-              onClick={() =>
-                column.toggleSorting(column.getIsSorted() === "asc")
-              }
-              className="text-center"
-            >
-              Description
-              {/* <CaretSortIcon className="ml-2 h-4 w-4" /> */}
-            </Button>
-          </div>
-        );
-      },
-      cell: ({ row }) => (
-        <div className="text-center">{row.getValue("description") || "-"}</div>
-      ),
-    },
+    // {
+    //   accessorKey: "description",
+    //   header: ({ column }) => {
+    //     return (
+    //       <div className="justify-center flex">
+    //         <Button
+    //           variant="ghost"
+    //           onClick={() =>
+    //             column.toggleSorting(column.getIsSorted() === "asc")
+    //           }
+    //           className="text-center"
+    //         >
+    //           Description
+    //           {/* <CaretSortIcon className="ml-2 h-4 w-4" /> */}
+    //         </Button>
+    //       </div>
+    //     );
+    //   },
+    //   cell: ({ row }) => (
+    //     <div className="text-center">{row.getValue("description") || "-"}</div>
+    //   ),
+    // },
     {
       accessorKey: "startDate",
       header: ({ column }) => {
