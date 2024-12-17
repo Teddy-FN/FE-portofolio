@@ -1,13 +1,18 @@
 /* eslint-disable react-hooks/rules-of-hooks */
 "use client";
 
-import React from "react";
+import React, { useState } from "react";
+import dynamic from "next/dynamic";
 import { useQuery, useMutation } from "@tanstack/react-query";
+import { useRouter } from "next/navigation";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import Link from "next/link";
 import { LuAsterisk } from "react-icons/lu";
+import draftToHtml from "draftjs-to-html";
+import { EditorState, convertToRaw } from "draft-js";
+import "react-draft-wysiwyg/dist/react-draft-wysiwyg.css";
 
 import {
   Breadcrumb,
@@ -22,7 +27,6 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import DashboardLayout from "@/components/DashboardTemplate";
 import { useToast } from "@/hooks/use-toast";
-import { Textarea } from "@/components/ui/textarea";
 import {
   Form,
   FormField,
@@ -39,18 +43,31 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { yearList } from "@/service/year";
+import { yearList, endDateExperience } from "@/service/year";
 
 import { postExperience } from "@/service/experience";
+
+const Editor = dynamic(
+  () => import("react-draft-wysiwyg").then((mod) => mod.Editor),
+  { ssr: false }
+);
 
 const page = () => {
   const { setActive } = useLoading();
   const { toast } = useToast();
+  const router = useRouter();
   const currDate = new Date().getFullYear();
+  const [editorState, setEditorState] = useState(EditorState.createEmpty());
+
   // Query
   const yearListData = useQuery({
     queryKey: ["yearList"],
     queryFn: yearList,
+  });
+
+  const endYearListData = useQuery({
+    queryKey: ["endDateExperience"],
+    queryFn: endDateExperience,
   });
 
   const mutateAddExperience = useMutation({
@@ -67,7 +84,9 @@ const page = () => {
       }, 1000);
       setTimeout(() => {
         setActive(null, null);
-        window.location.href = "/dashboard/experience";
+        if (typeof window !== "undefined") {
+          router.push("/dashboard/experience");
+        }
       }, 2000);
     },
     onError: (err) => {
@@ -107,7 +126,7 @@ const page = () => {
     mode: "onChange",
     defaultValues: {
       start: "" || currDate.toString(),
-      end: "" || currDate.toString(),
+      end: "" || "Present",
       placeWork: "",
       description: "",
       position: "",
@@ -124,6 +143,12 @@ const page = () => {
     formData.append("description", values.description);
     formData.append("createdBy", "Teddy Ferdian");
     mutateAddExperience.mutate(formData);
+  };
+
+  const handleEditorChange = (state) => {
+    setEditorState(state);
+    const data = draftToHtml(convertToRaw(state.getCurrentContent()));
+    form.setValue("description", data, { shouldValidate: true });
   };
 
   return (
@@ -236,7 +261,7 @@ const page = () => {
                             field.onChange(value.toString())
                           }
                         >
-                          {yearListData?.data?.map((items, index) => {
+                          {endYearListData?.data?.map((items, index) => {
                             return (
                               <DropdownMenuRadioItem
                                 value={items.value}
@@ -311,21 +336,55 @@ const page = () => {
               <FormField
                 control={form.control}
                 name="description"
-                render={({ field }) => (
+                render={() => (
                   <FormItem>
                     <div className="mb-4 flex items-center gap-2">
                       <FormLabel className="text-base">Description</FormLabel>
                       <LuAsterisk className="w-4 h-4 text-red-600" />
                     </div>
-                    <Textarea
-                      type="text"
-                      {...field}
-                      placeholder="Enter Company"
-                      className="w-full"
+                    <Editor
+                      editorState={editorState}
+                      onEditorStateChange={handleEditorChange}
+                      editorClassName="bg-primary rounded-md min-h-96"
+                      wrapperClassName="flex flex-col gap-0"
+                      toolbarClassName="bg-blue-500"
+                      toolbar={{
+                        options: [
+                          "inline",
+                          "blockType",
+                          "fontSize",
+                          "list",
+                          "textAlign",
+                          "history",
+                        ],
+                        blockType: {
+                          inDropdown: true,
+                          options: [
+                            "Normal",
+                            "H1",
+                            "H2",
+                            "H3",
+                            "H4",
+                            "H5",
+                            "H6",
+                          ],
+                          className:
+                            "bg-gray-100 border border-gray-300 rounded-md text-gray-700",
+                          dropdownClassName:
+                            "bg-white border border-gray-300 shadow-md rounded-md",
+                        },
+                        fontSize: {
+                          options: [8, 9, 10, 11, 12, 14, 16, 18, 24, 30, 36],
+                          className:
+                            "bg-gray-100 border border-gray-300 rounded-md text-gray-700",
+                          dropdownClassName:
+                            "bg-white border border-gray-300 shadow-md rounded-md",
+                        },
+                      }}
                     />
                     {form.formState.errors.description && (
                       <FormMessage>
-                        {form.formState.errors.description}
+                        {form.formState.errors.description.message}
                       </FormMessage>
                     )}
                   </FormItem>
