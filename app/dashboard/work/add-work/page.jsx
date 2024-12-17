@@ -1,7 +1,7 @@
 /* eslint-disable react-hooks/rules-of-hooks */
 "use client";
 
-import React, { useState, useMemo, useEffect } from "react";
+import React, { useState, useMemo } from "react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm, useFieldArray } from "react-hook-form";
 import { z } from "zod";
@@ -156,12 +156,6 @@ const page = () => {
     queryKey: ["getListStatusProjectInputWork"],
     queryFn: getListStatusProjectInputWork,
   });
-
-  useEffect(() => {
-    if (typeof window !== "undefined") {
-      console.log("Running on client side");
-    }
-  }, []);
 
   const mutateAddProject = useMutation({
     mutationFn: postProject,
