@@ -192,8 +192,6 @@ const page = () => {
   });
 
   const onSubmit = (values) => {
-    console.log("values =>", values);
-
     const formData = new FormData();
 
     // Append other fields
@@ -221,7 +219,6 @@ const page = () => {
       if (values.image instanceof File) {
         formData.append("image", values.image);
       }
-      console.log("HELLO =>", formData.get("image"));
       mutateAddAboutMe.mutate(formData);
     }
   };

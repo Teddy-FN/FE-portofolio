@@ -77,8 +77,6 @@ const page = () => {
     queryFn: nonFormalEducation,
   });
 
-  console.log("educationMajorData =>", educationMajorData);
-
   const currDate = new Date().getFullYear();
 
   const formSchema = z.object({
@@ -153,8 +151,6 @@ const page = () => {
   });
 
   const onSubmit = (values) => {
-    console.log("values =>", values);
-
     const formData = new FormData();
     // Append other fields
     formData.append("start", values.start);

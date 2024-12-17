@@ -557,8 +557,6 @@ const page = () => {
                 control={form.control}
                 name="typeEducation"
                 render={({ field }) => {
-                  console.log("FIELD =>", field);
-
                   return (
                     <FormItem>
                       <div className="mb-4 flex items-center gap-2">

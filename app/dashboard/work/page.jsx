@@ -156,7 +156,7 @@ const page = () => {
       ),
     },
     {
-      accessorKey: "description",
+      accessorKey: "status",
       header: ({ column }) => {
         return (
           <div className="justify-center flex">
@@ -167,14 +167,14 @@ const page = () => {
               }
               className="text-center"
             >
-              Description
+              Status
               {/* <CaretSortIcon className="ml-2 h-4 w-4" /> */}
             </Button>
           </div>
         );
       },
       cell: ({ row }) => (
-        <div className="text-center">{row.getValue("description") || "-"}</div>
+        <div className="text-center">{row.getValue("status") || "-"}</div>
       ),
     },
     {

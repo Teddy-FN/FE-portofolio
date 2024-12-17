@@ -8,8 +8,6 @@ export const workList = async () => {
 };
 
 export const getProjectByCategory = async (category) => {
-  console.log("CATEGORY =>", category);
-
   const { data, status } = await axiosInstance.get(
     `/project/get-project-by-category/${category}`
   );
@@ -52,6 +50,8 @@ export const getProjectById = async (payload) => {
 
 // Post project
 export const postProject = async (payload) => {
+  console.log("PAYLOAD =>", payload);
+
   const { data, status } = await axiosInstance.post(
     "/project/add-project",
     payload,

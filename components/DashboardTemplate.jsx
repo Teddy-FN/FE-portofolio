@@ -112,7 +112,6 @@ const DashboardLayout = ({ children }) => {
               <SidebarGroupContent>
                 <SidebarMenu>
                   {menus.map((items, index) => {
-                    console.log("ITEMS =>", items);
                     if (items?.children?.length === 0) {
                       return (
                         <SidebarMenuItem key={index}>

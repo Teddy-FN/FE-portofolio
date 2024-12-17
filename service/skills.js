@@ -14,7 +14,6 @@ export const getListSkilsInputWork = async () => {
     `/skills/get-skills?isTable=false`
   );
 
-  console.log("DATA getListSkilsInputWork =>", data);
   if (status !== 200) throw Error(`${data.message}`);
 
   const newFormatData = data.data.map((items) => {
