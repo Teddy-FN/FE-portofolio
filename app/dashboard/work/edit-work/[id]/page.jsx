@@ -1,7 +1,7 @@
 /* eslint-disable react-hooks/rules-of-hooks */
 "use client";
 
-import React, { useState, useMemo } from "react";
+import React, { useState, useMemo, useEffect } from "react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm, useFieldArray } from "react-hook-form";
 import { z } from "zod";
@@ -216,6 +216,12 @@ const page = () => {
     queryFn: getListStatusProjectInputWork,
   });
 
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      console.log("Running on client side");
+    }
+  }, []);
+
   const mutateEditProject = useMutation({
     mutationFn: (payload) =>
       putProject({
@@ -234,7 +240,9 @@ const page = () => {
       }, 1000);
       setTimeout(() => {
         setActive(null, null);
-        router.push("/dashboard/work");
+        if (typeof window !== "undefined") {
+          router.push("/dashboard/work");
+        }
       }, 2000);
     },
     onError: (err) => {
