@@ -5,6 +5,7 @@ import React, { useState, useMemo } from "react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm, useFieldArray } from "react-hook-form";
 import { z } from "zod";
+import { useRouter } from "next/router";
 import { FiPlus, FiTrash } from "react-icons/fi";
 import { useQuery, useMutation } from "@tanstack/react-query";
 import Link from "next/link";
@@ -61,6 +62,7 @@ const userInfoSchema = z.object({
 const page = () => {
   const { setActive } = useLoading();
   const { toast } = useToast();
+  const router = useRouter();
   const [imagePreview, setImagePreview] = useState(null);
   const [editorState, setEditorState] = useState(EditorState.createEmpty());
 
@@ -164,7 +166,7 @@ const page = () => {
       }, 1000);
       setTimeout(() => {
         setActive(null, null);
-        window.location.href = "/dashboard/work";
+        router.push("/dashboard/work");
       }, 2000);
     },
     onError: (err) => {
