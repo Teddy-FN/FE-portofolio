@@ -12,6 +12,12 @@ import {
   SiVuedotjs,
   SiPostgresql,
   SiSequelize,
+  SiExpress,
+  SiJavascript,
+  SiTypescript,
+  SiGithub,
+  SiMaterialformkdocs,
+  SiVuetify,
 } from "react-icons/si";
 
 // Components
@@ -53,16 +59,22 @@ const education = {
 };
 
 const iconsMap = {
-  "React js": <FaReact />,
+  "React Js": <FaReact />,
+  "Next JS": <FaReact />,
   "Node JS": <FaNodeJs />,
   "Next JS": <FaNodeJs />,
+  "Express JS": <SiExpress />,
   "HTML 5": <FaHtml5 />,
   "CSS 3": <FaCss3 />,
   Tailwind: <SiTailwindcss />,
-  Javascript: <FaJs />,
+  JavaScript: <SiJavascript />,
+  TypeScript: <SiTypescript />,
+  Github: <SiGithub />,
+  "Material UI": <SiMaterialformkdocs />,
   "Next Js": <SiNextdotjs />,
-  "Vuew JS": <SiVuedotjs />,
-  "Postgree SQL": <SiPostgresql />,
+  "Vue JS": <SiVuedotjs />,
+  Vuetify: <SiVuetify />,
+  Postgresql: <SiPostgresql />,
   Sequelize: <SiSequelize />,
 };
 
@@ -143,28 +155,32 @@ const Resume = () => {
           </p>
           <div className="h-[400px]">
             <ul className="grid grid-cols-1 lg:grid-cols-2 gap-[30px]">
-              {getListExperienceData?.data?.data?.map((items, index) => {
-                return (
-                  <li
-                    key={index}
-                    className="bg-[#232329] h-auto py-6 px-10 rounded-xl flex flex-col items-center lg:items-start gap-1"
-                  >
-                    <span className="text-accent">{items.duration}</span>
-                    <h3 className="text-xl max-w-[260px] min-h-[60px] text-center lg:text-left">
-                      {items.position}
-                    </h3>
-                    <div className="flex items-center gap-3">
-                      <span className="w-[6px] h-[6px] rounded-full bg-accent"></span>
-                      <p className="text-white/60">{items.company}</p>
-                    </div>
+              {getListExperienceData?.data?.data
+                ?.sort((a, b) => b.id - a.id)
+                .map((items, index) => {
+                  return (
+                    <li
+                      key={index}
+                      className="bg-[#232329] h-auto py-6 px-10 rounded-xl flex flex-col items-center lg:items-start gap-1"
+                    >
+                      <h3 className="text-xl max-w-[260px] min-h-[60px] text-center lg:text-left">
+                        {items.position}
+                      </h3>
+                      <div className="flex items-center gap-3">
+                        <span className="w-[6px] h-[6px] rounded-full bg-accent"></span>
+                        <p className="text-white/60">{items.company}</p>
+                      </div>
+                      <span className="text-accent">
+                        {items.startDate} - {items.endDate}
+                      </span>
 
-                    <div
-                      className="text-white/60"
-                      dangerouslySetInnerHTML={{ __html: items?.description }}
-                    />
-                  </li>
-                );
-              })}
+                      <div
+                        className="text-white/60"
+                        dangerouslySetInnerHTML={{ __html: items?.description }}
+                      />
+                    </li>
+                  );
+                })}
             </ul>
           </div>
         </div>
@@ -222,16 +238,20 @@ const Resume = () => {
                 return (
                   <li
                     key={index}
-                    className="bg-[#232329] h-[184px] py-6 px-10 rounded-xl flex flex-col justify-center items-center lg:items-start gap-1"
+                    className="bg-[#232329] py-6 px-10 rounded-xl flex flex-col justify-center items-center lg:items-start gap-1"
                   >
                     <span className="text-accent">{items.duration}</span>
                     <h3 className="text-xl max-w-[260px] min-h-[60px] text-center lg:text-left">
                       {items.degree}
                     </h3>
+                    <span className="text-accent">
+                      {items.startDate} - {items.endDate}
+                    </span>
                     <div className="flex items-center gap-3">
                       <span className="w-[6px] h-[6px] rounded-full bg-accent"></span>
                       <p className="text-white/60">{items.institution}</p>
                     </div>
+                    <p className="text-white/60">{items.major}</p>
                   </li>
                 );
               })}
@@ -365,7 +385,7 @@ const Resume = () => {
               <li className="flex items-center justify-center xl:justify-start gap-4">
                 <span className="text-white/60">Phone</span>
                 <span className="text-xl">
-                  {getListAboutMeData?.data?.data?.phone}
+                  {getListAboutMeData?.data?.data?.phoneNumber}
                 </span>
               </li>
               <li className="flex items-center justify-center xl:justify-start gap-4">
