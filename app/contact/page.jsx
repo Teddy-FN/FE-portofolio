@@ -6,7 +6,10 @@ import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { LuAsterisk } from "react-icons/lu";
 import { useQuery } from "@tanstack/react-query";
+import emailjs from "@emailjs/browser";
 
+import { useLoading } from "@/components/Loading";
+import { useToast } from "@/hooks/use-toast";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
@@ -42,36 +45,35 @@ const ICON = {
 };
 
 const Contact = () => {
+  const { toast } = useToast();
+  const { setActive } = useLoading();
   const formSchema = z.object({
-    image: z.union([
-      z.instanceof(File).refine((file) => file.size > 0, "Image is required"),
-      z.string().min(1, "Image URL is required").optional(),
-    ]),
-    name: z.string().min(4, "Enter a name with at least 4 characters."),
-    experience: z.string().min(1, "Enter an experience description."),
+    firstName: z
+      .string()
+      .min(2, "Enter a First Name with at least 2 characters."),
+    lastName: z
+      .string()
+      .min(2, "Enter a Last name with at least 2 characters."),
     email: z.string().email("Enter a valid email."),
-    address: z.string().min(4, "Enter a Address with at least 4 characters."),
+    description: z
+      .string()
+      .min(4, "Enter a description with at least 2 characters."),
     phoneNumber: z
       .string()
       .min(4, "Enter a Phone Number at least 4 characters."),
-    nationality: z.string().nonempty("Select a nationality."),
-    languages: z.array(z.string()).min(1, "Select at least one language."),
-    freelance: z.boolean().default(true),
+    category: z.string().min(1, "Select at least one Service."),
   });
 
   const form = useForm({
     resolver: zodResolver(formSchema),
     mode: "onChange",
     defaultValues: {
-      image: "",
-      name: "",
+      firstName: "",
+      lastName: "",
       phoneNumber: "",
-      address: "",
-      experience: "",
       email: "",
-      nationality: "",
-      languages: [],
-      freelance: true,
+      description: "",
+      category: "",
     },
   });
 
@@ -91,37 +93,39 @@ const Contact = () => {
     e.target.value = value;
   };
 
-  const onSubmit = (values) => {
-    const formData = new FormData();
-
-    // Append other fields
-    formData.append("name", values.name);
-    formData.append("experience", Number(values.experience));
-    formData.append("email", values.email);
-    formData.append("phoneNumber", values.phoneNumber);
-    formData.append("address", values.address);
-    formData.append("nationality", values.nationality);
-    formData.append("languages", values.languages);
-    formData.append("freelance", values.freelance);
-    formData.append("createdBy", "Teddy Ferdian"); // Assuming you need this as well
-
-    // Use mutate function to send the formData
-    if (geAboutMeData?.data?.id) {
-      if (values.image instanceof File) {
-        formData.append("image", values.image);
-        formData.append("modifiedBy", "Teddy Ferdian");
-      } else {
-        formData.append("image", values.image);
-      }
-      formData.append("id", state.data.id);
-      mutateEditAboutMe.mutate(formData);
-    } else {
-      if (values.image instanceof File) {
-        formData.append("image", values.image);
-      }
-
-      mutateAddAboutMe.mutate(formData);
-    }
+  const sendEmail = () => {
+    setActive(true, null);
+    const formElement = document.querySelector("form");
+    emailjs
+      .sendForm("service_blhs3nq", "template_b74phwa", formElement, {
+        publicKey: "69-1dTBFPi2AH0Tcm",
+      })
+      .then(
+        () => {
+          setTimeout(() => {
+            toast({
+              variant: "success",
+              title: "Success Add New About Me!",
+            });
+          }, 1000);
+          setTimeout(() => {
+            setActive(null, null);
+            form.reset();
+          }, 2000);
+        },
+        (error) => {
+          setTimeout(() => {
+            toast({
+              variant: "destructive",
+              title: "Uh oh! Something went wrong.",
+              description: error,
+            });
+          }, 1000);
+          setTimeout(() => {
+            setActive(null, null);
+          }, 2000);
+        }
+      );
   };
 
   return (
@@ -149,7 +153,7 @@ const Contact = () => {
               <p className="text-white/60">lorem</p>
               <Form {...form}>
                 <form
-                  onSubmit={form.handleSubmit(onSubmit)}
+                  onSubmit={form.handleSubmit(sendEmail)}
                   className="grid grid-cols-1 lg:grid-cols-2 gap-6 p-10 bg-[#272729] rounded-xl w-full"
                 >
                   {/* Input */}
@@ -168,7 +172,7 @@ const Contact = () => {
                           <Input
                             type="text"
                             {...field}
-                            placeholder="Enter First Name"
+                            placeholder="Enter Your First Name"
                             className="w-full"
                           />
                           {form.formState.errors.firstName && (
@@ -196,7 +200,7 @@ const Contact = () => {
                           <Input
                             type="text"
                             {...field}
-                            placeholder="Enter Last Name"
+                            placeholder="Enter Your Last Name"
                             className="w-full"
                           />
                           {form.formState.errors.lastName && (
@@ -216,9 +220,7 @@ const Contact = () => {
                       render={({ field }) => (
                         <FormItem>
                           <div className="mb-4 flex items-center gap-2">
-                            <FormLabel className="text-base">
-                              Last Name
-                            </FormLabel>
+                            <FormLabel className="text-base">Email</FormLabel>
                             <LuAsterisk className="w-4 h-4 text-red-600" />
                           </div>
                           <Input
@@ -245,7 +247,7 @@ const Contact = () => {
                         <FormItem>
                           <div className="mb-4 flex items-center gap-2">
                             <FormLabel className="text-base">
-                              Phone Number
+                              Phone Number / WA Number
                             </FormLabel>
                             <LuAsterisk className="w-4 h-4 text-red-600" />
                           </div>
@@ -282,7 +284,7 @@ const Contact = () => {
                               <div>
                                 <Input
                                   {...field}
-                                  placeholder="Select nationality"
+                                  placeholder="Select Service"
                                   readOnly
                                   className="w-full text-left cursor-pointer"
                                 />
@@ -326,15 +328,13 @@ const Contact = () => {
                       render={({ field }) => (
                         <FormItem>
                           <div className="mb-4 flex items-center gap-2">
-                            <FormLabel className="text-base">
-                              Description
-                            </FormLabel>
+                            <FormLabel className="text-base">Message</FormLabel>
                             <LuAsterisk className="w-4 h-4 text-red-600" />
                           </div>
                           <Textarea
                             {...field}
                             type="text"
-                            placeholder="Enter Name Product"
+                            placeholder="Enter Message"
                             maxLength={30}
                             className="w-full"
                           />
@@ -348,7 +348,7 @@ const Contact = () => {
                     />
                   </div>
 
-                  <Button size="sm" className="max-w-40">
+                  <Button size="sm" className="max-w-40" type="submit">
                     Send Message
                   </Button>
                 </form>
