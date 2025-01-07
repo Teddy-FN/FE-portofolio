@@ -39,7 +39,10 @@ import {
 
 const limitsOptions = [10, 20, 50];
 
-import { getListTableProject, deleteProject } from "@/service/work";
+import {
+  getListTableCertificate,
+  deleteCertificate,
+} from "@/service/certificate";
 import { generateLinkImageFromGoogleDrive } from "@/utils/generateImageGoogleDrive";
 
 const page = () => {
@@ -50,17 +53,17 @@ const page = () => {
     limit: 10,
   });
 
-  const getProject = useQuery({
-    queryKey: ["getProject", pagination.page, pagination.limit],
+  const getCertificate = useQuery({
+    queryKey: ["getCertificate", pagination.page, pagination.limit],
     queryFn: () =>
-      getListTableProject({
+      getListTableCertificate({
         page: pagination.page,
         limit: pagination.limit,
       }),
   });
 
-  const delProject = useMutation({
-    mutationFn: deleteProject,
+  const delCertificate = useMutation({
+    mutationFn: deleteCertificate,
     onMutate: () => {
       setActive(true, null);
     },
@@ -73,7 +76,7 @@ const page = () => {
       }, 1000);
       setTimeout(() => {
         setActive(null, null);
-        getProject.refetch();
+        getCertificate.refetch();
       }, 2000);
     },
     onError: (err) => {
@@ -102,7 +105,7 @@ const page = () => {
 
   const columns = [
     {
-      accessorKey: "img",
+      accessorKey: "image",
       header: ({ column }) => {
         return (
           <div className="justify-center flex">
@@ -113,14 +116,14 @@ const page = () => {
               }
               className="text-center"
             >
-              img
+              Image
               {/* <CaretSortIcon className="ml-2 h-4 w-4" /> */}
             </Button>
           </div>
         );
       },
       cell: ({ row }) => {
-        const urlImage = generateLinkImageFromGoogleDrive(row.original.img);
+        const urlImage = generateLinkImageFromGoogleDrive(row.original.image);
         return (
           <div className="text-center">
             <Image
@@ -134,7 +137,7 @@ const page = () => {
       },
     },
     {
-      accessorKey: "title",
+      accessorKey: "description",
       header: ({ column }) => {
         return (
           <div className="justify-center flex">
@@ -152,11 +155,11 @@ const page = () => {
         );
       },
       cell: ({ row }) => (
-        <div className="text-center">{row.getValue("title") || "-"}</div>
+        <div className="text-center">{row.getValue("description") || "-"}</div>
       ),
     },
     {
-      accessorKey: "status",
+      accessorKey: "type",
       header: ({ column }) => {
         return (
           <div className="justify-center flex">
@@ -174,7 +177,7 @@ const page = () => {
         );
       },
       cell: ({ row }) => (
-        <div className="text-center">{row.getValue("status") || "-"}</div>
+        <div className="text-center">{row.getValue("type") || "-"}</div>
       ),
     },
     {
@@ -223,7 +226,7 @@ const page = () => {
             <Button
               variants="outline"
               className="bg-red-500 text-white cursor-pointer flex items-center gap-6"
-              onClick={() => delProject.mutate({ id: row.original.id })}
+              onClick={() => delCertificate.mutate({ id: row.original.id })}
             >
               <FiTrash className="text-xl" />
               <p>Delete</p>
@@ -235,7 +238,7 @@ const page = () => {
   ];
 
   const table = useReactTable({
-    data: getProject?.data?.data || [],
+    data: getCertificate?.data?.data || [],
     columns,
     getCoreRowModel: getCoreRowModel(),
     // getPaginationRowModel: getPaginationRowModel(),
@@ -243,7 +246,7 @@ const page = () => {
   });
 
   const TABLES_DATA = useMemo(() => {
-    if (getProject.isLoading) {
+    if (getCertificate.isLoading) {
       return (
         <div className="flex flex-col gap-8">
           <Skeleton className="w-full h-96 rounded-md bg-pink-50/20" />
@@ -255,15 +258,15 @@ const page = () => {
       );
     }
 
-    if (getProject.isError) {
+    if (getCertificate.isError) {
       return (
         <div className="h-screen">
-          <AbortController refetch={() => getProject.refetch()} />
+          <AbortController refetch={() => getCertificate.refetch()} />
         </div>
       );
     }
 
-    if (getProject.data && getProject.data.data?.length > 0) {
+    if (getCertificate.data && getCertificate.data.data?.length > 0) {
       return (
         <Fragment>
           <div className="rounded-md border overflow-x-auto">
@@ -321,20 +324,20 @@ const page = () => {
             <div className="flex items-center gap-2 flex-1 justify-end">
               <Button
                 onClick={() => updatePagination({ page: pagination.page - 1 })}
-                disabled={pagination.page === 1 || getProject.isFetching}
+                disabled={pagination.page === 1 || getCertificate.isFetching}
               >
                 Previous
               </Button>
               <span>
                 Page {pagination.page} of{" "}
-                {getProject?.data?.meta?.totalPages || 1}
+                {getCertificate?.data?.meta?.totalPages || 1}
               </span>
               <Button
                 onClick={() => updatePagination({ page: pagination.page + 1 })}
                 disabled={
                   pagination.page >=
-                    (getProject?.data?.meta?.totalPages || 1) ||
-                  getProject.isFetching
+                    (getCertificate?.data?.meta?.totalPages || 1) ||
+                  getCertificate.isFetching
                 }
               >
                 Next
@@ -350,7 +353,7 @@ const page = () => {
         <h1>No data available</h1>
       </div>
     );
-  }, [getProject, table, columns, pagination]);
+  }, [getCertificate, table, columns, pagination]);
 
   return (
     <DashboardLayout>

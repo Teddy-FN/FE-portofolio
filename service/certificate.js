@@ -1,18 +1,19 @@
 import { axiosInstance } from ".";
+const config = { headers: { "Content-Type": "multipart/form-data" } };
 
-export const getListEducation = async () => {
+export const getListCertificate = async () => {
   const { data, status } = await axiosInstance.get(
-    `/education/get-education?isTable=false`
+    `/certificate/get-certificate?isTable=false`
   );
 
   if (status !== 200) throw Error(`${data.message}`);
   return data;
 };
 
-// Get List Education In Table
-export const getListTableEducation = async ({ page, limit }) => {
+// Get List Certificate In Table
+export const getListTableCertificate = async ({ page, limit }) => {
   const { data, status } = await axiosInstance.get(
-    `/education/get-education?isTable=true&page=${page}&limit=${limit}`
+    `/certificate/get-certificate?isTable=true&page=${page}&limit=${limit}`
   );
 
   if (status !== 200) throw Error(`${data.message}`);
@@ -20,29 +21,30 @@ export const getListTableEducation = async ({ page, limit }) => {
 };
 
 // Get By Id
-export const getEducationById = async (payload) => {
+export const getCertificateById = async (payload) => {
   const { data, status } = await axiosInstance.get(
-    `/education/get-education/${payload.id}`
+    `/certificate/get-certificate/${payload.id}`
   );
 
   if (status !== 200) throw Error(`${data.message}`);
   return data;
 };
 
-// Post education
-export const postEducation = async (payload) => {
+// Post Certificate
+export const postCertificate = async (payload) => {
   const { data, status } = await axiosInstance.post(
-    "/education/add-education",
-    payload
+    "/certificate/add-certificate",
+    payload,
+    config
   );
 
   if (status !== 200 && status !== 201) throw Error(`${data.message}`);
   return data;
 };
 
-export const putEducation = async ({ id, body }) => {
+export const putCertificate = async ({ id, body }) => {
   const { data, status } = await axiosInstance.put(
-    `/education/edit-education/${id}`,
+    `/certificate/edit-certificate/${id}`,
     body
   );
 
@@ -50,9 +52,9 @@ export const putEducation = async ({ id, body }) => {
   return data;
 };
 
-export const deleteEducation = async ({ id }) => {
+export const deleteCertificate = async ({ id }) => {
   const { data, status } = await axiosInstance.delete(
-    `/education/delete-education/${id}`
+    `/certificate/delete-certificate/${id}`
   );
 
   if (status !== 200) throw Error(`${data.message}`);
@@ -62,8 +64,8 @@ export const deleteEducation = async ({ id }) => {
 export const typeCertificate = async () => {
   const data = [
     {
-      value: "Formal Education",
-      label: "Formal Education",
+      value: "Formal Certificate",
+      label: "Formal Certificate",
     },
     {
       value: "Online Courses",
