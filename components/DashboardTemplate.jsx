@@ -4,7 +4,6 @@
 import React, { Fragment } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-
 import {
   SidebarProvider,
   SidebarTrigger,
@@ -22,7 +21,6 @@ import {
   CollapsibleContent,
   CollapsibleTrigger,
 } from "@/components/ui/collapsible";
-
 import {
   FaChevronDown,
   FaHome,
@@ -32,6 +30,7 @@ import {
   FaUser,
   FaBriefcase,
   FaBook,
+  FaArchive,
 } from "react-icons/fa";
 
 import MobileNav from "./MobileNav";
@@ -71,6 +70,12 @@ const menus = [
     icon: <FaSlidersH />,
     name: "Service",
     path: "/dashboard/service",
+    children: [],
+  },
+  {
+    icon: <FaArchive />,
+    name: "Certificate",
+    path: "/dashboard/certificate",
     children: [],
   },
   {
