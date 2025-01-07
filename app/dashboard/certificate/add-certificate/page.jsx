@@ -1,21 +1,15 @@
 /* eslint-disable react-hooks/rules-of-hooks */
 "use client";
 
-import React, { useState, useMemo } from "react";
+import React, { useState } from "react";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useForm, useFieldArray } from "react-hook-form";
+import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { useRouter } from "next/navigation";
-import dynamic from "next/dynamic";
-import { FiPlus, FiTrash } from "react-icons/fi";
 import { useQuery, useMutation } from "@tanstack/react-query";
 import Link from "next/link";
 import { useToast } from "@/hooks/use-toast";
 import { LuAsterisk } from "react-icons/lu";
-import draftToHtml from "draftjs-to-html";
-import { EditorState, convertToRaw } from "draft-js";
-// import { Editor } from "react-draft-wysiwyg";
-import "react-draft-wysiwyg/dist/react-draft-wysiwyg.css";
 
 // Components
 import {
@@ -30,7 +24,6 @@ import { useLoading } from "@/components/Loading";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import DashboardLayout from "@/components/DashboardTemplate";
-import { Separator } from "@/components/ui/separator";
 import {
   Form,
   FormField,
@@ -42,50 +35,29 @@ import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuLabel,
-  DropdownMenuCheckboxItem,
   DropdownMenuRadioGroup,
   DropdownMenuRadioItem,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-
-import { postProject } from "@/service/work";
-import { getListServiceInputWork } from "@/service/service";
-import { getListSkilsInputWork } from "@/service/skills";
-import { getListStatusProjectInputWork } from "@/service/status-project";
-
-const Editor = dynamic(
-  () => import("react-draft-wysiwyg").then((mod) => mod.Editor),
-  { ssr: false }
-);
+import { typeCertificate, postCertificate } from "@/service/certificate";
 
 const page = () => {
   const { setActive } = useLoading();
   const { toast } = useToast();
   const router = useRouter();
   const [imagePreview, setImagePreview] = useState(null);
-  const [editorState, setEditorState] = useState(EditorState.createEmpty());
 
   const formSchema = z.object({
     image: z.union([
       z.instanceof(File).refine((file) => file.size > 0, "Image is required"),
       z.string().min(1, "Image URL is required").optional(),
     ]),
-    title: z.string().min(4, {
-      message: "Enter Title Project Minimum Character 4 and max character 30.",
+    type: z.string().min(4, {
+      message: "Enter type Project Minimum Character 4 and max character 30.",
     }),
     description: z.string().min(4, {
       message: "Enter Description Minimum Character 4 and max character 30.",
-    }),
-    stack: z.array(z.string()).min(1, "Select at least one stack."),
-    live: z.string().min(4, {
-      message: "Enter Live URL Minimum 4 Character & Max 255 Character.",
-    }),
-    status: z.string().min(4, {
-      message: "Enter Status Minimum 4 Character & Max 255 Character.",
-    }),
-    category: z.string().min(4, {
-      message: "Enter Category",
     }),
   });
 
@@ -94,37 +66,18 @@ const page = () => {
     mode: "onChange",
     defaultValues: {
       image: "",
-      title: "",
+      type: "",
       description: "",
-      status: "",
-      stack: "",
-      live: "",
-      category: "",
     },
   });
 
-  const { fields, append, remove, update } = useFieldArray({
-    name: "github",
-    control: form.control,
+  const listTypeCertificate = useQuery({
+    queryKey: ["typeCertificate"],
+    queryFn: typeCertificate,
   });
 
-  const listService = useQuery({
-    queryKey: ["getListServiceInputWork"],
-    queryFn: getListServiceInputWork,
-  });
-
-  const listSkills = useQuery({
-    queryKey: ["getListSkilsInputWork"],
-    queryFn: getListSkilsInputWork,
-  });
-
-  const listStatus = useQuery({
-    queryKey: ["getListStatusProjectInputWork"],
-    queryFn: getListStatusProjectInputWork,
-  });
-
-  const mutateAddProject = useMutation({
-    mutationFn: postProject,
+  const mutateAddCertificate = useMutation({
+    mutationFn: postCertificate,
     onMutate: () => {
       setActive(true, null);
     },
@@ -132,13 +85,13 @@ const page = () => {
       setTimeout(() => {
         toast({
           variant: "success",
-          title: "Success Add New Work!",
+          title: "Success Add New Certificate!",
         });
       }, 1000);
       setTimeout(() => {
         setActive(null, null);
         if (typeof window !== "undefined") {
-          router.push("/dashboard/work");
+          router.push("/dashboard/certificate");
         }
       }, 2000);
     },
@@ -162,12 +115,10 @@ const page = () => {
     const formData = new FormData();
     // Append other fields
     formData.append("image", values.image);
-    formData.append("title", values.title);
-    formData.append("live", values.live);
-    formData.append("stack", values.stack);
-    formData.append("status", values.status);
+    formData.append("type", values.type);
+    formData.append("description", values.description);
     formData.append("createdBy", "Teddy Ferdian"); // Assuming you need this as well
-    mutateAddProject.mutate(formData);
+    mutateAddCertificate.mutate(formData);
   };
 
   const handleResetImage = () => {
@@ -188,174 +139,6 @@ const page = () => {
       reader.readAsDataURL(file);
     }
   };
-
-  const handleEditorChange = (state) => {
-    setEditorState(state);
-    const data = draftToHtml(convertToRaw(state.getCurrentContent()));
-    form.setValue("description", data, { shouldValidate: true });
-  };
-
-  const ADDING_OPTION = useMemo(() => {
-    if (form.getValues("github")) {
-      return (
-        <div className="col-span-2">
-          {fields?.map((items, index) => {
-            const numb = index + 1;
-            return (
-              <div key={index}>
-                <Separator />
-                <div
-                  key={index}
-                  className="flex py-6 items-start gap-6 justify-between relative"
-                >
-                  <div className="flex-1">
-                    <FormItem>
-                      <div className="mb-4 flex items-center gap-2">
-                        <FormLabel className="text-base">
-                          Name Github {numb}
-                        </FormLabel>
-                        <LuAsterisk className="w-4 h-4 text-red-600" />
-                      </div>
-                      <Input
-                        type="text"
-                        {...form.register(`github.${index}.name`, {
-                          onChange: (e) => {
-                            const value = e.target.value;
-
-                            // Set the value in the form
-                            form.setValue(`github.${index}.name`, value);
-
-                            // If the name length is greater than 1, clear errors for this field
-                            if (value.length > 1) {
-                              form.clearErrors(`github.${index}.name`);
-                            } else {
-                              form.trigger(`github.${index}.name`);
-                            }
-                          },
-                          validate: (value) => {
-                            if (value === "") {
-                              return "Name cannot be empty";
-                            }
-                            return true;
-                          },
-                        })}
-                        defaultValue={items.titleOption}
-                        placeholder="Enter Name Name"
-                        className="w-full"
-                      />
-                      {form.formState.errors?.github?.[index]?.name && (
-                        <FormMessage>
-                          {form.formState.errors?.github?.[index]?.name.message}
-                        </FormMessage>
-                      )}
-                    </FormItem>
-                  </div>
-                  <div className="flex-1">
-                    <FormItem>
-                      <div className="mb-4 flex items-center gap-2">
-                        <FormLabel className="text-base">
-                          URL Github {numb}
-                        </FormLabel>
-                        <LuAsterisk className="w-4 h-4 text-red-600" />
-                      </div>
-                      <Input
-                        type="text"
-                        {...form.register(`github.${index}.url`, {
-                          onChange: (e) => {
-                            const value = e.target.value;
-
-                            // Set the value in the form
-                            form.setValue(`github.${index}.url`, value);
-
-                            // If the name length is greater than 1, clear errors for this field
-                            if (value.length > 1) {
-                              form.clearErrors(`github.${index}.url`);
-                            } else {
-                              form.trigger(`github.${index}.url`);
-                            }
-                          },
-                          validate: (value) => {
-                            if (value === "") {
-                              return "Url Name cannot be empty";
-                            }
-                            return true;
-                          },
-                        })}
-                        defaultValue={items.titleOption}
-                        placeholder="Enter Name URL"
-                        className="w-full"
-                      />
-                      {form.formState.errors?.github?.[index]?.url && (
-                        <FormMessage>
-                          {form.formState.errors?.github?.[index]?.url.message}
-                        </FormMessage>
-                      )}
-                    </FormItem>
-                  </div>
-                  {/* Delete on Resolution Table - Desktop */}
-                  <div
-                    className={`justify-end self-center ${
-                      form.formState.errors?.github?.[index]?.name ||
-                      form.formState.errors?.github?.[index]?.url
-                        ? "mt-[18px]"
-                        : "mt-12"
-                    }  hidden md:flex`}
-                    onClick={() => {
-                      if (fields?.length === 1) {
-                        form.setValue("github", []);
-                      } else {
-                        remove(index);
-                      }
-                    }}
-                  >
-                    <Button
-                      variant="ghost"
-                      className="bg-red-600 hover:bg-red-700 text-white flex items-center gap-2"
-                    >
-                      <FiTrash className="h-4 w-4" />
-                      <p>Delete</p>
-                    </Button>
-                  </div>
-
-                  {/* Delete on Mobile */}
-                  <div
-                    className="absolute right-1 top-1 md:hidden"
-                    onClick={() => {
-                      if (fields?.length === 1) {
-                        form.setValue("github", []);
-                      } else {
-                        remove(index);
-                      }
-                    }}
-                  >
-                    <Button
-                      variant="ghost" // No background initially (ghost)
-                      className="bg-red-600 hover:bg-red-700 text-white rounded-full p-2 h-8 w-8 flex items-center justify-center transition-colors duration-200"
-                    >
-                      <FiTrash className="h-4 w-4" />
-                    </Button>
-                  </div>
-                </div>
-                <Separator />
-              </div>
-            );
-          })}
-        </div>
-      );
-    } else {
-      return null;
-    }
-  }, [
-    form.getValues("github"),
-    form,
-    fields,
-    remove,
-    update,
-    form.formState.errors,
-    form.register,
-    form.trigger,
-    form.clearErrors,
-  ]);
 
   return (
     <DashboardLayout>
@@ -395,7 +178,9 @@ const page = () => {
                 render={() => (
                   <FormItem>
                     <div className="mb-4 flex items-center gap-2">
-                      <FormLabel className="text-base">Image Project</FormLabel>
+                      <FormLabel className="text-base">
+                        Certificate Image
+                      </FormLabel>
                       <LuAsterisk className="w-4 h-4 text-red-600" />
                     </div>
 
@@ -436,7 +221,7 @@ const page = () => {
             <div className="col-span-1">
               <FormField
                 control={form.control}
-                name="title"
+                name="description"
                 render={({ field }) => (
                   <FormItem>
                     <div className="mb-4 flex items-center gap-2">
@@ -461,7 +246,7 @@ const page = () => {
             <div className="col-span-1">
               <FormField
                 control={form.control}
-                name="stack"
+                name="type"
                 render={({ field }) => (
                   <FormItem>
                     <div className="mb-4 flex items-center gap-2">
@@ -474,42 +259,29 @@ const page = () => {
                       <DropdownMenuTrigger asChild>
                         <div>
                           <Input
-                            value={
-                              Array.isArray(field.value)
-                                ? field.value.join(", ")
-                                : ""
-                            }
+                            {...field}
+                            placeholder="Select Category"
                             readOnly
-                            placeholder="Select Stack"
                             className="w-full text-left cursor-pointer"
                           />
                         </div>
                       </DropdownMenuTrigger>
                       <DropdownMenuContent className="w-56 h-60 overflow-scroll">
-                        <DropdownMenuLabel>Stack</DropdownMenuLabel>
+                        <DropdownMenuLabel>Type Certificate</DropdownMenuLabel>
                         <DropdownMenuSeparator />
-                        {listSkills?.data?.map((item, index) => {
-                          const isSelected =
-                            Array.isArray(field.value) &&
-                            field.value.includes(item.name);
-                          return (
-                            <DropdownMenuCheckboxItem
+                        <DropdownMenuRadioGroup
+                          value={field.value}
+                          onValueChange={(value) => field.onChange(value)}
+                        >
+                          {listTypeCertificate?.data?.map((item, index) => (
+                            <DropdownMenuRadioItem
                               key={index}
-                              checked={isSelected}
-                              onCheckedChange={(checked) => {
-                                const updatedStack = checked
-                                  ? [...(field.value || []), item.name]
-                                  : (field.value || []).filter(
-                                      (lang) => lang !== item.name
-                                    );
-                                field.onChange(updatedStack);
-                              }}
-                              className="flex items-center gap-5"
+                              value={item.value}
                             >
-                              <p>{item?.name}</p>
-                            </DropdownMenuCheckboxItem>
-                          );
-                        })}
+                              {item?.label}
+                            </DropdownMenuRadioItem>
+                          ))}
+                        </DropdownMenuRadioGroup>
                       </DropdownMenuContent>
                     </DropdownMenu>
                     {form.formState.errors.stack && (
