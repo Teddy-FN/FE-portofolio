@@ -7,6 +7,7 @@ const link = [
   { name: "Services", path: "/services" },
   { name: "Resume", path: "/resume" },
   { name: "Work", path: "/work" },
+  { name: "Certificate", path: "/certificate" },
   { name: "Contact", path: "/contact" },
 ];
 

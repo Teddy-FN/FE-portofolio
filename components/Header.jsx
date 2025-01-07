@@ -27,6 +27,10 @@ const menus = [
     path: "/work",
   },
   {
+    name: "Certificate",
+    path: "/certificate",
+  },
+  {
     name: "Contact",
     path: "/contact",
   },
