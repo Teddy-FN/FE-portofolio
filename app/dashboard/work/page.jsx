@@ -6,6 +6,8 @@ import { useMutation, useQuery } from "@tanstack/react-query";
 import { useToast } from "@/hooks/use-toast";
 import Link from "next/link";
 import Image from "next/image";
+import Zoom from "react-medium-image-zoom";
+import "react-medium-image-zoom/dist/styles.css";
 
 // Assets / Icons
 import { FiEdit, FiTrash } from "react-icons/fi";
@@ -123,12 +125,14 @@ const page = () => {
         const urlImage = generateLinkImageFromGoogleDrive(row.original.img);
         return (
           <div className="text-center">
-            <Image
-              src={urlImage}
-              width={200}
-              height={200}
-              alt={row.original.title}
-            />
+            <Zoom>
+              <Image
+                src={urlImage}
+                width={200}
+                height={200}
+                alt={row.original.title}
+              />
+            </Zoom>
           </div>
         );
       },
