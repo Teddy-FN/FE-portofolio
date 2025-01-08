@@ -11,7 +11,9 @@ import "react-medium-image-zoom/dist/styles.css";
 
 // Assets / Icons
 import { FiEdit, FiTrash } from "react-icons/fi";
+import { HiDotsHorizontal } from "react-icons/hi";
 
+// Components
 import {
   Breadcrumb,
   BreadcrumbItem,
@@ -20,6 +22,12 @@ import {
   BreadcrumbPage,
   BreadcrumbSeparator,
 } from "@/components/ui/breadcrumb";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 import { useLoading } from "@/components/Loading";
 import { Button } from "@/components/ui/button";
 import DashboardLayout from "@/components/DashboardTemplate";
@@ -212,30 +220,32 @@ const page = () => {
       header: () => <div className="text-center">Action</div>,
       cell: ({ row }) => {
         return (
-          <div className="flex flex-col justify-center gap-6">
-            <Button
-              variants="outline"
-              className="bg-blue-500 text-white cursor-pointer flex items-center gap-6"
-            >
-              <Link
-                href={{
-                  pathname: `/dashboard/certificate/edit-certificate/${row.original.id}`,
-                }}
-                className={`text-xl capitalize flex items-center gap-4`}
-              >
-                <FiEdit className="text-xl" />
-                <p>Edit</p>
-              </Link>
-            </Button>
-            <Button
-              variants="outline"
-              className="bg-red-500 text-white cursor-pointer flex items-center gap-6"
-              onClick={() => delCertificate.mutate({ id: row.original.id })}
-            >
-              <FiTrash className="text-xl" />
-              <p>Delete</p>
-            </Button>
-          </div>
+          <DropdownMenu>
+            <DropdownMenuTrigger className="flex items-center gap-1">
+              <HiDotsHorizontal className="text-white" />
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="start" className="bg-white">
+              <DropdownMenuItem>
+                <Link
+                  href={`/dashboard/certificate/edit-certificate/${row.original.id}`}
+                  className={`text-blue-500 cursor-pointer flex items-center gap-6`}
+                >
+                  <FiEdit className="text-xl" />
+                  <p>Edit</p>
+                </Link>
+              </DropdownMenuItem>
+              <DropdownMenuItem>
+                <div
+                  className="text-red-500 cursor-pointer flex items-center gap-6"
+                  onClick={() => delCertificate.mutate({ id: row.original.id })}
+                >
+                  <FiTrash className="text-xl" />
+                  <p>Delete</p>
+                </div>
+              </DropdownMenuItem>
+              {/* <DropdownMenuItem>GitHub</DropdownMenuItem> */}
+            </DropdownMenuContent>
+          </DropdownMenu>
         );
       },
     },
