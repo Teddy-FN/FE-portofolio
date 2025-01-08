@@ -6,6 +6,11 @@ import { useMutation, useQuery } from "@tanstack/react-query";
 import { useToast } from "@/hooks/use-toast";
 import Link from "next/link";
 
+// Assets / Icons
+import { FiEdit, FiTrash } from "react-icons/fi";
+import { HiDotsHorizontal } from "react-icons/hi";
+
+// Components
 import {
   Breadcrumb,
   BreadcrumbItem,
@@ -14,18 +19,22 @@ import {
   BreadcrumbPage,
   BreadcrumbSeparator,
 } from "@/components/ui/breadcrumb";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 import { useLoading } from "@/components/Loading";
 import { Button } from "@/components/ui/button";
 import DashboardLayout from "@/components/DashboardTemplate";
 import { Skeleton } from "@/components/ui/skeleton";
-import { FiEdit, FiTrash } from "react-icons/fi";
 import AbortController from "@/components/AbortController";
 import {
   flexRender,
   getCoreRowModel,
   useReactTable,
 } from "@tanstack/react-table";
-
 import {
   Table,
   TableBody,
@@ -116,28 +125,32 @@ const page = () => {
       accessorKey: "action",
       header: "Action",
       cell: ({ row }) => (
-        <div className="flex justify-center gap-6">
-          <Button
-            variants="outline"
-            className="bg-blue-500 text-white cursor-pointer flex items-center gap-6 w-max"
-          >
-            <Link
-              href={`/dashboard/work/status/edit-status/${row.original.id}`}
-              className={`text-xl capitalize flex items-center gap-4`}
-            >
-              <FiEdit />
-              Edit
-            </Link>
-          </Button>
-          <Button
-            variants="outline"
-            className="bg-red-500 text-white cursor-pointer flex items-center gap-6 w-max"
-            onClick={() => delStatusProject.mutate({ id: row.original.id })}
-          >
-            <FiTrash />
-            Delete
-          </Button>
-        </div>
+        <DropdownMenu>
+          <DropdownMenuTrigger className="flex items-center gap-1">
+            <HiDotsHorizontal className="text-white" />
+          </DropdownMenuTrigger>
+          <DropdownMenuContent align="start" className="bg-white">
+            <DropdownMenuItem>
+              <Link
+                href={`/dashboard/work/status/edit-status/${row.original.id}`}
+                className={`text-blue-500 cursor-pointer flex items-center gap-6`}
+              >
+                <FiEdit className="text-xl" />
+                <p>Edit</p>
+              </Link>
+            </DropdownMenuItem>
+            <DropdownMenuItem>
+              <div
+                className="text-red-500 cursor-pointer flex items-center gap-6"
+                onClick={() => delStatusProject.mutate({ id: row.original.id })}
+              >
+                <FiTrash className="text-xl" />
+                <p>Delete</p>
+              </div>
+            </DropdownMenuItem>
+            {/* <DropdownMenuItem>GitHub</DropdownMenuItem> */}
+          </DropdownMenuContent>
+        </DropdownMenu>
       ),
     },
   ];
