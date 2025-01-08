@@ -7,10 +7,9 @@ import Header from "@/components/Header";
 
 import Image from "next/image";
 
-import { getListExperience } from "@/service/experience";
+import { getListCertificate } from "@/service/certificate";
 import { Skeleton } from "@/components/ui/skeleton";
 import AbortController from "@/components/AbortController";
-
 const array = Array(8).fill(null);
 
 const experience = {
@@ -21,14 +20,17 @@ const experience = {
 
 const Certificate = () => {
   // Query
-  const getListExperienceData = useQuery({
-    queryKey: ["getListExperience"],
-    queryFn: getListExperience,
+  const getListCertificateData = useQuery({
+    queryKey: ["getListCertificate"],
+    queryFn: getListCertificate,
     keepPreviousData: true,
   });
 
   const RENDER_EXPERIENCE = useMemo(() => {
-    if (getListExperienceData?.isLoading || getListExperienceData.isFetching) {
+    if (
+      getListCertificateData?.isLoading ||
+      getListCertificateData.isFetching
+    ) {
       return (
         <div className="flex flex-col gap-[20px] py-8 text-center xl:text-left">
           <Skeleton className="bg-pink-50/20 h-8 w-full rounded-md" />
@@ -47,17 +49,17 @@ const Certificate = () => {
       );
     }
 
-    if (getListExperienceData?.isError) {
+    if (getListCertificateData?.isError) {
       return (
         <div className="h-screen">
-          <AbortController refetch={() => getListExperienceData.refetch()} />
+          <AbortController refetch={() => getListCertificateData.refetch()} />
         </div>
       );
     }
 
     if (
-      getListExperienceData?.data &&
-      getListExperienceData?.data?.data?.length > 0
+      getListCertificateData?.data &&
+      getListCertificateData?.data?.data?.length > 0
     ) {
       return (
         <div className="flex flex-col gap-[30px] text-center xl:text-left">
@@ -67,32 +69,27 @@ const Certificate = () => {
           </p>
           <div className="h-[400px]">
             <ul className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-[30px]">
-              {getListExperienceData?.data?.data
-                ?.sort((a, b) => b.id - a.id)
-                .map((items, index) => {
-                  return (
-                    <li
-                      key={index}
-                      className="bg-[#232329] h-auto py-6 px-10 rounded-xl flex flex-col items-center lg:items-start gap-1"
-                    >
-                      <h3 className="text-xl max-w-[260px] min-h-[60px] text-center lg:text-left">
-                        {items.position}
-                      </h3>
-                      <div className="flex items-center gap-3">
-                        <span className="w-[6px] h-[6px] rounded-full bg-accent"></span>
-                        <p className="text-white/60">{items.company}</p>
-                      </div>
-                      <span className="text-accent">
-                        {items.startDate} - {items.endDate}
-                      </span>
-
-                      <div
-                        className="text-white/60"
-                        dangerouslySetInnerHTML={{ __html: items?.description }}
-                      />
-                    </li>
-                  );
-                })}
+              {getListCertificateData?.data?.data?.map((items, index) => {
+                return (
+                  <li
+                    key={index}
+                    className="bg-[#232329] h-auto py-6 px-10 rounded-xl flex flex-col items-center lg:items-start gap-1"
+                  >
+                    <Image
+                      src={items.img}
+                      alt={items.title}
+                      width={150}
+                      height={150}
+                      className="object-cover rounded-md"
+                    />
+                    <div className="flex items-center gap-3">
+                      <span className="w-[6px] h-[6px] rounded-full bg-accent"></span>
+                      <p className="text-white/60">{items.description}</p>
+                    </div>
+                    <span className="text-accent">{items.type}</span>
+                  </li>
+                );
+              })}
             </ul>
           </div>
         </div>
@@ -104,7 +101,7 @@ const Certificate = () => {
         <h1>No data available</h1>
       </div>
     );
-  }, [getListExperienceData]);
+  }, [getListCertificateData]);
 
   return (
     <Fragment>

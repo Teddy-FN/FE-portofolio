@@ -71,7 +71,7 @@ const page = () => {
       setTimeout(() => {
         toast({
           variant: "success",
-          title: "Successfully Delete Data Project!",
+          title: "Successfully Delete Data Certificate!",
         });
       }, 1000);
       setTimeout(() => {
