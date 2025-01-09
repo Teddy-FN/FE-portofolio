@@ -157,30 +157,28 @@ const Resume = () => {
             <ul className="grid grid-cols-1 lg:grid-cols-2 gap-[30px]">
               {getListExperienceData?.data?.data
                 ?.sort((a, b) => b.id - a.id)
-                .map((items, index) => {
-                  return (
-                    <li
-                      key={index}
-                      className="bg-[#232329] h-auto py-6 px-10 rounded-xl flex flex-col items-center lg:items-start gap-1"
-                    >
-                      <h3 className="text-xl max-w-[260px] min-h-[60px] text-center lg:text-left">
-                        {items.position}
-                      </h3>
-                      <div className="flex items-center gap-3">
-                        <span className="w-[6px] h-[6px] rounded-full bg-accent"></span>
-                        <p className="text-white/60">{items.company}</p>
-                      </div>
-                      <span className="text-accent">
-                        {items.startDate} - {items.endDate}
-                      </span>
+                .map((items, index) => (
+                  <li
+                    key={index}
+                    className="bg-[#232329] h-auto py-6 px-10 rounded-xl flex flex-col items-center lg:items-start gap-1"
+                  >
+                    <h3 className="text-xl max-w-[260px] min-h-[60px] text-center lg:text-left">
+                      {items.position}
+                    </h3>
+                    <div className="flex items-center gap-3">
+                      <span className="w-[6px] h-[6px] rounded-full bg-accent"></span>
+                      <p className="text-white/60">{items.company}</p>
+                    </div>
+                    <span className="text-accent">
+                      {items.startDate} - {items.endDate}
+                    </span>
 
-                      <div
-                        className="text-white/60"
-                        dangerouslySetInnerHTML={{ __html: items?.description }}
-                      />
-                    </li>
-                  );
-                })}
+                    <div
+                      className="text-white/60"
+                      dangerouslySetInnerHTML={{ __html: items?.description }}
+                    />
+                  </li>
+                ))}
             </ul>
           </div>
         </div>
