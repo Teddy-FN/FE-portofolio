@@ -3,6 +3,7 @@
 import React, { useMemo } from "react";
 import Link from "next/link";
 import { useQuery } from "@tanstack/react-query";
+import CountUp from "react-countup";
 
 // Components
 import { Button } from "@/components/ui/button";
@@ -18,19 +19,20 @@ import { getListAboutMe } from "@/service/about-me";
 // Utils
 import { generateLinkImageFromGoogleDrive } from "@/utils/generateImageGoogleDrive";
 
+const array = Array(8).fill(null);
+
 const Dashboard = () => {
   const getAboutMeData = useQuery({
     queryKey: ["getListAboutMe"],
     queryFn: getListAboutMe,
   });
 
-  const geDashboardData = useQuery({
+  const getDashboardData = useQuery({
     queryKey: ["getDashboard"],
     queryFn: getDashboard,
   });
 
   console.log(getAboutMeData);
-  console.log(geDashboardData);
 
   const RENDER_PROFILE_DATA = useMemo(() => {
     if (getAboutMeData.isLoading && getAboutMeData.isFetching) {
@@ -66,8 +68,8 @@ const Dashboard = () => {
               </Button>
             </div>
             <ul className="grid grid-cols-1 xl:grid-cols-2 gap-y-6 gap-x-6 mx-auto xl:mx-0">
-              <li className="flex items-center justify-center xl:justify-start gap-4 col-span-1 xl:col-span-2">
-                <div className="mt-4 relative flex justify-center items-center w-full lg:w-1/2">
+              <li className="flex items-center gap-4 col-span-1 xl:col-span-2">
+                <div className="mt-4 relative flex items-center w-full lg:w-1/2">
                   <img
                     src={linkImage}
                     alt="Preview"
@@ -75,42 +77,42 @@ const Dashboard = () => {
                   />
                 </div>
               </li>
-              <li className="flex items-center justify-center xl:justify-start gap-4">
+              <li className="flex items-center gap-4">
                 <span className="text-white/60">Name</span>
                 <span className="text-xl">{data?.name || "-"}</span>
               </li>
-              <li className="flex items-center justify-center xl:justify-start gap-4">
+              <li className="flex items-center gap-4">
                 <span className="text-white/60">Email</span>
                 <span className="text-xl">{data?.email || "-"}</span>
               </li>
 
-              <li className="flex items-center justify-center xl:justify-start gap-4">
+              <li className="flex items-center gap-4">
                 <span className="text-white/60">Position</span>
                 <span className="text-xl">{data?.position || "-"}</span>
               </li>
-              <li className="flex items-center justify-center xl:justify-start gap-4">
+              <li className="flex items-center gap-4">
                 <span className="text-white/60">Phone</span>
                 <span className="text-xl">{data?.phoneNumber || "-"}</span>
               </li>
-              <li className="flex items-center justify-center xl:justify-start gap-4">
+              <li className="flex items-center gap-4">
                 <span className="text-white/60">Experience</span>
                 <span className="text-xl">{data?.experience || "-"}</span>
               </li>
-              <li className="flex items-center justify-center xl:justify-start gap-4">
+              <li className="flex items-center gap-4">
                 <span className="text-white/60">Nationality</span>
                 <span className="text-xl">{data?.nationality || "-"}</span>
               </li>
-              <li className="flex items-center justify-center xl:justify-start gap-4">
+              <li className="flex items-center gap-4">
                 <span className="text-white/60">Email</span>
                 <span className="text-xl">{data?.email || "-"}</span>
               </li>
-              <li className="flex items-center justify-center xl:justify-start gap-4">
+              <li className="flex items-center gap-4">
                 <span className="text-white/60">Freelance</span>
                 <span className="text-xl">
                   {data?.freelance ? "Available" : "Not Available"}
                 </span>
               </li>
-              <li className="flex items-center justify-center xl:justify-start gap-4">
+              <li className="flex items-center gap-4">
                 <span className="text-white/60">Languages</span>
                 <span className="text-xl">
                   {data?.languages.length > 0
@@ -139,6 +141,86 @@ const Dashboard = () => {
     }
   }, [getAboutMeData]);
 
+  const RENDER_STATS_DASHBOARD = useMemo(() => {
+    if (getDashboardData.isLoading) {
+      return array.map((_, index) => {
+        return (
+          <Skeleton
+            className="bg-pink-50/20 h-72 w-full rounded-md"
+            key={index}
+          />
+        );
+      });
+    }
+
+    if (getDashboardData.isError) {
+      return (
+        <div className="h-screen">
+          <AbortController refetch={() => getDashboardData.refetch()} />
+        </div>
+      );
+    }
+
+    if (getDashboardData?.data && getDashboardData?.isSuccess) {
+      return (
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+          {getDashboardData?.data?.data?.map((items, index) => {
+            let link = "";
+
+            switch (items.name) {
+              case "Certificate":
+                link = "/dashboard/certificate";
+                break;
+              case "Education":
+                link = "/dashboard/education";
+                break;
+              case "Experience":
+                link = "/dashboard/experience";
+                break;
+              case "Project":
+                link = "/dashboard/project";
+                break;
+              case "Service":
+                link = "/dashboard/service";
+                break;
+              case "Skill":
+                link = "/dashboard/skill";
+                break;
+
+              default:
+                link = "";
+                break;
+            }
+            return (
+              <div className="flex flex-col gap-4" key={index}>
+                <p className="leading-snug text-accent">{items.name}</p>
+                <div className="flex gap-4 items-center justify-between xl:justify-start bg-[#272729] rounded-xl w-full p-10">
+                  <div className="flex items-center flex-1 gap-4">
+                    <p className="leading-snug text-white/80">Total</p>
+                    <CountUp
+                      end={items.total}
+                      duration={5}
+                      delay={2}
+                      className="text-4xl xl:text-6xl font-extrabold"
+                    />
+                  </div>
+                  <Button>
+                    <Link
+                      href={link}
+                      className={`text-xl capitalize flex items-center gap-4`}
+                    >
+                      See {items.name} list
+                    </Link>
+                  </Button>
+                </div>
+              </div>
+            );
+          })}
+        </div>
+      );
+    }
+  }, [getDashboardData]);
+
   return (
     <DashboardLayout>
       <h1 className="text-2xl font-bold">Dashboard</h1>
@@ -146,6 +228,9 @@ const Dashboard = () => {
 
       {/* Render Profile Data */}
       <div className="my-10">{RENDER_PROFILE_DATA}</div>
+
+      {/* Render Total experience, project, etc */}
+      <div className="my-10">{RENDER_STATS_DASHBOARD}</div>
     </DashboardLayout>
   );
 };
