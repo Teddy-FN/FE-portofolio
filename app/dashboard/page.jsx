@@ -32,8 +32,6 @@ const Dashboard = () => {
     queryFn: getDashboard,
   });
 
-  console.log(getAboutMeData);
-
   const RENDER_PROFILE_DATA = useMemo(() => {
     if (getAboutMeData.isLoading && getAboutMeData.isFetching) {
       return <Skeleton className="w-full h-96 rounded-md bg-pink-50/20" />;
@@ -49,7 +47,6 @@ const Dashboard = () => {
 
     if (getAboutMeData.data && getAboutMeData.isSuccess) {
       const data = getAboutMeData.data.data;
-      console.log("DATA =>", data);
 
       const linkImage = generateLinkImageFromGoogleDrive(data?.photo);
 
@@ -224,7 +221,7 @@ const Dashboard = () => {
   return (
     <DashboardLayout>
       <h1 className="text-2xl font-bold">Dashboard</h1>
-      <p>Welcome to my dashboard!</p>
+      <p>Welcome to Teddy dashboard!</p>
 
       {/* Render Profile Data */}
       <div className="my-10">{RENDER_PROFILE_DATA}</div>

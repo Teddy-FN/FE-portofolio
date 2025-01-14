@@ -28,6 +28,7 @@ import { login } from "@/service/auth";
 
 const Register = () => {
   const { setActive } = useLoading();
+  const router = useRouter();
   const { toast } = useToast();
   const [showPassword, setShowPassword] = useState(false);
   const formSchema = z.object({
@@ -53,7 +54,7 @@ const Register = () => {
     onMutate: () => {
       setActive(true, null);
     },
-    onSuccess: () => {
+    onSuccess: (data) => {
       setTimeout(() => {
         toast({
           variant: "success",
@@ -62,9 +63,10 @@ const Register = () => {
       }, 1000);
       setTimeout(() => {
         setActive(null, null);
-        // if (typeof window !== "undefined") {
-        //   router.push("/dashboard");
-        // }
+        if (typeof window !== "undefined") {
+          router.push("/dashboard");
+          window.sessionStorage.setItem("data", JSON.stringify(data));
+        }
       }, 2000);
     },
     onError: (err) => {
