@@ -292,7 +292,6 @@ const page = () => {
     setEditorState(state);
 
     const data = draftToHtml(convertToRaw(state.getCurrentContent()));
-    console.log("DATA =>", data);
 
     form.setValue(
       "description",

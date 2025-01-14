@@ -1,9 +1,12 @@
 /* eslint-disable react/jsx-key */
 "use client";
 
-import React, { Fragment } from "react";
+import React, { useEffect, Fragment } from "react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { usePathname } from "next/navigation";
+
+import { Button } from "@/components/ui/button";
 import {
   SidebarProvider,
   SidebarTrigger,
@@ -15,6 +18,7 @@ import {
   SidebarMenu,
   SidebarMenuButton,
   SidebarMenuItem,
+  SidebarFooter,
 } from "@/components/ui/sidebar";
 import {
   Collapsible,
@@ -25,6 +29,7 @@ import {
   FaChevronDown,
   FaHome,
   FaGlobe,
+  FaTools,
   FaSchool,
   FaSlidersH,
   FaUser,
@@ -32,6 +37,7 @@ import {
   FaBook,
   FaArchive,
 } from "react-icons/fa";
+import { IoLogOut } from "react-icons/io5";
 
 import MobileNav from "./MobileNav";
 
@@ -43,13 +49,19 @@ const menus = [
     children: [],
   },
   {
+    icon: <FaGlobe />,
+    name: "See My Portfolio",
+    path: "/",
+    children: [],
+  },
+  {
     icon: <FaUser />,
     name: "About Me",
     path: "/dashboard/about-me",
     children: [],
   },
   {
-    icon: <FaGlobe />,
+    icon: <FaBriefcase />,
     name: "Experience",
     path: "/dashboard/experience",
     children: [],
@@ -79,7 +91,7 @@ const menus = [
     children: [],
   },
   {
-    icon: <FaBriefcase />,
+    icon: <FaTools />,
     name: "Project",
     path: "/dashboard/work",
     children: [
@@ -97,6 +109,17 @@ const menus = [
 
 const DashboardLayout = ({ children }) => {
   const pathName = usePathname();
+  const router = useRouter();
+
+  useEffect(() => {
+    const data = window.sessionStorage.getItem("data");
+
+    if (data === null) {
+      router.push("/login");
+    }
+  }, []);
+
+  const handleLogout = () => {};
 
   return (
     <Fragment>
@@ -115,7 +138,7 @@ const DashboardLayout = ({ children }) => {
             <SidebarGroup>
               {/* <SidebarGroupLabel>Application</SidebarGroupLabel> */}
               <SidebarGroupContent>
-                <SidebarMenu>
+                <SidebarMenu className="flex flex-col">
                   {menus.map((items, index) => {
                     if (items?.children?.length === 0) {
                       return (
@@ -131,7 +154,7 @@ const DashboardLayout = ({ children }) => {
                             <Link
                               href={items.path}
                               key={index}
-                              className="text-xl capitalize hover:text-accent transition-all flex items-center gap-4"
+                              className="text-xl capitalize text-white hover:text-primary hover:border-accent hover:bg-accent transition-all flex items-center gap-4"
                             >
                               {items.icon}
                               {items.name}
@@ -162,7 +185,7 @@ const DashboardLayout = ({ children }) => {
                                     items.path === pathName
                                       ? "text-accent border-b-2 border-accent"
                                       : "text-white"
-                                  } text-xl capitalize hover:text-accent transition-all flex items-center gap-4`}
+                                  } text-xl capitalize text-white hover:text-primary hover:border-accent hover:bg-accent transition-all flex items-center gap-4 p-2 rounded-md`}
                                 >
                                   {items.name}
                                 </Link>
@@ -177,6 +200,15 @@ const DashboardLayout = ({ children }) => {
               </SidebarGroupContent>
             </SidebarGroup>
           </SidebarContent>
+          <SidebarFooter className="bg-primary border-none border-primary">
+            <div
+              className="text-xl capitalize text-white hover:text-primary hover:border-accent hover:bg-accent transition-all flex items-center gap-4 p-2 rounded-md"
+              onClick={handleLogout}
+            >
+              <IoLogOut />
+              <p>Log out</p>
+            </div>
+          </SidebarFooter>
         </Sidebar>
         <main className="w-full px-4 lg:p-8">
           <SidebarTrigger className="hidden md:block" />
