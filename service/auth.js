@@ -8,7 +8,7 @@ export const login = async (payload) => {
   return data;
 };
 
-export const logout = async () => {
+export const logout = async (payload) => {
   const { data, status } = await axiosInstance.post("/auth/logout", payload);
 
   if (status !== 200 && status !== 201) throw Error(`${data.message}`);

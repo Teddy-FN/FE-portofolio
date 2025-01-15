@@ -5,8 +5,9 @@ import React, { useEffect, Fragment } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { usePathname } from "next/navigation";
-
-import { Button } from "@/components/ui/button";
+import { useMutation } from "@tanstack/react-query";
+import { useToast } from "@/hooks/use-toast";
+import { useLoading } from "@/components/Loading";
 import {
   SidebarProvider,
   SidebarTrigger,
@@ -40,6 +41,8 @@ import {
 import { IoLogOut } from "react-icons/io5";
 
 import MobileNav from "./MobileNav";
+
+import { logout } from "@/service/auth";
 
 const menus = [
   {
@@ -111,6 +114,10 @@ const DashboardLayout = ({ children }) => {
   const pathName = usePathname();
   const router = useRouter();
 
+  const { setActive } = useLoading();
+
+  const { toast } = useToast();
+
   useEffect(() => {
     const data = window.sessionStorage.getItem("data");
 
@@ -119,7 +126,43 @@ const DashboardLayout = ({ children }) => {
     }
   }, []);
 
-  const handleLogout = () => {};
+  const handleLogout = useMutation({
+    mutationFn: () => {
+      const data = window.sessionStorage.getItem("data");
+      const formatData = JSON.parse(data);
+      return logout({
+        id: formatData.user.id,
+      });
+    },
+    onMutate: () => {
+      setActive(true, null);
+    },
+    onSuccess: () => {
+      setTimeout(() => {
+        toast({
+          variant: "success",
+          title: "Success Logout!",
+        });
+      }, 1000);
+      setTimeout(() => {
+        setActive(null, null);
+        window.location.href = "/";
+        window.sessionStorage.removeItem("data");
+      }, 2000);
+    },
+    onError: (err) => {
+      setTimeout(() => {
+        toast({
+          variant: "destructive",
+          title: "Uh oh! Something went wrong.",
+          description: err.message,
+        });
+      }, 1000);
+      setTimeout(() => {
+        setActive(null, null);
+      }, 2000);
+    },
+  });
 
   return (
     <Fragment>
@@ -203,7 +246,7 @@ const DashboardLayout = ({ children }) => {
           <SidebarFooter className="bg-primary border-none border-primary">
             <div
               className="text-xl capitalize text-white hover:text-primary hover:border-accent hover:bg-accent transition-all flex items-center gap-4 p-2 rounded-md"
-              onClick={handleLogout}
+              onClick={() => handleLogout.mutate()}
             >
               <IoLogOut />
               <p>Log out</p>
