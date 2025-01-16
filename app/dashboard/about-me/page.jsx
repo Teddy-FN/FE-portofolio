@@ -161,7 +161,7 @@ const page = () => {
   });
 
   const mutateEditAboutMe = useMutation({
-    mutationFn: putAboutMe,
+    mutationFn: ({ id, body }) => putAboutMe({ id, body }),
     onMutate: () => {
       setActive(true, null);
     },
@@ -214,7 +214,10 @@ const page = () => {
         formData.append("image", values.image);
       }
       formData.append("id", geAboutMeData?.data?.data?.id);
-      mutateEditAboutMe.mutate(formData);
+      mutateEditAboutMe.mutate({
+        body: formData,
+        id: geAboutMeData?.data?.data?.id,
+      });
     } else {
       if (values.image instanceof File) {
         formData.append("image", values.image);

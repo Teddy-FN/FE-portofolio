@@ -22,10 +22,10 @@ export const postAboutMe = async (payload) => {
 };
 
 // Edit About Me
-export const putAboutMe = async (payload) => {
+export const putAboutMe = async ({ id, body }) => {
   const { data, status } = await axiosInstance.put(
-    `/about-me/edit-about-me/${payload.id}`,
-    payload
+    `/about-me/edit-about-me/${id}`,
+    body
   );
 
   if (status !== 200) throw Error(`${data.message}`);
