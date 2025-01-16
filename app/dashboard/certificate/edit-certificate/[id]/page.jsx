@@ -24,6 +24,7 @@ import { useLoading } from "@/components/Loading";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import DashboardLayout from "@/components/DashboardTemplate";
+import { Textarea } from "@/components/ui/textarea";
 import {
   Form,
   FormField,
@@ -270,11 +271,9 @@ const page = () => {
                       <FormLabel className="text-base">Description</FormLabel>
                       <LuAsterisk className="w-4 h-4 text-red-600" />
                     </div>
-                    <Input
-                      type="text"
+                    <Textarea
                       {...field}
-                      placeholder="Enter Name Project"
-                      maxLength={30}
+                      placeholder="Enter Description Certificate"
                       className="w-full"
                     />
                     {form.formState.errors.title && (

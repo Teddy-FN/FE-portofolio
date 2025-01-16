@@ -73,7 +73,7 @@ const Header = () => {
   }, [titleHome]);
 
   return (
-    <header className="py-8 xl:py-12 text-white xl:bg-pink-50/20">
+    <header className="py-8 xl:py-4 text-white xl:bg-pink-50/20">
       <div className="container mx-auto flex items-center justify-between">
         {DATAS_HEADER}
 
