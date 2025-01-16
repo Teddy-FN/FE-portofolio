@@ -213,7 +213,7 @@ const page = () => {
       } else {
         formData.append("image", values.image);
       }
-      formData.append("id", state.data.id);
+      formData.append("id", geAboutMeData?.data?.data?.id);
       mutateEditAboutMe.mutate(formData);
     } else {
       if (values.image instanceof File) {
