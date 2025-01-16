@@ -45,7 +45,8 @@ export const postCertificate = async (payload) => {
 export const putCertificate = async ({ id, body }) => {
   const { data, status } = await axiosInstance.put(
     `/certificate/edit-certificate/${id}`,
-    body
+    body,
+    config
   );
 
   if (status !== 200) throw Error(`${data.message}`);
