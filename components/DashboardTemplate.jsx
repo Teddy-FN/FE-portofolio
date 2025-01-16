@@ -166,7 +166,7 @@ const DashboardLayout = ({ children }) => {
 
   return (
     <Fragment>
-      <div className="lg:hidden container mx-auto flex items-center justify-between py-8 xl:py-12 text-white xl:bg-pink-50/20">
+      <div className="lg:hidden w-full flex items-center justify-between py-8 px-4 xl:py-12 text-white bg-pink-50/20">
         <Link href="/">
           <h1 className="text-4xl font-semibold">
             Dashboard <span className="text-accent">.</span>
