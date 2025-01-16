@@ -93,7 +93,6 @@ const page = () => {
     resolver: zodResolver(formSchema),
     mode: "onChange",
     defaultValues: {
-      id: null,
       image: "",
       name: "",
       phoneNumber: "",
@@ -108,7 +107,6 @@ const page = () => {
 
   useMemo(() => {
     if (geAboutMeData.data && geAboutMeData.isSuccess) {
-      form.setValue("id", geAboutMeData?.data?.data?.id);
       form.setValue("name", geAboutMeData?.data?.data?.name);
       form.setValue(
         "experience",
@@ -208,7 +206,7 @@ const page = () => {
     formData.append("createdBy", "Teddy Ferdian"); // Assuming you need this as well
 
     // Use mutate function to send the formData
-    if (values?.id) {
+    if (geAboutMeData?.data?.data?.id) {
       if (values.image instanceof File) {
         formData.append("image", values.image);
         formData.append("modifiedBy", "Teddy Ferdian");
