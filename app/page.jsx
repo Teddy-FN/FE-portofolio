@@ -50,14 +50,21 @@ export default function Home() {
               {/* Btn Social Media */}
 
               <div className="flex flex-col lg:flex-row items-center gap-8">
-                <Button
-                  variants="outline"
-                  size="lg"
-                  className="uppercase flex items-center gap-2"
+                <a
+                  href="/CV_Teddy_Latest.pdf"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  download
                 >
-                  <span>Download CV</span>
-                  <FiDownload className="text-xl" />
-                </Button>
+                  <Button
+                    variants="outline"
+                    size="lg"
+                    className="uppercase flex items-center gap-2"
+                  >
+                    <span>Download CV</span>
+                    <FiDownload className="text-xl" />
+                  </Button>
+                </a>
 
                 <div className="mb-8 xl:mb-0">
                   <Social
