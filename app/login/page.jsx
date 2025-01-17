@@ -2,12 +2,15 @@
 
 import React, { useState } from "react";
 import { motion } from "framer-motion";
+import Link from "next/link";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { useRouter } from "next/navigation";
 import { useMutation } from "@tanstack/react-query";
 import { useToast } from "@/hooks/use-toast";
+
+// Icons
 import { LuAsterisk } from "react-icons/lu";
 import { PiEyeBold, PiEyeClosedBold } from "react-icons/pi";
 
@@ -84,8 +87,6 @@ const Register = () => {
   });
 
   const onSubmit = (values) => {
-    console.log("values =>", values);
-
     const formData = new FormData();
     // Append other fields
     formData.append("userName", values.userName);
@@ -115,7 +116,7 @@ const Register = () => {
         <Form {...form}>
           <form
             onSubmit={form.handleSubmit(onSubmit)}
-            className="grid grid-cols-1 gap-8 p-10 bg-[#272729] rounded-xl"
+            className="grid grid-cols-1 gap-8 bg-[#272729] rounded-xl"
           >
             <div className="col-span-1">
               <FormField
@@ -192,6 +193,21 @@ const Register = () => {
             </Button>
           </form>
         </Form>
+
+        <div className="flex items-center justify-between">
+          <Link
+            href="/"
+            className={`text-base capitalize flex items-center gap-4 text-accent hover:text-white transition-all`}
+          >
+            See My Portofolio
+          </Link>
+          <Link
+            href="/register"
+            className={`text-base capitalize flex items-center gap-4 text-accent hover:text-white transition-all`}
+          >
+            Register
+          </Link>
+        </div>
       </div>
     </motion.div>
   );
