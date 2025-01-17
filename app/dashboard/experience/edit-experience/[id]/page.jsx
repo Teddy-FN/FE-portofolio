@@ -1,7 +1,7 @@
 /* eslint-disable react-hooks/rules-of-hooks */
 "use client";
 
-import React, { useState, useMemo } from "react";
+import React, { useEffect, useState, useMemo } from "react";
 import { useQuery, useMutation } from "@tanstack/react-query";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useToast } from "@/hooks/use-toast";
@@ -66,8 +66,22 @@ const page = () => {
   const router = useRouter();
   const { id } = params;
   const [editorState, setEditorState] = useState(EditorState.createEmpty());
-
   const currDate = new Date().getFullYear();
+
+  // State
+  const [dataUser, setDataUser] = useState(null);
+
+  useEffect(() => {
+    const data = window.sessionStorage.getItem("data");
+    console.log("DATA =>", data);
+
+    if (data === null) {
+      router.push("/login");
+    } else {
+      const formatData = JSON.parse(data);
+      setDataUser(formatData?.user);
+    }
+  }, []);
 
   // Query
   const yearListData = useQuery({
@@ -448,9 +462,11 @@ const page = () => {
                 <Button size="sm" className="max-w-full">
                   Cancel
                 </Button>
-                <Button size="sm" className="max-w-full" type="submit">
-                  Save
-                </Button>
+                {dataUser?.userType !== "user" && (
+                  <Button size="sm" className="max-w-full" type="submit">
+                    Save
+                  </Button>
+                )}
               </div>
             </div>
           </form>

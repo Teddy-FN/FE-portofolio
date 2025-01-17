@@ -1,7 +1,7 @@
 /* eslint-disable react-hooks/rules-of-hooks */
 "use client";
 
-import React, { useState, useMemo } from "react";
+import React, { useEffect, useState, useMemo } from "react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
@@ -56,7 +56,22 @@ const page = () => {
   const { toast } = useToast();
   const router = useRouter();
   const params = useParams();
+
+  // State
   const [imagePreview, setImagePreview] = useState(null);
+  const [dataUser, setDataUser] = useState(null);
+
+  useEffect(() => {
+    const data = window.sessionStorage.getItem("data");
+    console.log("DATA =>", data);
+
+    if (data === null) {
+      router.push("/login");
+    } else {
+      const formatData = JSON.parse(data);
+      setDataUser(formatData?.user);
+    }
+  }, []);
 
   const { id } = params;
 
@@ -339,9 +354,11 @@ const page = () => {
                 <Button size="sm" className="max-w-full">
                   Cancel
                 </Button>
-                <Button size="sm" className="max-w-full" type="submit">
-                  Save
-                </Button>
+                {dataUser?.userType !== "user" && (
+                  <Button size="sm" className="max-w-full" type="submit">
+                    Save
+                  </Button>
+                )}
               </div>
             </div>
           </form>

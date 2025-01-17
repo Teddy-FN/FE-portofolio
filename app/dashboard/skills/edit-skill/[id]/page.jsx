@@ -1,7 +1,7 @@
 /* eslint-disable react-hooks/rules-of-hooks */
 "use client";
 
-import React, { useMemo } from "react";
+import React, { useEffect, useMemo } from "react";
 import { useQuery, useMutation } from "@tanstack/react-query";
 import { useToast } from "@/hooks/use-toast";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -39,6 +39,21 @@ const page = () => {
   const params = useParams();
 
   const { id } = params;
+
+  // State
+  const [dataUser, setDataUser] = useState(null);
+
+  useEffect(() => {
+    const data = window.sessionStorage.getItem("data");
+    console.log("DATA =>", data);
+
+    if (data === null) {
+      router.push("/login");
+    } else {
+      const formatData = JSON.parse(data);
+      setDataUser(formatData?.user);
+    }
+  }, []);
 
   const getDataSkillsById = useQuery({
     queryKey: ["getSkillsById", id],
@@ -171,9 +186,11 @@ const page = () => {
                 <Button size="sm" className="max-w-full">
                   Cancel
                 </Button>
-                <Button size="sm" className="max-w-full" type="submit">
-                  Edit
-                </Button>
+                {dataUser?.userType !== "user" && (
+                  <Button size="sm" className="max-w-full" type="submit">
+                    Edit
+                  </Button>
+                )}
               </div>
             </div>
           </form>

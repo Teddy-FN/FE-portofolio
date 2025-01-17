@@ -1,7 +1,7 @@
 /* eslint-disable react-hooks/rules-of-hooks */
 "use client";
 
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import dynamic from "next/dynamic";
 import { useQuery, useMutation } from "@tanstack/react-query";
 import { useRouter } from "next/navigation";
@@ -58,6 +58,21 @@ const page = () => {
   const router = useRouter();
   const currDate = new Date().getFullYear();
   const [editorState, setEditorState] = useState(EditorState.createEmpty());
+
+  // State
+  const [dataUser, setDataUser] = useState(null);
+
+  useEffect(() => {
+    const data = window.sessionStorage.getItem("data");
+    console.log("DATA =>", data);
+
+    if (data === null) {
+      router.push("/login");
+    } else {
+      const formatData = JSON.parse(data);
+      setDataUser(formatData?.user);
+    }
+  }, []);
 
   // Query
   const yearListData = useQuery({
@@ -397,9 +412,11 @@ const page = () => {
                 <Button size="sm" className="max-w-full">
                   Cancel
                 </Button>
-                <Button size="sm" className="max-w-full" type="submit">
-                  Save
-                </Button>
+                {dataUser?.userType !== "user" && (
+                  <Button size="sm" className="max-w-full" type="submit">
+                    Save
+                  </Button>
+                )}
               </div>
             </div>
           </form>
