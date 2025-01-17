@@ -57,6 +57,7 @@ const page = () => {
     queryFn: getListAboutMe,
   });
 
+  // State
   const [imagePreview, setImagePreview] = useState(null);
   const [dataUser, setDataUser] = useState(null);
 

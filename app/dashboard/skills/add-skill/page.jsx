@@ -1,7 +1,7 @@
 /* eslint-disable react-hooks/rules-of-hooks */
 "use client";
 
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { useMutation } from "@tanstack/react-query";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
@@ -35,6 +35,21 @@ import { postSkills } from "@/service/skills";
 const page = () => {
   const { setActive } = useLoading();
   const { toast } = useToast();
+
+  // State
+  const [dataUser, setDataUser] = useState(null);
+
+  useEffect(() => {
+    const data = window.sessionStorage.getItem("data");
+    console.log("DATA =>", data);
+
+    if (data === null) {
+      router.push("/login");
+    } else {
+      const formatData = JSON.parse(data);
+      setDataUser(formatData?.user);
+    }
+  }, []);
 
   const formSchema = z.object({
     name: z.string().min(4, {
@@ -149,9 +164,11 @@ const page = () => {
                 <Button size="sm" className="max-w-full">
                   Cancel
                 </Button>
-                <Button size="sm" className="max-w-full" type="submit">
-                  Save
-                </Button>
+                {dataUser?.userType !== "user" && (
+                  <Button size="sm" className="max-w-full" type="submit">
+                    Save
+                  </Button>
+                )}
               </div>
             </div>
           </form>
