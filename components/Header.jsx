@@ -87,7 +87,7 @@ const Header = () => {
 
         {/* Mobile Nav */}
         <div className="xl:hidden">
-          <MobileNav menus={menus} />
+          <MobileNav menus={menus} isHeaderDashboard={false} />
         </div>
       </div>
     </header>

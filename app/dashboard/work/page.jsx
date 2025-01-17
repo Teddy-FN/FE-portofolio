@@ -1,7 +1,13 @@
 /* eslint-disable react-hooks/rules-of-hooks */
 "use client";
 
-import React, { useState, useCallback, useMemo, Fragment } from "react";
+import React, {
+  useEffect,
+  useState,
+  useCallback,
+  useMemo,
+  Fragment,
+} from "react";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { useToast } from "@/hooks/use-toast";
 import Link from "next/link";
@@ -54,10 +60,25 @@ import { generateLinkImageFromGoogleDrive } from "@/utils/generateImageGoogleDri
 const page = () => {
   const { toast } = useToast();
   const { setActive } = useLoading();
+
+  // State
   const [pagination, setPagination] = useState({
     page: 1,
     limit: 10,
   });
+  const [dataUser, setDataUser] = useState(null);
+
+  useEffect(() => {
+    const data = window.sessionStorage.getItem("data");
+    console.log("DATA =>", data);
+
+    if (data === null) {
+      router.push("/login");
+    } else {
+      const formatData = JSON.parse(data);
+      setDataUser(formatData?.user);
+    }
+  }, []);
 
   const getProject = useQuery({
     queryKey: ["getProject", pagination.page, pagination.limit],
@@ -429,14 +450,16 @@ const page = () => {
               </BreadcrumbList>
             </Breadcrumb>
           </div>
-          <Button>
-            <Link
-              href="/dashboard/work/add-work"
-              className={`text-xl capitalize flex items-center gap-4`}
-            >
-              Add Project
-            </Link>
-          </Button>
+          {dataUser?.userType !== "user" && (
+            <Button>
+              <Link
+                href="/dashboard/work/add-work"
+                className={`text-xl capitalize flex items-center gap-4`}
+              >
+                Add Project
+              </Link>
+            </Button>
+          )}
         </div>
         {TABLES_DATA}
       </div>

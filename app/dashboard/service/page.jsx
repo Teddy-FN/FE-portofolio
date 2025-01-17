@@ -1,7 +1,13 @@
 /* eslint-disable react-hooks/rules-of-hooks */
 "use client";
 
-import React, { useState, useCallback, useMemo, Fragment } from "react";
+import React, {
+  useEffect,
+  useState,
+  useCallback,
+  useMemo,
+  Fragment,
+} from "react";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import Link from "next/link";
 
@@ -51,10 +57,25 @@ const limitsOptions = [10, 20, 50];
 const page = () => {
   const { setActive } = useLoading();
   const { toast } = useToast();
+
+  // State
   const [pagination, setPagination] = useState({
     page: 1,
     limit: 10,
   });
+  const [dataUser, setDataUser] = useState(null);
+
+  useEffect(() => {
+    const data = window.sessionStorage.getItem("data");
+    console.log("DATA =>", data);
+
+    if (data === null) {
+      router.push("/login");
+    } else {
+      const formatData = JSON.parse(data);
+      setDataUser(formatData?.user);
+    }
+  }, []);
 
   const fetchListServiceTable = useCallback(() => {
     return getListTableService({
@@ -359,15 +380,16 @@ const page = () => {
               </BreadcrumbList>
             </Breadcrumb>
           </div>
-
-          <Button>
-            <Link
-              href="/dashboard/service/add-service"
-              className={`text-xl capitalize flex items-center gap-4`}
-            >
-              Add Service
-            </Link>
-          </Button>
+          {dataUser?.userType !== "user" && (
+            <Button>
+              <Link
+                href="/dashboard/service/add-service"
+                className={`text-xl capitalize flex items-center gap-4`}
+              >
+                Add Service
+              </Link>
+            </Button>
+          )}
         </div>
         {TABLES_DATA}
       </div>
