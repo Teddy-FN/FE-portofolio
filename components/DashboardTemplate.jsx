@@ -146,7 +146,7 @@ const DashboardLayout = ({ children }) => {
       }, 1000);
       setTimeout(() => {
         setActive(null, null);
-        window.location.href = "/";
+        window.location.href = "/login";
         window.sessionStorage.removeItem("data");
       }, 2000);
     },
@@ -172,7 +172,11 @@ const DashboardLayout = ({ children }) => {
             Dashboard <span className="text-accent">.</span>
           </h1>
         </Link>
-        <MobileNav menus={menus} />
+        <MobileNav
+          menus={menus}
+          handleLogout={() => handleLogout.mutate()}
+          isHeaderDashboard
+        />
       </div>
 
       <SidebarProvider>

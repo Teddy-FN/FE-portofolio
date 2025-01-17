@@ -1,12 +1,16 @@
 "use client";
 
-import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import { usePathname } from "next/navigation";
 import Link from "next/link";
 
+// Icons
 import { CiMenuFries } from "react-icons/ci";
+import { IoLogOut } from "react-icons/io5";
 
-const MobileNav = ({ menus }) => {
+// Components
+import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
+
+const MobileNav = ({ menus, handleLogout, isHeaderDashboard }) => {
   const pathName = usePathname();
 
   return (
@@ -38,6 +42,15 @@ const MobileNav = ({ menus }) => {
               </Link>
             );
           })}
+          {isHeaderDashboard && (
+            <div
+              className="text-xl capitalize text-white hover:text-primary hover:border-accent hover:bg-accent transition-all flex items-center gap-4 p-2 rounded-md"
+              onClick={handleLogout}
+            >
+              <IoLogOut />
+              <p>Log out</p>
+            </div>
+          )}
         </nav>
       </SheetContent>
     </Sheet>
